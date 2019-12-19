@@ -13,5 +13,1150 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="GameBaseCode">
+      <UniqueIdentifier>{88808c05-3a23-4346-98ab-f16ff68cf3fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{ab70e461-2560-4411-b9c9-51fb9ba11df2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{5ca03087-b8b1-481c-92d9-7d3ce6bdff32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\share">
+      <UniqueIdentifier>{527a63f0-b63a-4378-b36a-714448ef5340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Comm">
+      <UniqueIdentifier>{a8b9ce78-e87f-426b-bdf3-5b15b3c1994a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\ServerSocket">
+      <UniqueIdentifier>{e2125283-953a-4056-80d2-1ac13a663a28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\WorldKernel">
+      <UniqueIdentifier>{7435b4a8-7f92-4183-be06-cae5856f83ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\WorldKernel\Network">
+      <UniqueIdentifier>{1c686b3b-1492-487f-9123-d9eb25f6b2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel">
+      <UniqueIdentifier>{2173f6ca-90e7-428e-beac-1d78fa2f09e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Network">
+      <UniqueIdentifier>{4ca3f9e4-442a-43af-99db-d7c2816208df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Item">
+      <UniqueIdentifier>{3f046280-6be8-40cf-9f8c-fe163fd1d92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\User">
+      <UniqueIdentifier>{f00556d2-b882-440e-b0c3-bc6ccb7f4c27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\NPC">
+      <UniqueIdentifier>{206995d5-9358-4808-848a-567b12809def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Map">
+      <UniqueIdentifier>{d554718c-010a-441d-aaa9-6f4eb038098e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Syndicate">
+      <UniqueIdentifier>{ef0627c5-d8a6-4726-a41a-48186efac39d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Announce &amp; LeaveWord">
+      <UniqueIdentifier>{addf0e32-3632-463e-b6c9-67bc6c59fcbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Magic">
+      <UniqueIdentifier>{807e85c9-9b9c-441c-ab07-ba6bd0769c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Task / Action">
+      <UniqueIdentifier>{824e322b-9022-4ae9-a2fa-d6ff05c101dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Item\Network">
+      <UniqueIdentifier>{8c4367b7-5381-4b6a-817b-b2830b05d6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Syndicate\Network">
+      <UniqueIdentifier>{29c17048-f55f-40dd-bbc5-2801f17d0c29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\User\Network">
+      <UniqueIdentifier>{7b76848a-541a-47d9-bf09-cf3f7d7c1474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Friend">
+      <UniqueIdentifier>{fa0fffd6-b266-484d-aff8-b3ff95df5a4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Friend\Network">
+      <UniqueIdentifier>{dfd980ad-04ca-40fa-b4b7-18ef75433c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\NPC\Network">
+      <UniqueIdentifier>{1b9f806a-9e56-415a-9e9c-07bee14a711b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Magic\Network">
+      <UniqueIdentifier>{f0445c19-7744-48bc-96c5-7eb035114efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Map\Network">
+      <UniqueIdentifier>{a545e7a6-33c7-4969-a4aa-a55bcc7e0bf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Pet">
+      <UniqueIdentifier>{5b8a59eb-a6d5-4472-bbf7-b12f7c590c80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Pet\Network">
+      <UniqueIdentifier>{8b106014-3383-4039-ae6d-fce2a55ff1d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Announce &amp; LeaveWord\Network">
+      <UniqueIdentifier>{d5a50c1b-9359-4a3e-859b-418b703d2edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Map\MapData">
+      <UniqueIdentifier>{6575d528-ab41-4ccd-af1d-14014ee860d2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\BaseFunc.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\IniFile.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\logfile.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\MyHeap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\NetStringPacker.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ThreadBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TimeOut.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\VarType.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBaseCode\MyConstRecord.cpp">
+      <Filter>GameBaseCode</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBaseCode\mydatabase.cpp">
+      <Filter>GameBaseCode</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBaseCode\MyField.cpp">
+      <Filter>GameBaseCode</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBaseCode\MyRecord.cpp">
+      <Filter>GameBaseCode</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBaseCode\myrecordset.cpp">
+      <Filter>GameBaseCode</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgServerDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Comm\InternetPort.cpp">
+      <Filter>Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="Comm\messageport.cpp">
+      <Filter>Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGroupThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\ServerSocket\ServerSocket.cpp">
+      <Filter>Server\ServerSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\ServerSocket\SSocket.cpp">
+      <Filter>Server\ServerSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\WorldKernel.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\ClientSocket.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\ConnectUser.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\MapList.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\SynWorldManager.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\UserList.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\ChatRoomManager.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\MessageBoard.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\SynWorldShell.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgConnect.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgLogin.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgTime.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgRegister.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgMessageBoard.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\ChatRoom.cpp">
+      <Filter>Server\WorldKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgChatRoom.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBaseCode\PrcHeap.cpp">
+      <Filter>GameBaseCode</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgLogin_A.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgLogin_C.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgRole.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MapGroupKernel.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Agent.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\RoleManager.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\NetMsg.cpp">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Role.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Item.cpp">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\ItemType.cpp">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\GameObj.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\ItemData.cpp">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\ItemAddition.cpp">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\UserManager.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\User.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcManager.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Npc.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MapGroup.cpp">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MapManager.cpp">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\SynManager.cpp">
+      <Filter>Server\MapGroupKernel\Syndicate</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\EventPack.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\LeaveWord.cpp">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\AnnounceData.cpp">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Announce.cpp">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\GameMap.cpp">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\GameBlock.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Weather.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\WeatherRegion.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgWeather.cpp">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MagicType.cpp">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Team.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\UserData.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\UserPackage.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcLink.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcScene.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcShop.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcStorage.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcTable.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\NpcTask.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Package.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\BetOutside.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\StatusOnce.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\StatusMore.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\TaskDetail.cpp">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\TaskDetailData.cpp">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\GameAction.cpp">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Transformation.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgDataArray.cpp">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgItemInfo.cpp">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\AINpc.cpp">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Magic.cpp">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Magic_Process.cpp">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MagicData.cpp">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\SynAttr.cpp">
+      <Filter>Server\MapGroupKernel\Syndicate</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Syndicate.cpp">
+      <Filter>Server\MapGroupKernel\Syndicate</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgSyndicate.cpp">
+      <Filter>Server\MapGroupKernel\Syndicate\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgSynAttrInfo.cpp">
+      <Filter>Server\MapGroupKernel\Syndicate\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPlayer.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgUserAttrib.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgSynInfo.cpp">
+      <Filter>Server\MapGroupKernel\Syndicate\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Booth.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Enemy.cpp">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Friend.cpp">
+      <Filter>Server\MapGroupKernel\Friend</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\FriendData.cpp">
+      <Filter>Server\MapGroupKernel\Friend</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgFriend.cpp">
+      <Filter>Server\MapGroupKernel\Friend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcInfoEx.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgItem.cpp">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgItemInfoEx.cpp">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcInfo.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgNpc.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Tutor.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\TutorData.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\SquareDeal.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgTrade.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgAction.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgFriendInfo.cpp">
+      <Filter>Server\MapGroupKernel\Friend\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgInteract.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgMagicEffect.cpp">
+      <Filter>Server\MapGroupKernel\Magic\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgName.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgItemAttrib.cpp">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPlayerTask.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgUserInfo.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgMapInfo.cpp">
+      <Filter>Server\MapGroupKernel\Map\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgDialog.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPackage.cpp">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgAiNpcInfo.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgCallPetInfo.cpp">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgMagicInfo.cpp">
+      <Filter>Server\MapGroupKernel\Magic\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgFlushExp.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgBetOutside.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\User_Item.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\UserTeam.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgTeam.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgTeamMember.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgTalk.cpp">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\User_Task.cpp">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MapData.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MapDataPath.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Cell.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\TerrainObj.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Layer.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MapObj.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\TerrainObjPart.cpp">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\NetMsgW.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgTalkW.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgNameW.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgDialogW.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\WorldKernel\Network\MsgFriendW.cpp">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\Array.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\AutoLink.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\AutoLinkSet.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\AutoPtr.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\BaseFunc.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\basetype.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Cn_Res.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\En_Res.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\GameObjArray.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\GameObjSet.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Index.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\IniFile.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\logfile.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MyArray.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\mycom.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MyHeap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MyStack.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\MyString.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\NetStringPacker.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\T_MyQueue.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\T_SafePtr.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\T_SingleMap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ThreadBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TickOver.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TimeOut.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\VarType.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\Cn_DDRes.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\define.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\En_DDRes.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\I_Shell.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\MyDDString.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\networkdef.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\share\protocol.h">
+      <Filter>Server\share</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\ConstGameData.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\GameData.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\I_mydb.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\myConstrecord.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\mydatabase.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\Mydb.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\MyField.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\myrecord.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\myrecordset.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\T_GameDataMap.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\T_GameDataSet.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgServerDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="typedef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Comm\I_MessagePort.h">
+      <Filter>Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="Comm\InternetPort.h">
+      <Filter>Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="Comm\MessagePort.h">
+      <Filter>Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="P_ServerManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGroupThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\ServerSocket\EncryptServer.h">
+      <Filter>Server\ServerSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\ServerSocket\ServerSocket.h">
+      <Filter>Server\ServerSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\ServerSocket\SSocket.h">
+      <Filter>Server\ServerSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\WorldKernel.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\ClientSocket.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\ConnectUser.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\MapList.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\SynWorldManager.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\UserList.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\AllMsg.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\ChatRoomManager.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\MessageBoard.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\SynWorldShell.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgAccount_A.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgConnect_A.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgFee_A.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgLogin_A.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgQueryFee_A.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\EncryptClient.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgConnect.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgLogin.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgTime.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgRegister.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgMessageBoard.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\ChatRoom.h">
+      <Filter>Server\WorldKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgChatRoom.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBaseCode\PrcHeap.h">
+      <Filter>GameBaseCode</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgLogin_C.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgRole.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MapGroupKernel.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\DeadLoop.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Agent.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\RoleManager.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\AllMsg.h">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\NetMsg.h">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\I_Role.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Role.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\ItemType.h">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Item.h">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\GameObj.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\T_SingleMap2.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\ItemData.h">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\ItemAddition.h">
+      <Filter>Server\MapGroupKernel\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\T_SingleObjSet2.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\SingleMap64.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\UserTable.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\UserManager.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\User.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcManager.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Npc.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MapGroup.h">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MapManager.h">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\SynManager.h">
+      <Filter>Server\MapGroupKernel\Syndicate</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\EventPack.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\LeaveWord.h">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\AnnounceData.h">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Announce.h">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\GameMap.h">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\I_MapData.h">
+      <Filter>Server\MapGroupKernel\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\GameBlock.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MultiObjSet.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Weather.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\WeatherRegion.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgWeather.h">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MagicType.h">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Team.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\UserData.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\UserPackage.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcLink.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcScene.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcShop.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcStorage.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcTable.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\NpcTask.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Package.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\BetOutside.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\StatusOnce.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\StatusMore.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\TaskDetail.h">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\TaskDetailData.h">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\ActionDefine.h">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\GameAction.h">
+      <Filter>Server\MapGroupKernel\Task / Action</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Transformation.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgDataArray.h">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgItemInfo.h">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\AINpc.h">
+      <Filter>Server\MapGroupKernel\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Magic.h">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MagicData.h">
+      <Filter>Server\MapGroupKernel\Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\SynAttr.h">
+      <Filter>Server\MapGroupKernel\Syndicate</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Syndicate.h">
+      <Filter>Server\MapGroupKernel\Syndicate</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgSyndicate.h">
+      <Filter>Server\MapGroupKernel\Syndicate\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgSynAttrInfo.h">
+      <Filter>Server\MapGroupKernel\Syndicate\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPlayer.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgUserAttrib.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgSynInfo.h">
+      <Filter>Server\MapGroupKernel\Syndicate\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Booth.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Enemy.h">
+      <Filter>Server\MapGroupKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Friend.h">
+      <Filter>Server\MapGroupKernel\Friend</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\FriendData.h">
+      <Filter>Server\MapGroupKernel\Friend</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgFriend.h">
+      <Filter>Server\MapGroupKernel\Friend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcInfoEx.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgItem.h">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgItemInfoEx.h">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcInfo.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgNpc.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Tutor.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\TutorData.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\SquareDeal.h">
+      <Filter>Server\MapGroupKernel\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgTrade.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgAction.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgFriendInfo.h">
+      <Filter>Server\MapGroupKernel\Friend\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgInteract.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgMagicEffect.h">
+      <Filter>Server\MapGroupKernel\Magic\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgName.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgItemAttrib.h">
+      <Filter>Server\MapGroupKernel\Item\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPlayerTask.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgUserInfo.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgMapInfo.h">
+      <Filter>Server\MapGroupKernel\Map\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgDialog.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPackage.h">
+      <Filter>Server\MapGroupKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgAiNpcInfo.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgCallPetInfo.h">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgMagicInfo.h">
+      <Filter>Server\MapGroupKernel\Magic\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgFlushExp.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgBetOutside.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgTeam.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgTeamMember.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgTalk.h">
+      <Filter>Server\MapGroupKernel\Announce &amp; LeaveWord\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MapData.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Cell.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\T_CompactObjSet.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\TerrainObj.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Layer.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MapObj.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\TerrainObjPart.h">
+      <Filter>Server\MapGroupKernel\Map\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\NetMsgW.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgTalkW.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgNameW.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgDialogW.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\WorldKernel\Network\MsgFriendW.h">
+      <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Common\Common.dsp">
+      <Filter>Common</Filter>
+    </None>
+    <None Include="GameBaseCode\GameBaseCodeMT.dsp">
+      <Filter>GameBaseCode</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MsgServer.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
