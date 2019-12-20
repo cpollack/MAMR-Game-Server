@@ -291,7 +291,7 @@ bool CMyRecord::Open(CMyRecordset  *pMyRecordset, DWORD idNewKey /*= NEWKEY_NONE
 #ifdef	USE_NEW
 			m_objFields[i].m_szVal = (char *) s_heapString.Alloc(sizeof(char)*(m_Fields[i].length+1));
 #else
-			//m_objFields[i].m_szVal = (char *) g_heapSystem.New(sizeof(char)*(m_Fields[i].length+1));
+			m_objFields[i].m_szVal = (char *) g_heapSystem.New(sizeof(char)*(m_Fields[i].length+1));
 #endif
 															//★ 全局堆分配，会有内存碎片
 			strcpy(m_objFields[i].m_szVal, pMyRecordset->m_objFields[i].m_szVal);

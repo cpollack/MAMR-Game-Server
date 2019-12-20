@@ -333,6 +333,7 @@ protected: // application
 	DWORD			m_nStatus;
 };
 
+// Intended for your block and the 8 around you
 #define	FOR_9_BLOCKS(P,X,Y)							\
 	for(x = __max(Block(X)-1,0); x <= Block(X)+1 && x < P->GetWidthOfBlock(); x++)		\
 		for(y = __max(Block(Y)-1,0); y <= Block(Y)+1 && y < P->GetHeightOfBlock(); y++)

@@ -20,6 +20,7 @@ const unsigned short _MSG_MAPINFO	= _MSG_GENERAL + 31;
 const unsigned short _MSG_ROLE		= _MSG_GENERAL + 50;
 const unsigned short _MSG_CONNECT	= _MSG_GENERAL + 52;
 
+const unsigned short _MSG_NPCINFO	= _MSG_GENERAL + 1030;
 
 //Uncleaned
 
@@ -69,7 +70,6 @@ const unsigned short _MSG_SYNMEMBERINFO	=_MSG_GENERAL+112;
 const unsigned short _MSG_DICE			=_MSG_GENERAL+113;
 const unsigned short _MSG_SYNINFO		=_MSG_GENERAL+114;
 
-const unsigned short _MSG_NPCINFO		=_MSG_GENERAL+1030;
 const unsigned short _MSG_NPC			=_MSG_GENERAL+1031;
 const unsigned short _MSG_DIALOG		=_MSG_GENERAL+1032;
 const unsigned short _MSG_FRIENDINFO	=_MSG_GENERAL+1033;

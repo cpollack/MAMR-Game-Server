@@ -17,7 +17,7 @@ CMsgNpcInfo::CMsgNpcInfo()
 	Init();
 	m_pInfo	=(MSG_Info *)m_bufMsg;
 
-	m_StrPacker.SetBuf(m_pInfo->szBuf, _MAX_MSGSIZE-sizeof(MSG_Info)+1);
+	//m_StrPacker.SetBuf(m_pInfo->szBuf, _MAX_MSGSIZE-sizeof(MSG_Info)+1);
 }
 
 CMsgNpcInfo::~CMsgNpcInfo()
@@ -26,7 +26,7 @@ CMsgNpcInfo::~CMsgNpcInfo()
 }
 
 //////////////////////////////////////////////////////////////////////
-BOOL CMsgNpcInfo::Create(CNpc* pNpc)
+BOOL CMsgNpcInfo::Create(CNpc* pNpc, int nMode)
 {
 	// init
 	this->Init();
@@ -34,22 +34,16 @@ BOOL CMsgNpcInfo::Create(CNpc* pNpc)
 	// fill info now
 
 	m_pInfo->id			= pNpc->GetID();
-	m_pInfo->usType		= pNpc->GetType();
-	//m_pInfo->usSort		= pNpc->GetSort();
-	m_pInfo->usLook		= pNpc->GetLookFace();
-	m_pInfo->usCellX	= pNpc->GetPosX();
-	m_pInfo->usCellY	= pNpc->GetPosY();
-	m_pInfo->cLength	= pNpc->GetLength();
-	m_pInfo->cFat		= pNpc->GetFat();
+	m_pInfo->wMode		= nMode;
+	m_pInfo->wType		= pNpc->GetType();
+	m_pInfo->wLook		= pNpc->GetLook();
+	m_pInfo->wCellX		= pNpc->GetPosX();
+	m_pInfo->wCellY		= pNpc->GetPosY();
 
-	// with name
-	if(0)
-	{
-		m_StrPacker.AddString(pNpc->GetName());
-	}
+	strcpy(m_pInfo->szName, pNpc->GetName());
 
 	m_unMsgType	=_MSG_NPCINFO;
-	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();
+	m_unMsgSize	=sizeof(MSG_Info);
 
 	return true;
 }
@@ -63,22 +57,22 @@ BOOL CMsgNpcInfo::Create(OBJID id, int nType, int nSort, int nLookFace, int nCel
 	// fill info now
 
 	m_pInfo->id			= id;
-	m_pInfo->usType		= (unsigned short)nType;
+	/*m_pInfo->usType		= (unsigned short)nType;
 	m_pInfo->usSort		= (unsigned short)nSort;
 	m_pInfo->usLook		= (unsigned short)nLookFace;
-	m_pInfo->usCellX	= (unsigned short)nCellX;
+	m_pInfo->usCellX	= (unsigned short)nCellX;	
 	m_pInfo->usCellY	= (unsigned short)nCellY;
 	m_pInfo->cLength	= (char)nLength;
-	m_pInfo->cFat		= (char)nFat;
+	m_pInfo->cFat		= (char)nFat;*/
 
 	// with name
-	if(pszName)
-	{
-		m_StrPacker.AddString(pszName);
-	}
+	//if(pszName)
+	//{
+	//	m_StrPacker.AddString(pszName);
+	//}
 
 	m_unMsgType	=_MSG_NPCINFO;
-	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();
+	m_unMsgSize	=sizeof(MSG_Info);
 
 	return true;
 }
@@ -109,9 +103,9 @@ void CMsgNpcInfo::Process(CGameSocket* pSocket)
 		return;
 
 	MSGBUF	szMsg;
-	sprintf(szMsg, "%d %d %d %d %d", 
-			m_pInfo->usCellX, m_pInfo->usCellY, 
-			m_pInfo->usLook, m_pInfo->usType, m_pInfo->usSort);		// 转换成串，提供给任务系统
+	//sprintf(szMsg, "%d %d %d %d %d", 
+	//		m_pInfo->wCellX, m_pInfo->usCellY, 
+	//		m_pInfo->wLook, m_pInfo->usType, m_pInfo->usSort);		// 转换成串，提供给任务系统
 			// dir,			 frame,			, pose
 
 	OBJID	idTaskItem = pUser->GetTaskItemID();

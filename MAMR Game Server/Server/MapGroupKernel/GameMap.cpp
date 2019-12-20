@@ -238,20 +238,22 @@ void CGameMap::SendBlockInfo(IRole* pRole)
 	void* pTemp = NULL;
 	if(pRole->QueryObj(OBJ_USER, IPP_OF(pTemp)))
 	{
-		int x,y;
-		FOR_9_BLOCKS(this, pRole->GetPosX(), pRole->GetPosY())
-		{
-			IThingSet* pSet = BlockByIndex(x,y).QuerySet();
+		//int x,y;
+		//FOR_9_BLOCKS(this, pRole->GetPosX(), pRole->GetPosY())
+		//{
+			IThingSet* pSet = BlockByIndex(0,0).QuerySet();
 			for(int i = 0; i < pSet->GetAmount(); i++)
 			{
 				IMapThing* pMapThing = pSet->GetObjByIndex(i);
 				if(pMapThing && !(pMapThing->GetObjType() == OBJ_USER && pMapThing->GetID() == pRole->GetID()) )
 				{
+					//Not a newbie map and not a user
+					//Why not a user? we need to know what users are on a map.. Maybe they are sent elsewhere?
 					if(!( IsNewbieMap() && pMapThing->GetObjType() == OBJ_USER ))
 						pMapThing->SendShow(pRole);
 				}
 			}
-		}
+		//}
 	}
 	else // if(pRole->QueryObj(OBJ_MONSTER, IPP_OF(pTemp)))
 	{

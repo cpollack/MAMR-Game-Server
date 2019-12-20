@@ -432,9 +432,11 @@ bool CUser::EnterMap()
 		UpdateBroadcastSet();
 
 		pMap->EnterRoom(this->QueryMapThing(), WITH_BLOCK);
-//		pMap->SendBlockInfo((IRole*)this);
+	
 		//pMap->SendRegionInfo(this);
+
 		pMap->SendMapInfo(this);
+		pMap->SendBlockInfo((IRole*)this); //Send after changing maps, not before
 
 //		SendSelfToBlock();
 	}

@@ -213,7 +213,7 @@ public: // get attrib
 	virtual LPCTSTR	GetName				();
 //	virtual LPCTSTR	GetMate				()						{ return NOMATE_NAME; }
 
-	virtual DWORD	GetLookFace			()						{ return m_pData->GetInt(NPCDATA_LOOK); }
+	virtual DWORD	GetLook				()						{ return m_pData->GetInt(NPCDATA_LOOK); }
 	//virtual DWORD	GetLookFace			()						{ if(GetType()==_STATUARY_NPC) return m_pData->GetInt(STATUARYDATA_LOOKFACE); return m_pData->GetInt(NPCDATA_LOOK); }
 	//virtual char	GetLength			()						{ return m_pData->GetInt(NPCDATA_LENGTH); }
 	//virtual char	GetFat				()						{ return m_pData->GetInt(NPCDATA_FAT); }

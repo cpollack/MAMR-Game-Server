@@ -22,7 +22,7 @@ public:
 public:
 	int		size()									{ return m_nSize; }
 	T*		operator [](int idx)					{ return (T*)(m_buf + sizeof(T)*idx); }
-	void	clear()									{ memset(m_buf, 0, sizeof(T)*m_nSize); }
+	void	clear()									{ if (m_buf) memset(m_buf, 0, sizeof(T)*m_nSize); }
 protected:
 	char*	m_buf;
 	int		m_nSize;

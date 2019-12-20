@@ -22,7 +22,7 @@ public:
 	CMsgNpcInfo();
 	virtual ~CMsgNpcInfo();
 
-	BOOL	Create	(CNpc* pNpc);
+	BOOL	Create	(CNpc* pNpc, int nMode);
 	BOOL	Create(OBJID id, int nType, int nSort, int nLookType, int nCellX, int nCellY, int nLength, int nFat, const char* pszName=NULL);
 public:	
 	BOOL			Create		(char* pMsgBuf, DWORD dwSize);
@@ -32,21 +32,21 @@ protected:
 	typedef struct {
 		MSGHEAD_DEFINE
 
-		OBJID		id;
-		unsigned	short usCellX;
-		unsigned	short usCellY;
-		USHORT		usLook;					// dir for statuary
-		USHORT		usType;					// frame for statuary
-		USHORT		usSort;					// pose for statuary
-		char		cLength;				// ¸ß°«
-		char		cFat;					// ÅÖÊÝ
-		char		szBuf[1];
+		OBJID	id;
+		WORD	wMode;
+		WORD	wType;
+		WORD	wLook;
+		WORD	wCellX;
+		WORD	wCellY;
+
+		char szName[_MAX_NAMESIZE];
+		BYTE bColorSets[25];
 	}MSG_Info;
 
 	MSG_Info*	m_pInfo;
 
-private:
-	CNetStringPacker	m_StrPacker;
+//private:
+	//CNetStringPacker	m_StrPacker;
 };
 
 #endif // !defined(AFX_MSGNPCINFO_H__50F4AAD1_342A_4D6C_A161_33CDE0158D5B__INCLUDED_)

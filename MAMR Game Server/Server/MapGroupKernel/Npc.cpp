@@ -471,7 +471,7 @@ void CNpc::SendShow(IRole* pRole)
 	else
 	{
 		CMsgNpcInfo	msg;
-		IF_OK(msg.Create(this))
+		IF_OK(msg.Create(this, 0))
 			pRole->SendMsg(&msg);
 	}
 }
@@ -498,7 +498,7 @@ bool CNpc::SendSelfToBlock()
 	else
 	{
 		CMsgNpcInfo	msg;
-		IF_OK(msg.Create(this))
+		IF_OK(msg.Create(this, 0))
 			GetMap()->BroadcastBlockMsg(QueryMapThing(), &msg);
 	}
 
