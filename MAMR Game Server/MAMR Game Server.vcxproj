@@ -175,6 +175,7 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgCallPetInfo.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgDataArray.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgDialog.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgDirection.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgFlushExp.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgFriend.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgFriendInfo.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgTrade.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgUserAttrib.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgUserInfo.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgWalk.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgWeather.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\NetMsg.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Npc.cpp" />
@@ -357,6 +359,7 @@
     <ClInclude Include="Server\MapGroupKernel\Network\MsgCallPetInfo.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgDataArray.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgDialog.h" />
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgDirection.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgFlushExp.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgFriend.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgFriendInfo.h" />
@@ -384,6 +387,7 @@
     <ClInclude Include="Server\MapGroupKernel\Network\MsgTrade.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgUserAttrib.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgUserInfo.h" />
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgWalk.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgWeather.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\NetMsg.h" />
     <ClInclude Include="Server\MapGroupKernel\Npc.h" />

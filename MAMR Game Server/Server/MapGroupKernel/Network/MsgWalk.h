@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "NetMsg.h"
-#include "User.h"
+#include "../User.h"
 
 class CMsgWalk : public CNetMsg  
 {

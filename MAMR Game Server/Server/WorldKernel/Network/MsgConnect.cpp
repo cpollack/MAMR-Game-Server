@@ -102,7 +102,8 @@ void CMsgConnect::Process(void* pSocket)
 
 	// After receiving MSG_CONNECT, reset the password with the authentication number.
 	DWORD dwEncyptCode = (m_pInfo->idAccount+m_pInfo->dwData)^0x4321;
-	GameWorld()->ChangeCode(GetSocketID(), m_pInfo->dwData^dwEncyptCode);
+	//GameWorld()->ChangeCode(GetSocketID(), m_pInfo->dwData^dwEncyptCode);
+	GameWorld()->ChangeCode(GetSocketID(), m_pInfo->dwData);
 
 	if(GameWorld()->ClientConnect(m_pInfo->idAccount, m_pInfo->dwData, m_pInfo->szInfo, this->GetSocketID()))
 	{

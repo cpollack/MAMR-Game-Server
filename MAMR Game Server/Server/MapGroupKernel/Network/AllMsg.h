@@ -14,10 +14,13 @@
 #include "MsgPlayer.h"
 #include "MsgUserInfo.h"
 #include "MsgUserAttrib.h"
+#include "MsgDirection.h"
 #include "MsgAction.h"
 #include "MsgInteract.h"
 #include "MsgPlayerTask.h"
 #include "MsgFlushExp.h"
+
+#include "MsgWalk.h"
 
 #include "MsgTalk.h"
 #include "MsgFriend.h"
@@ -56,7 +59,6 @@
 
 //#include "MsgMessageBoard.h"
 //#include "MsgTick.h"
-//#include "MsgWalk.h"
 //#include "MsgWalkEx.h"
 //#include "MsgMapItem.h"
 //#include "MsgBattleSystem.h"

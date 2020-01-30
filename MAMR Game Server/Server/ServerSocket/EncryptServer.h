@@ -24,6 +24,7 @@ public:
 	void Init() { m_nPos1 = m_nPos2 = 0; m_cGlobalEncrypt.Init(); }
 	void Encrypt(unsigned char * bufMsg, int nLen, bool bMove = true);
 	void ChangeCode(DWORD dwData);
+	void Reset() { m_nPos1 = 0; m_nPos2 = 0; }
 protected:
 	int		m_nPos1;
 	int		m_nPos2;

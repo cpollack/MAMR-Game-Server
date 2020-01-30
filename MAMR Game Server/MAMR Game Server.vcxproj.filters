@@ -552,6 +552,12 @@
     <ClCompile Include="Server\WorldKernel\Network\MsgFriendW.cpp">
       <Filter>Server\WorldKernel\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgWalk.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgDirection.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\Array.h">
@@ -1144,6 +1150,12 @@
     </ClInclude>
     <ClInclude Include="Server\WorldKernel\Network\MsgFriendW.h">
       <Filter>Server\WorldKernel\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgWalk.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgDirection.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -43,9 +43,10 @@ BOOL CMsgAction::Create(OBJID idPlayer, int nPosX, int nPosY, USHORT usDir, USHO
 	m_pInfo->idUser		=idPlayer;
 	m_pInfo->unPosX		=(USHORT)nPosX;
 	m_pInfo->unPosY		=(USHORT)nPosY;
-	m_pInfo->unDir		=usDir;
-	m_pInfo->dwData		=dwData;
-	m_pInfo->usAction	=usAction;
+	m_pInfo->dwDir		=usDir;
+	m_pInfo->dwAction   = usAction;
+	m_pInfo->dwTimeStamp	=dwData;
+
 
 	return true;
 }
@@ -70,11 +71,11 @@ BOOL CMsgAction::Create(OBJID idPlayer, int nPosX, int nPosY, USHORT usDir, USHO
 	m_pInfo->idUser		=idPlayer;
 	m_pInfo->unPosX		=(USHORT)nPosX;
 	m_pInfo->unPosY		=(USHORT)nPosY;
-	m_pInfo->unDir		=usDir;
+	/*m_pInfo->unDir		=usDir;
 	m_pInfo->usAction	=usAction;
 
 	m_pInfo->usTargetPosX	=usTargetPosX;
-	m_pInfo->usTargetPosY	=usTargetPosY;
+	m_pInfo->usTargetPosY	=usTargetPosY;*/
 
 	return true;
 }
@@ -109,10 +110,10 @@ void CMsgAction::Process(void *pInfo)
 			return;
 
 		// TransmitMsg
-		switch(m_pInfo->usAction)
+		switch(m_pInfo->dwAction)
 		{
 		case actionQueryFriendInfo:
-			{
+			/*{
 				CUser* pTarget = UserManager()->GetUser(m_pInfo->idTarget);
 				if(pTarget)
 				{
@@ -122,10 +123,10 @@ void CMsgAction::Process(void *pInfo)
 							pTarget->GetMate(), pTarget->GetNobilityRank()))
 						SendMsg(&msg);
 				}
-			}
+			}*/
 			break;
 		case actionQueryEnemyInfo:
-			{
+			/*{
 				CUser* pTarget = UserManager()->GetUser(m_pInfo->idTarget);
 				if(pTarget)
 				{
@@ -135,7 +136,7 @@ void CMsgAction::Process(void *pInfo)
 							pTarget->GetMate(), pTarget->GetNobilityRank()))
 						SendMsg(&msg);
 				}
-			}
+			}*/
 			break;
 		/*case actionQueryStudentsOfStudent:
 			{
@@ -170,11 +171,11 @@ void CMsgAction::Process(void *pInfo)
 	pRole->QueryObj(OBJ_USER, IPP_OF(pUser));
 
 	// fill id
-	if(m_pInfo->usAction != actionXpCLear)
+	if(m_pInfo->dwAction != actionXpCLear)
 		m_pInfo->idUser	= pRole->GetID();
 
 	// stop fight
-	switch(m_pInfo->usAction)
+	switch(m_pInfo->dwAction)
 	{
 	case actionQueryFriendInfo:
 	case actionQueryEnemyInfo:
@@ -194,10 +195,10 @@ void CMsgAction::Process(void *pInfo)
 
 	// actions...
 	DEBUG_TRY	// VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-	switch(m_pInfo->usAction)
+	switch(m_pInfo->dwAction)
 	{
 	case actionQueryTeamMember:
-		{
+		/*{
 			if (pUser)
 			{
 				CUser* pTarget = UserManager()->GetUser(m_pInfo->idTarget);
@@ -209,10 +210,10 @@ void CMsgAction::Process(void *pInfo)
 				}
 			}
 		}
-		break;
+		break;*/
 
 	case actionQueryPlayer:
-		{
+		/*{
 			if (pUser)
 			{
 				IRole* pRole = pUser->FindAroundRole(m_pInfo->idTarget);
@@ -239,7 +240,7 @@ void CMsgAction::Process(void *pInfo)
 				}
 			}
 		}
-		break;
+		break;*/
 
 /*
 	case actionMine:
@@ -265,7 +266,7 @@ void CMsgAction::Process(void *pInfo)
 */
 
 	case actionChangeFace:
-		{
+		/*{
 			if (pUser)
 			{
 				// spend money
@@ -287,19 +288,23 @@ void CMsgAction::Process(void *pInfo)
 					pTeam->BroadcastTeamMsg(this, pUser);
 			}
 		}
-		break;
+		break;*/
 	case actionChgDir:
 		{
-			pRole->SetDir(m_pInfo->unDir);
+			pRole->SetDir(m_pInfo->dwDir);
 			pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
 		}
 		break;
 	case actionPosition:
 		{
+			//My Code here
+			//pRole->SetPosition
+			//does not exist
+			pUser->TransPos(m_pInfo->unPosX, m_pInfo->unPosY);
 		}
 		break;
 	case actionEmotion:
-		{
+		/*{
 			if (pUser)
 			{
 				pRole->SetPose(m_pInfo->dwData);
@@ -323,7 +328,7 @@ void CMsgAction::Process(void *pInfo)
 #endif
 				pRole->BroadcastRoomMsg(this, INCLUDE_SELF);
 			}
-		}
+		}*/
 		break;
 	case actionBroadcastPos:
 		{
@@ -363,8 +368,8 @@ void CMsgAction::Process(void *pInfo)
 			if(!pUser)
 				break;
 			pRole->ProcessOnMove(MOVEMODE_CHGMAP);
-			OBJID idMap = m_pInfo->idTarget;
-			pUser->FlyMap(idMap, m_pInfo->unPosX, m_pInfo->unPosY);		// 回应actionFlyMap. call - may be delete this;
+			//OBJID idMap = m_pInfo->idTarget;
+			//pUser->FlyMap(idMap, m_pInfo->unPosX, m_pInfo->unPosY);		// 回应actionFlyMap. call - may be delete this;
 		}
 		break;
 	case actionChgWeather:
@@ -559,7 +564,7 @@ void CMsgAction::Process(void *pInfo)
 		break;
 
 	case actionJump:
-		{
+	/*	{
 			if (pUser)
 			{
 				pUser->m_dwLastJump = m_pInfo->dwTimeStamp;
@@ -602,9 +607,9 @@ void CMsgAction::Process(void *pInfo)
 				}
 			}
 		}
-		break;
+		break;*/
 	case actionSynchro:
-		{
+		/*{
 			if (pUser && pUser->IsAlive())		// IsAlive: 打飞
 			{
 				if(pUser->IsSynchro())
@@ -613,7 +618,7 @@ void CMsgAction::Process(void *pInfo)
 				}
 				pUser->SetSynchro(true);
 			}
-
+			
 			if (pRole->GetPosX() != m_pInfo->usTargetPosX || pRole->GetPosY() != m_pInfo->usTargetPosY)
 			{
 				pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
@@ -630,9 +635,9 @@ void CMsgAction::Process(void *pInfo)
 				}
 			}
 		}
-		break;
+		break;*/
 	case actionXpCLear:
-		{
+		/*{
 			if(!pUser)
 				break;
 
@@ -649,7 +654,7 @@ void CMsgAction::Process(void *pInfo)
 			
 			pUser->ClsXpVal();
 		}
-		break;
+		break;*/
 
 	case actionReborn:
 		{
@@ -688,7 +693,7 @@ void CMsgAction::Process(void *pInfo)
 					else
 					{
 						SQLBUF szSQL = "";
-						sprintf(szSQL, "UPDATE %s SET mate='%s' WHERE name='%s' LIMIT 1",
+						std::sprintf(szSQL, "UPDATE %s SET mate='%s' WHERE name='%s' LIMIT 1",
 								_TBL_USER,
 								NOMATE_NAME,
 								pUser->GetMate());
@@ -700,22 +705,22 @@ void CMsgAction::Process(void *pInfo)
 				SQLBUF szSQL;
 
 				// delete all friend info
-				sprintf(szSQL, "DELETE FROM %s WHERE userid=%u or friendid=%u", _TBL_FRIEND, pUser->GetID(), pUser->GetID());
+				std::sprintf(szSQL, "DELETE FROM %s WHERE userid=%u or friendid=%u", _TBL_FRIEND, pUser->GetID(), pUser->GetID());
 				Database()->ExecuteSQL(szSQL);
 				// delete all enemy info
-				sprintf(szSQL, "DELETE FROM %s WHERE userid=%u or enemy=%u", _TBL_ENEMY, pUser->GetID(), pUser->GetID());
+				std::sprintf(szSQL, "DELETE FROM %s WHERE userid=%u or enemy=%u", _TBL_ENEMY, pUser->GetID(), pUser->GetID());
 				Database()->ExecuteSQL(szSQL);
 				// delete all task info
-				sprintf(szSQL, "DELETE FROM %s WHERE userid=%u", _TBL_TASKDETAIL, pUser->GetID());
+				std::sprintf(szSQL, "DELETE FROM %s WHERE userid=%u", _TBL_TASKDETAIL, pUser->GetID());
 				Database()->ExecuteSQL(szSQL);
 
 
 				// copy user record to cq_deluser
-				sprintf(szSQL, "INSERT INTO %s SELECT * FROM %s WHERE id=%u", _TBL_DELUSER, _TBL_USER, pUser->GetID());
+				std::sprintf(szSQL, "INSERT INTO %s SELECT * FROM %s WHERE id=%u", _TBL_DELUSER, _TBL_USER, pUser->GetID());
 				Database()->ExecuteSQL(szSQL);
 
 				// del record
-				sprintf(szSQL, "DELETE FROM %s WHERE id=%u", _TBL_USER, pUser->GetID());
+				std::sprintf(szSQL, "DELETE FROM %s WHERE id=%u", _TBL_USER, pUser->GetID());
 				Database()->ExecuteSQL(szSQL);
 
 				// login out
@@ -725,7 +730,7 @@ void CMsgAction::Process(void *pInfo)
 		break;
 
 	case actionSetPkMode:
-		{
+		/*{
 			if(pUser)
 			{
 				int	nMode = m_pInfo->dwData;
@@ -756,11 +761,11 @@ void CMsgAction::Process(void *pInfo)
 				pUser->SendMsg(this);
 				pUser->SendSysMsg(pMsg);
 			}
-		}
+		}*/
 		break;
 
 	case actionQueryFriendInfo:
-		{
+	/*	{
 			if(pUser)
 			{
 				CFriend* pFriend = pUser->GetFriend(m_pInfo->idTarget);
@@ -779,10 +784,10 @@ void CMsgAction::Process(void *pInfo)
 						MapGroup(m_idProcess)->QueryIntraMsg()->TransmitMsg(this, GetSocketID(), GetNpcID());
 				}
 			}
-		}
+		}*/
 		break;
 	case actionQueryEnemyInfo:
-		{
+		/*{
 			if(pUser)
 			{
 				if(pUser->QueryEnemy()->GetName(m_pInfo->idTarget))
@@ -800,7 +805,7 @@ void CMsgAction::Process(void *pInfo)
 						MapGroup(m_idProcess)->QueryIntraMsg()->TransmitMsg(this, GetSocketID(), GetNpcID());
 				}
 			}
-		}
+		}*/
 		break;
 	case actionQueryLeaveWord:
 		{
@@ -817,10 +822,10 @@ void CMsgAction::Process(void *pInfo)
 		{
 			if(pUser)
 			{
-				if(pUser->CreateBooth(m_pInfo->unPosX, m_pInfo->unPosY, m_pInfo->unDir))
+				if(pUser->CreateBooth(m_pInfo->unPosX, m_pInfo->unPosY, m_pInfo->dwDir))
 				{
-					m_pInfo->dwData = pUser->QueryBooth()->GetID();
-					pUser->SendMsg(this);
+					//m_pInfo->dwData = pUser->QueryBooth()->GetID();
+					//pUser->SendMsg(this);
 				}
 			}
 		}
@@ -835,9 +840,9 @@ void CMsgAction::Process(void *pInfo)
 		{
 			if(pUser && pUser->QueryBooth())
 			{
-				pUser->QueryBooth()->EnterMap(m_pInfo->unPosX, m_pInfo->unPosY, m_pInfo->unDir);
-				m_pInfo->dwData = pUser->QueryBooth()->GetID();
-				pUser->SendMsg(this);
+				pUser->QueryBooth()->EnterMap(m_pInfo->unPosX, m_pInfo->unPosY, m_pInfo->dwDir);
+				//m_pInfo->dwData = pUser->QueryBooth()->GetID();
+				//pUser->SendMsg(this);
 			}
 		}
 		break;
@@ -848,23 +853,23 @@ void CMsgAction::Process(void *pInfo)
 		}
 		break;
 	case actionQueryCryOut:
-		{
+		/*{
 			CUser* pTarget = UserManager()->GetUser(m_pInfo->idTarget);
 			if(!pTarget)
 				return ;
 
 			if(pUser && pTarget->QueryBooth())
 				pTarget->QueryBooth()->SendCryOut(pUser);
-		}
+		}*/
 		break;
 	case actionQueryEquipment:
-		{
+		/*{
 			CUser* pTarget = UserManager()->GetUser(m_pInfo->idTarget);
 			if(!pTarget)
 				return ;
 
 			pTarget->SendAllEquipInfoTo(pUser);
-		}
+		}*/
 		break;
 	case actionAbortTransform:
 		{
@@ -891,8 +896,8 @@ void CMsgAction::Process(void *pInfo)
 	case actionDelHonorTitle:
 	case actionSelectHonorTitle:
 		{
-			if(pUser)
-				pUser->ProcessMsgAction(m_pInfo->usAction, m_pInfo->dwData, m_pInfo->idUser);
+			//if(pUser)
+				//pUser->ProcessMsgAction(m_pInfo->usAction, m_pInfo->dwData, m_pInfo->idUser);
 		}
 		break;
 
@@ -902,8 +907,8 @@ void CMsgAction::Process(void *pInfo)
 			if(pUser && pUser->IsAgent())
 			{
 				pRole->ProcessOnMove(MOVEMODE_CHGMAP);
-				OBJID idMap = m_pInfo->idTarget;
-				pUser->FlyMap(idMap, m_pInfo->unPosX, m_pInfo->unPosY);		// 回应actionFlyMap. call - may be delete this;
+				//OBJID idMap = m_pInfo->idTarget;
+				//pUser->FlyMap(idMap, m_pInfo->unPosX, m_pInfo->unPosY);		// 回应actionFlyMap. call - may be delete this;
 			}
 		}
 		break;
@@ -914,13 +919,13 @@ void CMsgAction::Process(void *pInfo)
 				CAgent* pAgent = pUser->QueryAgent();
 				IF_OK(pAgent)
 				{
-					pAgent->FullItem(m_pInfo->dwData, 0);
+					//pAgent->FullItem(m_pInfo->dwData, 0);
 				}
 			}
 		}
 		break;
 	case actionQuerySynInfo:
-		{
+		/*{
 			if(pUser)
 			{
 				CSyndicate* pSyn = SynManager()->QuerySyndicate(m_pInfo->dwData);
@@ -931,7 +936,7 @@ void CMsgAction::Process(void *pInfo)
 						pUser->SendMsg(&msg);
 				}
 			}
-		}
+		}*/
 		break;
 	// 以下是导师系统相关
 	/*case actionStudentApply:
@@ -1227,12 +1232,12 @@ void CMsgAction::Process(void *pInfo)
 
 	case actionAcceptPlayerTask:
 		{
-			pUser->AcceptMercenaryTask(m_pInfo->dwData);
+			//pUser->AcceptMercenaryTask(m_pInfo->dwData);
 		}
 		break;
 	case actionCancelPlayerTask:
 		{
-			pUser->CancelMercenaryTask(m_pInfo->dwData);
+			//pUser->CancelMercenaryTask(m_pInfo->dwData);
 		}
 		break;
 	// =======================================
@@ -1246,5 +1251,5 @@ void CMsgAction::Process(void *pInfo)
 		ASSERT(!"switch");
 		break;
 	}
-	DEBUG_CATCH2("switch(MSGACTION) [%d]", m_pInfo->usAction)		// AAAAAAAAAAAAAAAA
+	DEBUG_CATCH2("switch(MSGACTION) [%d]", m_pInfo->dwAction)		// AAAAAAAAAAAAAAAA
 }

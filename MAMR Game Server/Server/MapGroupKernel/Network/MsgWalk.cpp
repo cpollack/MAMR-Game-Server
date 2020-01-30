@@ -2,9 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "AllMsg.h"
-#include "mapgroup.h"
-#include "transformation.h"
-#include "I_Role.h"
+#include "../mapgroup.h"
+#include "../transformation.h"
+#include "../I_Role.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -183,14 +183,14 @@ void CMsgWalk::Process(void *pInfo)
 //*
 //	pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
 
-	{
+	/*{
 		CMsgWalkEx msg;
 		IF_OK(msg.Create(m_pInfo->idUser, m_pInfo->ucDir, m_pInfo->ucMode, nNewX, nNewY))
 		{
 //			pRole->SendMsg(&msg);
 			pRole->BroadcastRoomMsg(&msg, INCLUDE_SELF);
 		}
-	}
+	}*/
 //*/
 /*else
 	pRole->SendMsg(this);

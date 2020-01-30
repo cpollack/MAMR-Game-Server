@@ -27,6 +27,8 @@
 //Action
 #define STR_ACTION_USER_FLYTOMAINMAP_ERROR	"The main map does not exist, and the city roll cannot be used!"
 
+#define	STR_YOUR_CANNOT_WALK		"You cannot walk£¡"
+
 // Chatroom
 #define STR_CHATROOM_NAME								"Chatroom %d"
 #define STR_CHATROOM_CANNOT_INMOREROOM					"Cannot enter multiple chat rooms at the same time!"

@@ -4425,7 +4425,7 @@ void CUser::ProcXpVal()
 	}
 	else
 	{
-		if (GetMap() && GetMap()->IsBoothEnable())		// 进入摆摊地图就不加XP了
+		/*if (GetMap() && GetMap()->IsBoothEnable())		// 进入摆摊地图就不加XP了
 			return;
 
 		//---jinggy---begin
@@ -4437,7 +4437,7 @@ void CUser::ProcXpVal()
 			nAddXpValue = ::CutTrail(0, AdjustData(nAddXpValue, pStatus->GetPower()));						
 		}		
 		//---jinggy---end
-		AddXp(nAddXpValue);
+		AddXp(nAddXpValue);*/
 	}		
 
 #ifdef _DEBUG
@@ -5213,8 +5213,8 @@ bool CUser::JoinMap(OBJID idMap, int nPosX, int nPosY)
 
 	// 发送回应消息
 	CMsgAction	msg;
-	if(msg.Create(GetID(), nPosX, nPosY, GetDir(), actionFlyMap, m_pMap->GetDocID()))
-		SendMsg(&msg);
+	//if(msg.Create(GetID(), nPosX, nPosY, GetDir(), actionFlyMap, m_pMap->GetDocID()))
+	//	SendMsg(&msg);
 
 	EnterMap();
 
@@ -5769,7 +5769,7 @@ void CUser::SetStatus(int nStatus, bool bSynchro)
 		this->ClrAttackTarget();	// 停止自动战斗
 	}
 
-	if(bSynchro && i64OldEffect != GetEffect())
+	/*if(bSynchro && i64OldEffect != GetEffect())
 	{
 		CMsgUserAttrib msg;
 		if (msg.Create(GetID(), _USERATTRIB_KEEPEFFECT, GetEffect()))
@@ -5794,7 +5794,7 @@ void CUser::SetStatus(int nStatus, bool bSynchro)
 			}
 			BroadcastRoomMsg(&msg, INCLUDE_SELF);
 		}
-	}
+	}*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -6074,7 +6074,7 @@ void CUser::ClsStatus(int nStatus, bool bSynchro)
 			BroadcastRoomMsg(&msg, INCLUDE_SELF);
 		}
 	}
-	if(bSynchro && i64OldEffect != GetEffect())
+	/*if(bSynchro && i64OldEffect != GetEffect())
 	{
 		CMsgUserAttrib msg;
 		if (msg.Create(GetID(), _USERATTRIB_KEEPEFFECT, GetEffect()))
@@ -6097,7 +6097,7 @@ void CUser::ClsStatus(int nStatus, bool bSynchro)
 			}
 			BroadcastRoomMsg(&msg, INCLUDE_SELF);
 		}
-	}
+	}*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -6949,11 +6949,11 @@ void CUser::SetLight(int dwRGB, int nSecs/*=0*/)
 //////////////////////////////////////////////////////////////////////
 void CUser::SendLight()
 {
-	int	nKeepSecs = 0;		// keep light
+	//int	nKeepSecs = 0;		// keep light
 
-	CMsgAction	msg;
-	IF_OK(msg.Create(GetID(), GetPosX(), GetPosY(), nKeepSecs, actionMapARGB, GetMap()->GetLight()))
-		SendMsg(&msg);
+	//CMsgAction	msg;
+	//IF_OK(msg.Create(GetID(), GetPosX(), GetPosY(), nKeepSecs, actionMapARGB, GetMap()->GetLight()))
+	//	SendMsg(&msg);
 }
 
 //////////////////////////////////////////////////////////////////////

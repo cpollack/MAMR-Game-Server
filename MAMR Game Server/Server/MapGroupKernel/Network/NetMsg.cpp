@@ -145,6 +145,9 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 	CNetMsg* pMsg	=NULL;
 	switch(idMsg)
 	{
+	case _MSG_DIRECTION:
+		pMsg = new CMsgDirection;
+		break;
 	/*case _MSG_TALK:
 		pMsg	=new CMsgTalk;
 		break;
