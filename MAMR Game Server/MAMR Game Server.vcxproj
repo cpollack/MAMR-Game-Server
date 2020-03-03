@@ -169,6 +169,8 @@
     <ClCompile Include="Server\MapGroupKernel\MapGroupKernel.cpp" />
     <ClCompile Include="Server\MapGroupKernel\MapManager.cpp" />
     <ClCompile Include="Server\MapGroupKernel\MapObj.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Monster.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\MonsterData.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgAction.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgAiNpcInfo.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgBetOutside.cpp" />
@@ -215,6 +217,8 @@
     <ClCompile Include="Server\MapGroupKernel\NpcTable.cpp" />
     <ClCompile Include="Server\MapGroupKernel\NpcTask.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Package.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Pet.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\PetData.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Role.cpp" />
     <ClCompile Include="Server\MapGroupKernel\RoleManager.cpp" />
     <ClCompile Include="Server\MapGroupKernel\SquareDeal.cpp" />
@@ -351,6 +355,8 @@
     <ClInclude Include="Server\MapGroupKernel\MapGroupKernel.h" />
     <ClInclude Include="Server\MapGroupKernel\MapManager.h" />
     <ClInclude Include="Server\MapGroupKernel\MapObj.h" />
+    <ClInclude Include="Server\MapGroupKernel\Monster.h" />
+    <ClInclude Include="Server\MapGroupKernel\MonsterData.h" />
     <ClInclude Include="Server\MapGroupKernel\MultiObjSet.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\AllMsg.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgAction.h" />
@@ -399,6 +405,8 @@
     <ClInclude Include="Server\MapGroupKernel\NpcTable.h" />
     <ClInclude Include="Server\MapGroupKernel\NpcTask.h" />
     <ClInclude Include="Server\MapGroupKernel\Package.h" />
+    <ClInclude Include="Server\MapGroupKernel\Pet.h" />
+    <ClInclude Include="Server\MapGroupKernel\PetData.h" />
     <ClInclude Include="Server\MapGroupKernel\Role.h" />
     <ClInclude Include="Server\MapGroupKernel\RoleManager.h" />
     <ClInclude Include="Server\MapGroupKernel\SingleMap64.h" />

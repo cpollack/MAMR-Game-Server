@@ -558,6 +558,18 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgDirection.cpp">
       <Filter>Server\MapGroupKernel\User\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Monster.cpp">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\MonsterData.cpp">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\PetData.cpp">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Pet.cpp">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\Array.h">
@@ -1156,6 +1168,18 @@
     </ClInclude>
     <ClInclude Include="Server\MapGroupKernel\Network\MsgDirection.h">
       <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Monster.h">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\MonsterData.h">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\PetData.h">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Pet.h">
+      <Filter>Server\MapGroupKernel\Pet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

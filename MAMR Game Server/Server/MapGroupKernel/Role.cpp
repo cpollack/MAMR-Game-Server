@@ -399,7 +399,7 @@ void CRole::TransPos(int nPosX, int nPosY)
 	{
 		SendSysMsg(STR_INVALID_COORDINATE);
 		MSGBUF	szMsg;
-		sprintf(szMsg, "玩家[%s]飞到非法坐标[%d,%d,%d]。", GetName(), GetMap()->GetID(), nPosX, nPosY);
+		sprintf(szMsg, "Player[%s] flew to illegal coordinates[%d, %d, %d].", GetName(), GetMap()->GetID(), nPosX, nPosY);
 		::GmLogSave(szMsg);
 		pUser->KickBack();
 		//UserManager()->KickOutSocket(GetSocketID(), szMsg);
@@ -422,8 +422,9 @@ void CRole::TransPos(int nPosX, int nPosY)
 //		pMap->SendBlockInfo(this);
 //	SendSelfToBlock();
 
-	ClrBroadcastSet();
-	UpdateBroadcastSet();
+	//Blocks don't change, so I don't think we need to clear and update BCset on move
+	//ClrBroadcastSet();
+	//UpdateBroadcastSet();
 	
 	ProcessAfterMove();
 }
@@ -435,31 +436,33 @@ void CRole::JumpPos(int nPosX, int nPosY)
 		return;
 	
 	CMapPtr pMap = this->GetMap();
-	IF_NOT(pMap && pMap->IsValidPoint(nPosX, nPosY))
-		return;
+	IF_NOT(pMap) return;
+	//IF_NOT(pMap && pMap->IsValidPoint(nPosX, nPosY)) //Mapdata isnt loaded yet?
+	//	return;
 
 	CUser* pUser = NULL;
 	if (this->QueryObj(OBJ_USER, IPP_OF(pUser)))
 	{
-		int	nDeltaX	= abs(nPosX - m_nPosX);
-		int	nDeltaY	= abs(nPosY - m_nPosY);
+		//We don't use blocks
+		//int	nDeltaX	= abs(nPosX - m_nPosX);
+		//int	nDeltaY	= abs(nPosY - m_nPosY);
 		
 		// 检查外挂
-		if(nDeltaX > CELLS_PER_BLOCK || nDeltaY > CELLS_PER_BLOCK)
-		{
+		//if(nDeltaX > CELLS_PER_BLOCK || nDeltaY > CELLS_PER_BLOCK)
+		//{
 			//		::GmLogSave("玩家[%s]跳的距离非法[%d][%d]。", GetName(), nDeltaX, nDeltaY);
-			return ;
-		}
-		if(GetMap() && !GetMap()->IsStandEnable(nPosX, nPosY))
-		{
-			SendSysMsg(STR_INVALID_COORDINATE);
+		//	return ;
+		//}
+		//if(!pMap->IsStandEnable(nPosX, nPosY))
+		//{
+		//	SendSysMsg(STR_INVALID_COORDINATE);
 //			MSGBUF	szMsg;
 //			sprintf(szMsg, "玩家[%s]跳到非法坐标[%d,%d,%d]。", GetName(), GetMapID(), nPosX, nPosY);
 //			::GmLogSave(szMsg);
-			pUser->KickBack();
+		//	pUser->KickBack();
 			//UserManager()->KickOutSocket(GetSocketID(), szMsg);
-			return ;
-		}
+			//return ;
+		//}
 	}
 
 	CRole::DetachStatus(this, STATUS_HIDDEN);
@@ -502,8 +505,9 @@ void CRole::JumpPos(int nPosX, int nPosY)
 	}
 */
 
-	ClrBroadcastSet();
-	UpdateBroadcastSet();
+	//Blocks don't change, so I don't think we need to clear and update BCset on move
+	//ClrBroadcastSet();
+	//UpdateBroadcastSet();
 	
 	ProcessAfterMove();
 }
@@ -588,12 +592,12 @@ bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
 	QueryObj(OBJ_USER, IPP_OF(pUser));
 
 	bool	bIsCallPet = false;
-	CMonster* pMonster;
-	if (QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
-	{
-		if (pMonster->IsCallPet() || pMonster->IsEudemon())
-			bIsCallPet = true;
-	}
+	CAiNpc* pMonster;
+	//if (QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
+	//{
+	//	if (pMonster->IsCallPet() || pMonster->IsEudemon())
+	//		bIsCallPet = true;
+	//}
 
 	// 寻找新的目标集
 	typedef std::vector<IRole*>		ROLE_SET;
@@ -601,15 +605,17 @@ bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
 	BROADCAST_SET	setNewMapItem;
 	int x,y,z;
 	IRole*	pRole = NULL;
-	FOR_9_BLOCKTHINGS(GetMap(), GetPosX(), GetPosY())
+
+	IThingSet* pSet = GetMap()->BlockByIndex(0, 0).QuerySet();
+	for (int i = 0; i < pSet->GetAmount(); i++)
 	{
-		IMapThing* pTarget = GetMap()->QueryThingByIndex(x,y,z);
+		IMapThing* pTarget = pSet->GetObjByIndex(i);
 		if(!pTarget)
 			continue;
 			
-		if (abs(pTarget->GetPosX() - GetPosX()) <= CELLS_PER_VIEW
-			&& abs(pTarget->GetPosY() - GetPosY()) <= CELLS_PER_VIEW)
-		{
+		//if (abs(pTarget->GetPosX() - GetPosX()) <= CELLS_PER_VIEW
+		//	&& abs(pTarget->GetPosY() - GetPosY()) <= CELLS_PER_VIEW)
+		//{
 			if (pTarget->QueryRole(IPP_OF(pRole)))
 			{
 				CUser* pTargetUser = NULL;
@@ -626,7 +632,7 @@ bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
 			{
 				setNewMapItem.push_back(pTarget->GetID());
 			}
-		}
+		//}
 	}
 
 	// 清除原有目标集 —— 重新搜索所有目标
@@ -707,17 +713,19 @@ bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
 			{
 				// 将对方加入自己的目标集，同时也将自己加入对方目标集
 				// 自己是玩家，或者自己是NPC且对方是玩家或幻兽的时候才需要发送
-				bool bSendSelf = (pUser || 
-									(!bIsCallPet && (pRole->QueryObj(OBJ_USER, IPP_OF(pTargetUser))
+				bool bSendSelf = (pUser ||
+								(!bIsCallPet && (pRole->QueryObj(OBJ_USER, IPP_OF(pTargetUser)))
 													|| (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster))
-															&& (pMonster->IsCallPet() || pMonster->IsEudemon())))));
-				AddToBCRoleSet(pRole->GetID(), bSendSelf);
+															&& (pMonster->IsCallPet() || pMonster->IsEudemon()))));
+				//AddToBCRoleSet(pRole->GetID(), bSendSelf);
+				AddToBCRoleSet(pRole->GetID(), false);
 
 				// 对方不是幻兽，且，自己是玩家或幻兽或者对方是玩家的时候才需要发送
 				pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster));
 				bool bSendTarget = ((!pMonster || (!pMonster->IsCallPet() && !pMonster->IsEudemon()))
 										&& (pUser || bIsCallPet || pRole->QueryObj(OBJ_USER, IPP_OF(pTargetUser))));
-				pRole->AddToBCRoleSet(GetID(), bSendTarget);
+				//pRole->AddToBCRoleSet(GetID(), bSendTarget);
+				pRole->AddToBCRoleSet(GetID(), false);
 			}
 		}
 	}
@@ -843,7 +851,7 @@ void CRole::BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf)
 
 	CUser*	pUser		= NULL;
 	IRole*	pRole		= NULL;
-	CMonster* pMonster	= NULL;
+	CAiNpc* pMonster	= NULL;
 	bool bSendToNpc	= (QueryObj(OBJ_USER, IPP_OF(pUser))
 						|| (QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && (pMonster->IsCallPet() || pMonster->IsEudemon()))
 						|| bSendSelf);

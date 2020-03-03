@@ -17,6 +17,11 @@
 #include "I_Role.h"
 #include "gameMap.h"
 
+struct HSB {
+	BYTE hue;
+	BYTE sat;
+	BYTE bright;
+};
 
 //////////////////////////////////////////////////////////////////////
 class CRole : public IRole, public IMapThing
@@ -114,6 +119,7 @@ public: // const
 	virtual CUser*	QueryOwnerUser		()						{ return NULL; }
 
 public:	// modify attrib ------------------------------
+	virtual void	SetPos				(int posX, int posY)				{ m_nPosX = posX; m_nPosY = posY; }
 	virtual void	SetDir				(int nDir)							{}
 	virtual void	SetPose				(int nPose)							{}
 	virtual	void	SetStatus			(int nStatus, bool bSynchro=true)	PURE_VIRTUAL_FUNCTION

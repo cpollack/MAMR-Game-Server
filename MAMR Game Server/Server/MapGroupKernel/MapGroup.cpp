@@ -35,6 +35,7 @@ IMagicTrackSet*	g_setMagicTrack	= NULL;
 IMagicTypeSet*	g_setAutoMagicType	= NULL;
 IAddPointSet*	g_setAddPoint	= NULL;
 ITrapTypeSet*	g_setTrapType	= NULL;
+INpcTypeSet*	g_setNpcType = NULL;
 IMonsterTypeSet*	g_setMonsterType	= NULL;
 IRebirthSet*	g_setRebirth	= NULL;
 CItemAddition*	g_pItemAddition	= NULL;
@@ -98,82 +99,10 @@ bool CMapGroup::Create(PROCESS_ID idProcess, ISocket* pSocket, IDatabase* pDb, I
 		))
 		return false;
 
-	// 创建全局常量对象
-	if(m_idProcess == MSGPORT_MAPGROUP_FIRST)
-	{
-		g_pItemType = CItemType::CreateNew();
-		IF_NOT(g_pItemType && g_pItemType->Create(pDb))
-			return false;
-
-		//add by zlong 2003-11-15
-		//g_pDropRuleMap = CDropRuleMap::CreateNew();
-		//IF_NOT(g_pDropRuleMap && g_pDropRuleMap->Create(pDb))
-		//	return false;
-
-		char	szSQL[1024];
-		sprintf(szSQL, "SELECT * FROM %s", _TBL_MAP);
-		g_setStaticMap = CStaticMapSet::CreateNew(true);
-		IF_NOT_(g_setStaticMap && g_setStaticMap->Create(szSQL, pDb))
-			return false;
-
-		sprintf(szSQL, "SELECT * FROM %s", _TBL_TASK);
-		g_setTask	= CTaskSet::CreateNew(true);
-		IF_NOT_(g_setTask && g_setTask->Create(szSQL, Database()))
-			return false;
-
-		sprintf(szSQL, "SELECT * FROM %s", _TBL_ACTION);
-		g_setAction	= CActionSet::CreateNew(true);
-		IF_NOT_(g_setAction && g_setAction->Create(szSQL, Database()))
-			return false;
-
-		//sprintf(szSQL, "SELECT * FROM %s", _TBL_LEVEXP);
-		//g_setLevupexp	= CLevupexpSet::CreateNew(true);
-		//IF_NOT_(g_setLevupexp && g_setLevupexp->Create(szSQL, Database()))
-		//	return false;
-
-		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_POINTALLOT);
-		g_setAddPoint	= CAddPointSet::CreateNew(true);
-		IF_NOT_(g_setAddPoint && g_setAddPoint->Create(szSQL, Database()))
-			return false;*/
-
-		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_TRACK);
-		g_setMagicTrack	= CMagicTrackSet::CreateNew(true);
-		IF_NOT (g_setMagicTrack && g_setMagicTrack->Create(szSQL, Database()))
-			return false;*/
-
-		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_MAGICTYPE);
-		g_setMagicType	= CMagicTypeSet::CreateNew(true);
-		IF_NOT_(g_setMagicType && g_setMagicType->Create(szSQL, Database()))
-			return false;*/
-
-		/*sprintf(szSQL, "SELECT * FROM %s WHERE auto_learn!=0", _TBL_MAGICTYPE);
-		g_setAutoMagicType	= CMagicTypeSet::CreateNew(true);
-		IF_NOT_(g_setAutoMagicType && g_setAutoMagicType->Create(szSQL, Database()))
-			return false;*/
-
-		//IF_NOT(CWantedList::s_WantedList.Create(Database()))
-		//	return false;
-
-		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_TRAPTYPE);
-		g_setTrapType	= CTrapTypeSet::CreateNew(true);
-		IF_NOT_(g_setTrapType && g_setTrapType->Create(szSQL, Database()))
-			return false;*/
-
-		sprintf(szSQL, "SELECT * FROM %s", _TBL_MONSTER);
-		g_setMonsterType	= CMonsterTypeSet::CreateNew(true);
-		IF_NOT_(g_setMonsterType && g_setMonsterType->Create(szSQL, Database()))
-			return false;
-
-		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_REBIRTH);
-		g_setRebirth	= CRebirthSet::CreateNew(true);
-		IF_NOT_(g_setRebirth && g_setRebirth->Create(szSQL, Database()))
-			return false;*/
-
-		/*g_pItemAddition	= CItemAddition::CreateNew();
-		IF_NOT(g_pItemAddition && g_pItemAddition->Create(pDb))
-			return false;*/
-/*		sprintf(szSQL, "DELETE FROM %s WHERE state = 2", _TBL_AUCTION);//LW每次起动服务器时删除已拍买过的物品
-		Database()->ExecuteSQL(szSQL);*/
+	// Load Immediately required Global Object Sets
+	if (m_idProcess == MSGPORT_MAPGROUP_FIRST) {
+		//char	szSQL[1024];
+		//None needed currently
 	}
 
 	CMapManager* pMapManager = new CMapManager(m_idProcess);
@@ -243,6 +172,92 @@ bool CMapGroup::Create(PROCESS_ID idProcess, ISocket* pSocket, IDatabase* pDb, I
 	CONST int INTERVAL_EVENT = 60;	// seconds
 	m_tmEvent.Startup(INTERVAL_EVENT);
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+void CMapGroup::Init() {
+	// Load Global Object Sets
+	if (m_idProcess == MSGPORT_MAPGROUP_FIRST)
+	{
+		char	szText[1024];
+		sprintf(szText, "#%u: map group Initializing Global Tables", m_pMsgPort->GetID());
+		m_pMsgPort->Send(MSGPORT_SHELL, SHELL_PRINTTEXT, STRING_TYPE(szText), szText);
+
+		g_pItemType = CItemType::CreateNew();
+		IF_NOT(g_pItemType && g_pItemType->Create(m_pDb))
+			return;
+
+		//add by zlong 2003-11-15
+		//g_pDropRuleMap = CDropRuleMap::CreateNew();
+		//IF_NOT(g_pDropRuleMap && g_pDropRuleMap->Create(pDb))
+		//	return false;
+
+		char	szSQL[1024];
+
+		sprintf(szSQL, "SELECT * FROM %s", _TBL_MAP);
+		g_setStaticMap = CStaticMapSet::CreateNew(true);
+		IF_NOT_(g_setStaticMap && g_setStaticMap->Create(szSQL, m_pDb))
+			return;
+
+		sprintf(szSQL, "SELECT * FROM %s", _TBL_TASK);
+		g_setTask = CTaskSet::CreateNew(true);
+		IF_NOT_(g_setTask && g_setTask->Create(szSQL, Database()))
+			return;
+
+		sprintf(szSQL, "SELECT * FROM %s", _TBL_ACTION);
+		g_setAction = CActionSet::CreateNew(true);
+		IF_NOT_(g_setAction && g_setAction->Create(szSQL, Database()))
+			return;
+
+		//sprintf(szSQL, "SELECT * FROM %s", _TBL_LEVEXP);
+		//g_setLevupexp	= CLevupexpSet::CreateNew(true);
+		//IF_NOT_(g_setLevupexp && g_setLevupexp->Create(szSQL, Database()))
+		//	return false;
+
+		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_POINTALLOT);
+		g_setAddPoint	= CAddPointSet::CreateNew(true);
+		IF_NOT_(g_setAddPoint && g_setAddPoint->Create(szSQL, Database()))
+		return false;*/
+
+		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_TRACK);
+		g_setMagicTrack	= CMagicTrackSet::CreateNew(true);
+		IF_NOT (g_setMagicTrack && g_setMagicTrack->Create(szSQL, Database()))
+		return false;*/
+
+		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_MAGICTYPE);
+		g_setMagicType	= CMagicTypeSet::CreateNew(true);
+		IF_NOT_(g_setMagicType && g_setMagicType->Create(szSQL, Database()))
+		return false;*/
+
+		/*sprintf(szSQL, "SELECT * FROM %s WHERE auto_learn!=0", _TBL_MAGICTYPE);
+		g_setAutoMagicType	= CMagicTypeSet::CreateNew(true);
+		IF_NOT_(g_setAutoMagicType && g_setAutoMagicType->Create(szSQL, Database()))
+		return false;*/
+
+		//IF_NOT(CWantedList::s_WantedList.Create(Database()))
+		//	return false;
+
+		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_TRAPTYPE);
+		g_setTrapType	= CTrapTypeSet::CreateNew(true);
+		IF_NOT_(g_setTrapType && g_setTrapType->Create(szSQL, Database()))
+		return false;*/
+
+		sprintf(szSQL, "SELECT * FROM %s", _TBL_MONSTER);
+		g_setMonsterType = CMonsterTypeSet::CreateNew(true);
+		IF_NOT_(g_setMonsterType && g_setMonsterType->Create(szSQL, Database()))
+			return;
+
+		/*sprintf(szSQL, "SELECT * FROM %s", _TBL_REBIRTH);
+		g_setRebirth	= CRebirthSet::CreateNew(true);
+		IF_NOT_(g_setRebirth && g_setRebirth->Create(szSQL, Database()))
+		return false;*/
+
+		/*g_pItemAddition	= CItemAddition::CreateNew();
+		IF_NOT(g_pItemAddition && g_pItemAddition->Create(pDb))
+		return false;*/
+		/*		sprintf(szSQL, "DELETE FROM %s WHERE state = 2", _TBL_AUCTION);//LW每次起动服务器时删除已拍买过的物品
+		Database()->ExecuteSQL(szSQL);*/
+	}
 }
 
 //////////////////////////////////////////////////////////////////////

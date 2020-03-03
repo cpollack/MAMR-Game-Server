@@ -27,7 +27,7 @@ char	szUserTable[];
 
 
 //////////////////////////////////////////////////////////////////////
-//是否自动分配点数
+//Point auto allocation
 enum {_NOT_AUTOALLOT = 0, _AUTOALLOT = 1};
 
 struct WantedInfoStruct{
@@ -83,7 +83,7 @@ struct	UserInfoStruct
 	DWORD			dwMedal_select;	//int(4) unsigned
 	char			setTitle[TITLE_BUFSIZE];			//int(4) unsigned	称号
 	DWORD			dwTitle_select;	//int(4) unsigned
-	UCHAR			ucMetempsychosis;	//tinyint(1) unsigned		转世轮回
+	DWORD			ucMetempsychosis;	//tinyint(1) unsigned		转世轮回
 	OBJID			idSyndicate;	//int(4) unsigned				所属帮派
 	OBJID			idSubgroup;	//int(4) unsigned				所属帮派
 	WORD			wSynRank;	//int(4) unsigned				所属帮派

@@ -27,9 +27,9 @@ public:
 	virtual bool	DelAllMonster()																		PURE_VIRTUAL_FUNCTION_0
 	virtual bool	CreateMonster(const ST_CREATENEWNPC* pInfo)											PURE_VIRTUAL_FUNCTION_0
 	virtual bool	CreateSynPet(const ST_CREATENEWNPC* pInfo, LPCTSTR pszName=NULL)					PURE_VIRTUAL_FUNCTION_0
-	virtual CMonster*	CreateCallPet(CUser* pUser, OBJID idType, int x, int y)								PURE_VIRTUAL_FUNCTION_0
+	virtual CAiNpc*	CreateCallPet(CUser* pUser, OBJID idType, int x, int y)								PURE_VIRTUAL_FUNCTION_0
 	// 创建幻兽 -- zlong 2004-02-05
-	virtual CMonster*	CreateEudemon(CUser* pUser, CItem* pItem, int x, int y)							PURE_VIRTUAL_FUNCTION_0
+	virtual CAiNpc*	CreateEudemon(CUser* pUser, CItem* pItem, int x, int y)							PURE_VIRTUAL_FUNCTION_0
 };
 
 class CNpcManager : INpcManager
@@ -45,9 +45,9 @@ public:
 	virtual bool	DelAllMonster();
 	virtual bool	CreateMonster(const ST_CREATENEWNPC* pInfo);
 	virtual bool	CreateSynPet(const ST_CREATENEWNPC* pInfo, LPCTSTR pszName=NULL);
-	virtual CMonster*	CreateCallPet(CUser* pUser, OBJID idType, int x, int y);
+	virtual CAiNpc*	CreateCallPet(CUser* pUser, OBJID idType, int x, int y);
 	// 创建幻兽 -- zlong 2004-02-05
-	virtual CMonster*	CreateEudemon(CUser* pUser, CItem* pItem, int x, int y);
+	virtual CAiNpc*	CreateEudemon(CUser* pUser, CItem* pItem, int x, int y);
 
 protected: // ctrl
 	PROCESS_ID			m_idProcess;

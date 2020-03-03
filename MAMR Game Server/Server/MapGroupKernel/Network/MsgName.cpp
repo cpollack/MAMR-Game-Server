@@ -254,7 +254,7 @@ void CMsgName::Process(void *pInfo)
 				pUser->SendMsg(&msg);
 
 			// 如果幻兽召唤出来了，则更新幻兽资料
-			CMonster* pEudemon = pUser->QueryEudemon(pItem->GetID());
+			CAiNpc* pEudemon = pUser->QueryEudemon(pItem->GetID());
 			if (pEudemon)
 			{
 				CMsgPlayer	msg;

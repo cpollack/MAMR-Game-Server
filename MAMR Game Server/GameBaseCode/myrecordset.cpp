@@ -519,8 +519,8 @@ void CMyRecordset::Close()
 			//g_heapSystem.Delete(m_pbDirty);
 #endif
 			for (unsigned int i=0;i<m_uiFieldsCount;i++)
-			if (m_objFields[i].m_ulType == FIELD_TYPE_STRING 
-				|| m_objFields[i].m_ulType == FIELD_TYPE_VAR_STRING)
+			if (m_objFields[i] && (m_objFields[i].m_ulType == FIELD_TYPE_STRING //added m_objFields[i] && 
+				|| m_objFields[i].m_ulType == FIELD_TYPE_VAR_STRING))
 #ifdef	USE_NEW
 				s_heapString.Free(m_objFields[i].m_szVal);
 #else

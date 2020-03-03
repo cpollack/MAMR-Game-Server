@@ -366,7 +366,7 @@ CGameMap* CMapManager::GetGameMap(OBJID idMap, BOOL bLoad/*=true*/)
 	CHECKF(pRes);
 	for(int i = 0; i < pRes->RecordCount(); i++, pRes->MoveNext())
 	{
-		CMonster* pMonster = CMonster::CreateNew();
+		CAiNpc* pMonster = CAiNpc::CreateNew();
 		IF_OK(pMonster)
 		{
 			IF_OK(pMonster->Create(m_idProcess, pRes))

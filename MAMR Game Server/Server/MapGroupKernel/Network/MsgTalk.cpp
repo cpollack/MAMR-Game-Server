@@ -282,7 +282,7 @@ void CMsgTalk::Process(void *pInfo)
 			DWORD dwType = 0, dwAmount = 0;
 			if (3 == sscanf(szWords+1, "%s %u %u", szCmd, &dwType, &dwAmount))
 			{
-				CNpcType* pType = MonsterType()->GetObj(dwType);
+				CNpcType* pType = NpcType()->GetObj(dwType);
 				if (pType)
 				{
 					for (int j=0; j<dwAmount; j++)
@@ -293,7 +293,7 @@ void CMsgTalk::Process(void *pInfo)
 						info.id		= MONSTERID_FIRST+j;
 						info.idMap	= 1002;
 						
-						CMonster* pMonster = CMonster::CreateNew();
+						CAiNpc* pMonster = CAiNpc::CreateNew();
 						if (pMonster->Create(m_idProcess, pType, &info))
 						{
 							pMonster->BeKill(pUser->QueryRole());

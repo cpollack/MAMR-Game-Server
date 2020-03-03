@@ -63,11 +63,10 @@ enum SYNDATA{
 		SYNDATA_REPUTE,			// 帮派声望
 		SYNDATA_PUBLISHTIME,	// 公告发布时间，格式：yyyymmdd
 };
-namespace world_kernel {
-	extern char	szID[256];
-	extern char	szSynTable[256];
-}
-typedef	CGameData<SYNDATA, world_kernel::szSynTable, world_kernel::szID>	CSynWorldBase;
+
+extern char	szWorldSynID[256];
+extern char	szWorldSynTable[256];
+typedef	CGameData<SYNDATA, szWorldSynTable, szWorldSynID>	CSynWorldBase;
 
 //////////////////////////////////////////////////////////////////////
 class ISynModify

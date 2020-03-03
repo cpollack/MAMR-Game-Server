@@ -40,7 +40,7 @@ bool CMapGroupKernel::Create(IMessagePort* pPort)
 	m_pDb = ::CreateDatabase(DB_IP, DB_USER, DB_PW, DB_DB);
 	if(!m_pDb)
 	{
-		LOGERROR("数据库连接失败!");
+		LOGERROR("Database connection failed!");
 		return false;
 	}
 
@@ -53,6 +53,11 @@ bool CMapGroupKernel::Create(IMessagePort* pPort)
 	}
 
 	return true;		// return false : 创建失败，程序关闭。
+}
+
+//////////////////////////////////////////////////////////////////////
+void CMapGroupKernel::Init() {
+	MapGroup(m_pMsgPort->GetID())->Init();
 }
 
 //////////////////////////////////////////////////////////////////////

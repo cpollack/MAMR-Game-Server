@@ -1,4 +1,4 @@
-// AINpc.cpp: implementation of the CMonster class.
+// AINpc.cpp: implementation of the CAiNpc class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -32,19 +32,18 @@ const int	SORB_REFLECT_SECS					= 6;			// 吸收反射状态每隔6秒作用一次
 #define EXPLODEMONEY_DOUBLE	15  //暴钱时的倍数
 //---jinggy---end
 //////////////////////////////////////////////////////////////////////
-MYHEAP_IMPLEMENTATION(CMonster,s_heap)
-char	szPetTable[] = _TBL_PET;
+MYHEAP_IMPLEMENTATION(CAiNpc,s_heap)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-CMonster::CMonster()
+CAiNpc::CAiNpc()
 {
-	SetObjType(OBJ_MONSTER);
+	SetObjType(OBJ_NPCTYPE);
 	m_pType			= NULL;
 	m_idNpc			= ID_NONE;
 	//m_pBattleSystem	= NULL;
-	m_pData			= NULL;
+	//m_pData			= NULL;
 
 	m_tFootPrint	= 0;
 	m_posFootPrint.x	= 0;
@@ -69,9 +68,9 @@ CMonster::CMonster()
 }
 
 //////////////////////////////////////////////////////////////////////
-CMonster::~CMonster()
+CAiNpc::~CAiNpc()
 {
-	if(m_pData)
+	/*if(m_pData)
 	{
 		if(IsSynPet())
 			MapManager()->RecyclePetID(GetID());
@@ -83,7 +82,7 @@ CMonster::~CMonster()
 		else
 			m_pData->DeleteRecord();
 		m_pData->Release();
-	}
+	}*/
 	if(m_idNpc != ID_NONE)
 	{
 		LeaveMapGroup();
@@ -102,42 +101,42 @@ CMonster::~CMonster()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::Create(PROCESS_ID idProcess, IRecordset* pRes)
+bool CAiNpc::Create(PROCESS_ID idProcess, IRecordset* pRes)
 {
 	m_idProcess		= idProcess;
 
-	ASSERT(!m_pData);
+	//ASSERT(!m_pData);
 
-	m_pData = CPetData::CreateNew();
-	CHECKF(m_pData);
-	IF_NOT(m_pData->Create(pRes))
-		return false;
+	//m_pData = CPetData::CreateNew();
+	//CHECKF(m_pData);
+	//IF_NOT(m_pData->Create(pRes))
+	//	return false;
 
-	OBJID idType = m_pData->GetInt(PETDATA_TYPE);
-	m_pType			= MonsterType()->GetObj(idType);
+	//OBJID idType = m_pData->GetInt(PETDATA_TYPE);
+	//m_pType			= NpcType()->GetObj(idType);
 	CHECKF(m_pType);
 
 	m_nDir			= ::RandGet(8);
-	m_pMap			= MapManager()->GetGameMap(m_pData->GetInt(PETDATA_MAPID), false);		// false: not load dynamic map
+	//m_pMap			= MapManager()->GetGameMap(m_pData->GetInt(PETDATA_MAPID), false);		// false: not load dynamic map
 	if(!m_pMap)
 	{
-		m_pData->Release();
-		m_pData = NULL;
+		//m_pData->Release();
+		//m_pData = NULL;
 		return false;		// not this map group, or in dynamic map
 	}
 
 	m_idNpc			= MapManager()->SpawnNewPetID();		//? mast follow m_pMap
-	m_nPosX			= m_pData->GetInt(PETDATA_RECORD_X);
-	m_nPosY			= m_pData->GetInt(PETDATA_RECORD_Y);
+	//m_nPosX			= m_pData->GetInt(PETDATA_RECORD_X);
+	//m_nPosY			= m_pData->GetInt(PETDATA_RECORD_Y);
 //	m_dwStatus		= STATUS_NORMAL;
 	m_i64Effect		= KEEPEFFECT_NORMAL;
 //	if((m_pType->GetInt(NPCTYPEDATA_ATKUSER) & ATKUSER_WING))
 //		m_i64Effect		= KEEPEFFECT_WING;
 	m_nPose			= POSE_STAND;
-	m_idGen			= m_pData->GetInt(PETDATA_GENID);
+	//m_idGen			= m_pData->GetInt(PETDATA_GENID);
 
-	m_nCurrLife		= m_pData->GetInt(PETDATA_LIFE);
-	m_nCurrMana		= m_pData->GetInt(PETDATA_MANA);
+	//m_nCurrLife		= m_pData->GetInt(PETDATA_LIFE);
+	//m_nCurrMana		= m_pData->GetInt(PETDATA_MANA);
 	m_tFight.SetInterval(m_pType->GetInt(NPCTYPEDATA_ATKSPEED));
 	m_tFight.Update();
 
@@ -155,12 +154,12 @@ bool CMonster::Create(PROCESS_ID idProcess, IRecordset* pRes)
 	info.id				= GetID();
 	info.usAction		= MSGAINPCINFO_CREATENEW;
 	info.usType			= GetType();
-	info.ucOwnerType	= m_pData->GetInt(PETDATA_OWNERTYPE);
-	info.idOwner		= m_pData->GetInt(PETDATA_OWNERID);
+	//info.ucOwnerType	= m_pData->GetInt(PETDATA_OWNERTYPE);
+	//info.idOwner		= m_pData->GetInt(PETDATA_OWNERID);
 	info.idMap			= GetMap()->GetID();
 	info.usPosX			= GetPosX();
 	info.usPosY			= GetPosY();
-	info.idData			= m_pData->GetInt(PETDATA_GENID);
+	//info.idData			= m_pData->GetInt(PETDATA_GENID);
 	info.nData			= GetData();
 	CMsgMonsterInfo	msg;
 	IF_OK(msg.Create(&info))
@@ -170,7 +169,7 @@ bool CMonster::Create(PROCESS_ID idProcess, IRecordset* pRes)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC* pInfo, CUser* pUser, OBJID idItem)
+bool CAiNpc::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC* pInfo, CUser* pUser, OBJID idItem)
 {
 	CHECKF(pType && pInfo && pUser);
 
@@ -211,7 +210,7 @@ bool CMonster::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWN
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC* pInfo, LPCTSTR pszName/*=NULL*/)
+bool CAiNpc::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC* pInfo, LPCTSTR pszName/*=NULL*/)
 {
 	m_idProcess		= idProcess;
 
@@ -254,7 +253,7 @@ bool CMonster::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWN
 
 	/////////////////////////////////////////////////////////////////////////
 	// create record
-	m_pData = CPetData::CreateNew();
+	/*m_pData = CPetData::CreateNew();
 	IF_OK(m_pData)
 	{
 		IF_OK(m_pData->Create(GameDataDefault()->GetPetData(), ID_NONE))
@@ -281,12 +280,12 @@ bool CMonster::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWN
 		{
 			SAFE_RELEASE(m_pData);
 		}
-	}
+	}*/
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::OnTimer(time_t tCurr)
+void CAiNpc::OnTimer(time_t tCurr)
 {
 	if(!this->IsAlive() && !m_bLeaveMap)
 	{
@@ -323,7 +322,7 @@ void CMonster::OnTimer(time_t tCurr)
 			m_tAddLife.Clear();
 		}
 	}
-	DEBUG_CATCH("CMonster add life");
+	DEBUG_CATCH("CAiNpc add life");
 	
 	// 幻兽生命自动回复 -----------------------------------------------
 	DEBUG_TRY
@@ -340,7 +339,7 @@ void CMonster::OnTimer(time_t tCurr)
 			 }
 		}
 	}
-	DEBUG_CATCH("CMonster increase life");
+	DEBUG_CATCH("CAiNpc increase life");
 
 	// 吸收伤害反射 -------------------------------------------------
 	/*DEBUG_TRY
@@ -361,7 +360,7 @@ void CMonster::OnTimer(time_t tCurr)
 
 		m_nTotalDamage = 0;		// 无论成功与否，一定要记得清0
 	}
-	DEBUG_CATCH("CMonster sorb reflect timer crash.")*/
+	DEBUG_CATCH("CAiNpc sorb reflect timer crash.")*/
 
 	// 自动攻击 ------------------------------------------------------
 	/*DEBUG_TRY
@@ -372,14 +371,14 @@ void CMonster::OnTimer(time_t tCurr)
 		m_pBattleSystem->ProcAttack_Hand2Hand();
 		m_nFightPause	= 0;
 	}
-	DEBUG_CATCH("CMonster ProcAttack_Hand2Hand");*/
+	DEBUG_CATCH("CAiNpc ProcAttack_Hand2Hand");*/
 
 	/*if (m_pMagic)
 	{
 		DEBUG_TRY
 		DEADLOOP_CHECK(PID, "QueryMagic()->OnTimer")
 		m_pMagic->OnTimer(tCurr);
-		DEBUG_CATCH("CMonster magic timer crash.")
+		DEBUG_CATCH("CAiNpc magic timer crash.")
 	}*/
 
 	// status --------------------------------------------------------
@@ -438,7 +437,7 @@ void CMonster::OnTimer(time_t tCurr)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::ClearAllStatus()
+void CAiNpc::ClearAllStatus()
 {
 	for(int i = QueryStatusSet()->GetAmount() - 1; i >= 0; i--)
 	{
@@ -450,7 +449,7 @@ void CMonster::ClearAllStatus()
 
 //////////////////////////////////////////////////////////////////////
 /*
-int	 CMonster::AdjustData(int nData, int nAdjust, int nMaxData/ *=0* /)
+int	 CAiNpc::AdjustData(int nData, int nAdjust, int nMaxData/ *=0* /)
 {
 	if(nAdjust>=ADJUST_PERCENT)
 		return MulDiv(nData, nAdjust-ADJUST_PERCENT, 100);
@@ -469,7 +468,7 @@ int	 CMonster::AdjustData(int nData, int nAdjust, int nMaxData/ *=0* /)
 */
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::SendMsg(CNetMsg* pMsg)
+bool CAiNpc::SendMsg(CNetMsg* pMsg)
 {
 	if ((this->IsEudemon() || this->IsCallPet()) && m_pOwner)
 		return m_pOwner->SendMsg(pMsg);
@@ -478,13 +477,13 @@ bool CMonster::SendMsg(CNetMsg* pMsg)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf /*= false*/)
+void CAiNpc::BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf /*= false*/)
 {
 	CRole::BroadcastRoomMsg(pMsg, bSendSelf);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf /*= false*/)		
+void CAiNpc::BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf /*= false*/)
 {
 	CMsgTalk	msg;
 	if(msg.Create(GetName(), ALLUSERS_NAME, szMsg, NULL, 0xff0000, _TXTATR_SYSTEM))
@@ -492,7 +491,7 @@ void CMonster::BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf /*= false*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::BroadcastMapMsg(CNetMsg* pMsg, bool bSendSelf /*= false*/)		
+void CAiNpc::BroadcastMapMsg(CNetMsg* pMsg, bool bSendSelf /*= false*/)
 { 
 	CMapPtr pMap = this->GetMap();
 	if(pMap)
@@ -507,7 +506,7 @@ void CMonster::BroadcastMapMsg(CNetMsg* pMsg, bool bSendSelf /*= false*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::BroadcastMapMsg(LPCTSTR szMsg, bool bSendSelf /*= false*/)		
+void CAiNpc::BroadcastMapMsg(LPCTSTR szMsg, bool bSendSelf /*= false*/)
 {
 	CMsgTalk	msg;
 	if(msg.Create(SYSTEM_NAME, ALLUSERS_NAME, szMsg, NULL, 0xff0000, _TXTATR_SYSTEM))
@@ -515,7 +514,7 @@ void CMonster::BroadcastMapMsg(LPCTSTR szMsg, bool bSendSelf /*= false*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::SendSelfToBlock()
+bool CAiNpc::SendSelfToBlock()
 {
 	// brocast my info
 	CMsgPlayer msg;
@@ -526,7 +525,7 @@ bool CMonster::SendSelfToBlock()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::SendLeaveFromBlock()
+bool CAiNpc::SendLeaveFromBlock()
 {
 	if(!m_bLeaveMap)
 	{
@@ -546,7 +545,7 @@ bool CMonster::SendLeaveFromBlock()
 /////////////////////////////////////////////////////////////////////////////
 // role
 /////////////////////////////////////////////////////////////////////////////
-void CMonster::SendShow(IRole* pRole)
+void CAiNpc::SendShow(IRole* pRole)
 {
 	CHECK(pRole);
 
@@ -556,7 +555,7 @@ void CMonster::SendShow(IRole* pRole)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::SendSysMsg(const char* fmt, ...)
+bool CAiNpc::SendSysMsg(const char* fmt, ...)
 { 
 	MSGBUF	szMsg;
     vsprintf( szMsg, fmt, (char*) ((&fmt)+1) );
@@ -571,7 +570,7 @@ bool CMonster::SendSysMsg(const char* fmt, ...)
 //////////////////////////////////////////////////////////////////////
 // modify attrib
 //////////////////////////////////////////////////////////////////////
-bool CMonster::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
+bool CAiNpc::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 {
 	CMsgUserAttrib	msg;
 	if(!msg.Create(GetID(), _USERATTRIB_NONE, _USERATTRIB_NONE))			// _USERATTRIB_NONE : 不添加
@@ -672,7 +671,7 @@ bool CMonster::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::ProcessAfterMove()
+void CAiNpc::ProcessAfterMove()
 {
 	/*IThingSet* pSet = GetMap()->QueryBlock(GetPosX(), GetPosY()).QuerySet();
 	for(int i = 0; i < pSet->GetAmount(); i++)
@@ -688,7 +687,7 @@ void CMonster::ProcessAfterMove()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::ProcessOnMove(int nMoveMode)
+void CAiNpc::ProcessOnMove(int nMoveMode)
 {
 	SetPose(_ACTION_STANDBY);
 	// stop fight
@@ -701,7 +700,7 @@ void CMonster::ProcessOnMove(int nMoveMode)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::GetFootPrint	(int& nPosX, int& nPosY)
+void CAiNpc::GetFootPrint	(int& nPosX, int& nPosY)
 {
 	if (::TimeGet()-m_tFootPrint >= TIME_FOOTPRINT)
 	{	// time out
@@ -718,7 +717,7 @@ void CMonster::GetFootPrint	(int& nPosX, int& nPosY)
 //////////////////////////////////////////////////////////////////////
 // interactive
 //////////////////////////////////////////////////////////////////////
-bool CMonster::Freeze(int nPower)								// return false: 解穴不成功
+bool CAiNpc::Freeze(int nPower)								// return false: 解穴不成功
 {
 	if(IsAlive())
 	{
@@ -738,7 +737,7 @@ bool CMonster::Freeze(int nPower)								// return false: 解穴不成功
 //////////////////////////////////////////////////////////////////////
 // fight
 //////////////////////////////////////////////////////////////////////
-bool CMonster::SetAttackTarget(IRole* pTarget /*= NULL*/)
+bool CAiNpc::SetAttackTarget(IRole* pTarget /*= NULL*/)
 {
 	/*if(pTarget == NULL)
 	{
@@ -757,7 +756,7 @@ bool CMonster::SetAttackTarget(IRole* pTarget /*= NULL*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::AutoSkillAttack(IRole* pTarget)
+bool CAiNpc::AutoSkillAttack(IRole* pTarget)
 {
 	CHECKF(pTarget);
 
@@ -813,7 +812,7 @@ bool CMonster::AutoSkillAttack(IRole* pTarget)
 				else
 					return false;
 			}
-			DEBUG_CATCH("CMonster::ProcessBomb()")
+			DEBUG_CATCH("CAiNpc::ProcessBomb()")
 		}
 		break;
 	case	MAGICSORT_VAMPIRE:
@@ -831,7 +830,7 @@ bool CMonster::AutoSkillAttack(IRole* pTarget)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::AdditionMagic(int nLifeLost, int nDamage)
+bool CAiNpc::AdditionMagic(int nLifeLost, int nDamage)
 {
 	if(!IsMagicAtk())
 		return false;
@@ -869,7 +868,7 @@ bool CMonster::AdditionMagic(int nLifeLost, int nDamage)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CMonster::GetDieMode()
+int CAiNpc::GetDieMode()
 {
 	CHECKF(m_pMagicType);
 
@@ -882,7 +881,7 @@ int CMonster::GetDieMode()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::ProcessBomb()
+void CAiNpc::ProcessBomb()
 {
 	CHECK(IsMagicAtk());
 	CHECK(m_pMagicType);
@@ -978,7 +977,7 @@ void CMonster::ProcessBomb()
 
 //////////////////////////////////////////////////////////////////////
 // precondition is dodge failed
-int CMonster::Attack(IRole* pTarget)		// return : lose life
+int CAiNpc::Attack(IRole* pTarget)		// return : lose life
 {
 	CHECKF(pTarget);
 
@@ -1022,7 +1021,7 @@ int CMonster::Attack(IRole* pTarget)		// return : lose life
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::BeAttack(bool bMagic, IRole* pTarget, int nPower, bool bReflectEnable/*=true*/)
+bool CAiNpc::BeAttack(bool bMagic, IRole* pTarget, int nPower, bool bReflectEnable/*=true*/)
 {
 	if (m_pType->GetInt(NPCTYPEDATA_MAGIC_TYPE) == SIMPLEMAGIC_RECRUIT && !m_tAddLife.IsActive())
 		m_tAddLife.Startup(RECRUITMAGIC_SECS);
@@ -1036,7 +1035,7 @@ bool CMonster::BeAttack(bool bMagic, IRole* pTarget, int nPower, bool bReflectEn
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::Kill(IRole* pTarget, DWORD dwDieWay)
+void CAiNpc::Kill(IRole* pTarget, DWORD dwDieWay)
 {
 	CHECK(pTarget);
 
@@ -1045,7 +1044,7 @@ void CMonster::Kill(IRole* pTarget, DWORD dwDieWay)
 		pTarget->BroadcastRoomMsg(&msg, true);
 
 #ifdef	LOCAL_DEBUG
-	CMonster* pMonster;
+	CAiNpc* pMonster;
 	if(pTarget->QueryObj(OBJ_NPC, IPP_OF(pMonster)))
 		LOGERROR("怪物[%s][%d]在[%d,%d]杀死了[%s][%d]", GetName(), GetType(), 
 						GetPosX(), GetPosY(), pMonster->GetName(), pMonster->GetType());
@@ -1080,12 +1079,12 @@ void CMonster::Kill(IRole* pTarget, DWORD dwDieWay)
 				memset(setDivine, 0, sizeof(setDivine));
 				for (int i=0; i<m_pOwner->GetEudemonAmount(); i++)
 				{
-					CMonster* pEudemon = m_pOwner->QueryEudemonByIndex(i);
-					if (pEudemon && pEudemon->GetID() != this->GetID())
-					{
-						OBJID idDivine = pEudemon->GetDivineID();
-						++setDivine[idDivine];
-					}
+					//CAiNpc* pEudemon = m_pOwner->QueryEudemonByIndex(i);
+					//if (pEudemon && pEudemon->GetID() != this->GetID())
+					//{
+					//	OBJID idDivine = pEudemon->GetDivineID();
+					//	++setDivine[idDivine];
+					//}
 				}
 				for (int i=1; i<=8; i++)
 				{
@@ -1108,16 +1107,16 @@ void CMonster::Kill(IRole* pTarget, DWORD dwDieWay)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::BeKill(IRole* pRole /*= NULL*/)
+void CAiNpc::BeKill(IRole* pRole /*= NULL*/)
 {
 	if(IsDeleted())
 		return ;
 
 	// pet
-	if(m_pData)
+	/*if(m_pData)
 	{
 		m_pData->SetInt(PETDATA_LIFE, 0);		// set flag to die
-	}
+	}*/
 
 	// 幻兽死亡扣亲密度，并且加仇人
 	if (this->IsEudemon() && m_pEudemonItem && m_pOwner)
@@ -1131,7 +1130,7 @@ void CMonster::BeKill(IRole* pRole /*= NULL*/)
 
 		// 被别人或者别人的幻兽杀死，加入主人的仇人名单
 		CUser* pAtkUser = NULL;
-		CMonster* pMonster = NULL;
+		CAiNpc* pMonster = NULL;
 		if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsEudemon())
 			pAtkUser = pMonster->QueryOwnerUser();
 		else
@@ -1155,7 +1154,7 @@ void CMonster::BeKill(IRole* pRole /*= NULL*/)
 	{
 		DEBUG_TRY
 		ProcessBomb();
-		DEBUG_CATCH("CMonster::ProcessBomb()")
+		DEBUG_CATCH("CAiNpc::ProcessBomb()")
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -1172,7 +1171,7 @@ void CMonster::BeKill(IRole* pRole /*= NULL*/)
 	int nChanceAdjust = 100;
 	CUser* pUser = NULL;
 	// 玩家攻击绿名则掉钱/爆钱率调整为原来的20%
-	if (pRole->QueryObj(OBJ_USER, IPP_OF(pUser)) && (NAME_GREEN == CMonster::GetNameType(pRole->GetLev(), this->GetLev())))
+	if (pRole->QueryObj(OBJ_USER, IPP_OF(pUser)) && (NAME_GREEN == CAiNpc::GetNameType(pRole->GetLev(), this->GetLev())))
 		nChanceAdjust = 20;
 
 	if (::RandGet(100) < (m_pType->GetInt(NPCTYPEDATA_DROP_MONEY_CHANCE)*nChanceAdjust/100))
@@ -1313,7 +1312,7 @@ void CMonster::BeKill(IRole* pRole /*= NULL*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::DelMonster(bool bNow/*=false*/)			// call this mast !IsDeleted()
+void CAiNpc::DelMonster(bool bNow/*=false*/)			// call this mast !IsDeleted()
 {
 	CHECK(!IsDeleted());
 
@@ -1330,10 +1329,10 @@ void CMonster::DelMonster(bool bNow/*=false*/)			// call this mast !IsDeleted()
 	}
 
 	// pet
-	if(m_pData)
+	/*if(m_pData)
 	{
 		m_pData->SetInt(PETDATA_LIFE, 0);		// set flag to die
-	}
+	}*/
 
 	// synchro npc server to del npc object
 	if(bNow)
@@ -1349,7 +1348,7 @@ void CMonster::DelMonster(bool bNow/*=false*/)			// call this mast !IsDeleted()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CMonster::SendDamageMsg(OBJID idTarget, int nDamage)
+void CAiNpc::SendDamageMsg(OBJID idTarget, int nDamage)
 {
 	if(IsSimpleMagicAtk())
 	{
@@ -1372,7 +1371,7 @@ void CMonster::SendDamageMsg(OBJID idTarget, int nDamage)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetDropMoneyAvg()
+DWORD CAiNpc::GetDropMoneyAvg()
 {
 	DWORD dwMoneyMin = m_pType->GetInt(NPCTYPEDATA_DROPMONEY_MIN);
 	DWORD dwMoneyMax = m_pType->GetInt(NPCTYPEDATA_DROPMONEY_MAX);
@@ -1382,7 +1381,7 @@ DWORD CMonster::GetDropMoneyAvg()
 ////////////////////////////////////////////////////////////////////////////////////
 // drop
 ////////////////////////////////////////////////////////////////////////////////////
-bool CMonster::DropMoney(DWORD dwMoney, OBJID idOwner)
+bool CAiNpc::DropMoney(DWORD dwMoney, OBJID idOwner)
 {
 	if (dwMoney <= 0)
 		return true;
@@ -1423,7 +1422,7 @@ bool CMonster::DropMoney(DWORD dwMoney, OBJID idOwner)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-bool CMonster::DropItem(OBJID idItemType, OBJID idOwner, int nMagic2, int nMagic3, int nUserLuck,bool bIsAllowDropUnident)
+bool CAiNpc::DropItem(OBJID idItemType, OBJID idOwner, int nMagic2, int nMagic3, int nUserLuck,bool bIsAllowDropUnident)
 {
 	/*if (idItemType == ID_NONE)
 		return true;
@@ -1509,7 +1508,7 @@ bool CMonster::DropItem(OBJID idItemType, OBJID idOwner, int nMagic2, int nMagic
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-bool CMonster::DropEquipment(DWORD dwValue, OBJID idOwner, DWORD dwQuality/*=0*/)
+bool CAiNpc::DropEquipment(DWORD dwValue, OBJID idOwner, DWORD dwQuality/*=0*/)
 {
 	// drop money if value less than 100
 	if (dwValue < 100)
@@ -1560,7 +1559,7 @@ bool CMonster::DropEquipment(DWORD dwValue, OBJID idOwner, DWORD dwQuality/*=0*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-bool CMonster::DropMedicine(OBJID idOwner)
+bool CAiNpc::DropMedicine(OBJID idOwner)
 {
 	//rem by zlong 2003-11-15
 	//修改了monstertype表以后已经没有drop_hp和drop_mp两个字段了
@@ -1610,7 +1609,7 @@ bool CMonster::DropMedicine(OBJID idOwner)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-bool CMonster::ProcessAction(CUser* pUser, OBJID idAction, LPCTSTR pszAccept)
+bool CAiNpc::ProcessAction(CUser* pUser, OBJID idAction, LPCTSTR pszAccept)
 {
 	if (idAction == ID_NONE)
 		return false;
@@ -1743,7 +1742,7 @@ bool CMonster::ProcessAction(CUser* pUser, OBJID idAction, LPCTSTR pszAccept)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::IsAtkable(IRole* pTarget, bool bSendHint)
+bool CAiNpc::IsAtkable(IRole* pTarget, bool bSendHint)
 {
 	if (!pTarget)
 		return false;
@@ -1789,13 +1788,13 @@ bool CMonster::IsAtkable(IRole* pTarget, bool bSendHint)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::IsBeAtkable()
+bool CAiNpc::IsBeAtkable()
 {
 	return !(QueryStatus(STATUS_LOCK));
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::EnterMapGroup()
+bool CAiNpc::EnterMapGroup()
 {
 	CMapPtr pMap = this->GetMap();
 	CHECKF(pMap);
@@ -1826,7 +1825,7 @@ bool CMonster::EnterMapGroup()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::LeaveMapGroup()
+bool CAiNpc::LeaveMapGroup()
 {
 	CMapPtr pMap = this->GetMap();
 	CHECKF(pMap);
@@ -1846,7 +1845,7 @@ bool CMonster::LeaveMapGroup()
 }
 
 //////////////////////////////////////////////////////////////////////
-LPCTSTR	CMonster::GetName()
+LPCTSTR	CAiNpc::GetName()
 {
 	if (this->IsEudemon() && m_pEudemonItem)
 		return m_pEudemonItem->GetStr(ITEMDATA_NAME);
@@ -1855,7 +1854,7 @@ LPCTSTR	CMonster::GetName()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetLife()
+DWORD CAiNpc::GetLife()
 {
 	int nMaxLife = this->GetMaxLife();
 	if (this->IsEudemon() && m_pEudemonItem)
@@ -1875,7 +1874,7 @@ DWORD CMonster::GetLife()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetMaxLife()
+DWORD CAiNpc::GetMaxLife()
 {
 	int nLife = m_pType->GetInt(NPCTYPEDATA_LIFE);
 
@@ -1894,7 +1893,7 @@ DWORD CMonster::GetMaxLife()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetMinAtk()
+DWORD CAiNpc::GetMinAtk()
 {
 	DWORD dwAtk	= m_pType->GetInt(NPCTYPEDATA_ATTACKMIN);
 
@@ -1910,7 +1909,7 @@ DWORD CMonster::GetMinAtk()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetMaxAtk()
+DWORD CAiNpc::GetMaxAtk()
 {
 	DWORD dwAtk	= m_pType->GetInt(NPCTYPEDATA_ATTACKMAX);
 
@@ -1929,7 +1928,7 @@ DWORD CMonster::GetMaxAtk()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetMgcMinAtk()
+DWORD CAiNpc::GetMgcMinAtk()
 {
 	DWORD dwAtk	= m_pType->GetInt(NPCTYPEDATA_ATTACKMIN);
 
@@ -1948,7 +1947,7 @@ DWORD CMonster::GetMgcMinAtk()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetMgcMaxAtk()
+DWORD CAiNpc::GetMgcMaxAtk()
 {
 	DWORD dwAtk	= m_pType->GetInt(NPCTYPEDATA_ATTACKMAX);
 
@@ -1967,7 +1966,7 @@ DWORD CMonster::GetMgcMaxAtk()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetDdg()
+DWORD CAiNpc::GetDdg()
 {
 	DWORD dwDodge	= this->GetDodge();
 
@@ -1990,7 +1989,7 @@ DWORD CMonster::GetDdg()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetDef()
+DWORD CAiNpc::GetDef()
 {
 	DWORD dwDef	= 0;
 
@@ -2009,7 +2008,7 @@ DWORD CMonster::GetDef()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetDex()
+DWORD CAiNpc::GetDex()
 {
 	float fDex = 0.0f;
 
@@ -2023,7 +2022,7 @@ DWORD CMonster::GetDex()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetMagicDef()
+DWORD CAiNpc::GetMagicDef()
 {
 	int nDef	= m_pType->GetInt(NPCTYPEDATA_MAGIC_DEF);
 
@@ -2041,7 +2040,7 @@ DWORD CMonster::GetMagicDef()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CMonster::GetInterAtkRate()
+DWORD CAiNpc::GetInterAtkRate()
 {
 	int nRate = GetIntervalAtkRate();
 
@@ -2060,7 +2059,7 @@ DWORD CMonster::GetInterAtkRate()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CMonster::SetStatus(int nStatus, bool bSynchro)
+void CAiNpc::SetStatus(int nStatus, bool bSynchro)
 {
 	I64 i64OldEffect = m_i64Effect;
 	switch (nStatus)
@@ -2339,7 +2338,7 @@ void CMonster::SetStatus(int nStatus, bool bSynchro)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CMonster::ClsStatus(int nStatus, bool bSynchro)
+void CAiNpc::ClsStatus(int nStatus, bool bSynchro)
 {
 	I64 i64OldEffect = m_i64Effect;
 	switch (nStatus)
@@ -2597,20 +2596,20 @@ void CMonster::ClsStatus(int nStatus, bool bSynchro)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CMonster::SaveInfo()
+void CAiNpc::SaveInfo()
 {
-	if(m_pData)
+	/*if(m_pData)
 	{
 		m_pData->SetInt(PETDATA_LIFE, GetLife());
 //		m_pData->SetInt(PETDATA_MANA, GetMana());
 		m_pData->SetInt(PETDATA_RECORD_X, GetPosX());
 		m_pData->SetInt(PETDATA_RECORD_Y, GetPosY());
 		m_pData->Update();
-	}
+	}*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool CMonster::IsAlive()
+bool CAiNpc::IsAlive()
 {
 	if ((m_i64Effect & KEEPEFFECT_DIE) == KEEPEFFECT_DIE || this->GetLife() <= 0 || m_bLeaveMap)
 		return false;
@@ -2619,7 +2618,7 @@ bool CMonster::IsAlive()
 }
 
 /*////////////////////////////////////////////////////////////////////////////
-BOOL CMonster::CheckStatus(int nStatus)
+BOOL CAiNpc::CheckStatus(int nStatus)
 {
 	if (nStatus == STATUS_NORMAL || STATUS_DIE == nStatus)
 	{
@@ -2638,7 +2637,7 @@ BOOL CMonster::CheckStatus(int nStatus)
 }*/
 
 /////////////////////////////////////////////////////////////////////////////
-int CMonster::AdjustExp(IRole* pTarget, int nRawExp, bool bNewbieBonusMsg/*=false*/)
+int CAiNpc::AdjustExp(IRole* pTarget, int nRawExp, bool bNewbieBonusMsg/*=false*/)
 {
 	CHECKF (pTarget);
 	int nExp = nRawExp;
@@ -2664,7 +2663,7 @@ int CMonster::AdjustExp(IRole* pTarget, int nRawExp, bool bNewbieBonusMsg/*=fals
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CMonster::AwardBattleExp		(int nExp, bool bGemEffect/*=true*/, bool bIncludeOwner/*=true*/)
+void CAiNpc::AwardBattleExp		(int nExp, bool bGemEffect/*=true*/, bool bIncludeOwner/*=true*/)
 {
 	if (IsEudemon() && m_pEudemonItem && m_pOwner)
 	{
@@ -2681,13 +2680,13 @@ void CMonster::AwardBattleExp		(int nExp, bool bGemEffect/*=true*/, bool bInclud
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool CMonster::IsInsteadMagic()
+bool CAiNpc::IsInsteadMagic()
 {
 	return m_pMagicType && m_pMagicType->GetInt(MAGICTYPEDATA_SORT) == MAGICSORT_INSTEAD;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-OBJID CMonster::GetMasterID()
+OBJID CAiNpc::GetMasterID()
 {
 	if((IsCallPet() || IsEudemon()) && m_pOwner)
 		return m_pOwner->GetID();
@@ -2695,7 +2694,7 @@ OBJID CMonster::GetMasterID()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::IsImmunity(IRole* pRole)
+bool CAiNpc::IsImmunity(IRole* pRole)
 {
 	CHECKF(pRole);
 
@@ -2729,7 +2728,7 @@ bool CMonster::IsImmunity(IRole* pRole)
 }
 
 //////////////////////////////////////////////////////////////////////
-int  CMonster::AdjustAttack		(int nAtk)
+int  CAiNpc::AdjustAttack		(int nAtk)
 {
 	int	nAddAtk = 0;
 
@@ -2748,7 +2747,7 @@ int  CMonster::AdjustAttack		(int nAtk)
 }
 
 //////////////////////////////////////////////////////////////////////
-int  CMonster::AdjustDefence		(int nDef)
+int  CAiNpc::AdjustDefence		(int nDef)
 {
 	int	nAddDef = 0;
 
@@ -2772,7 +2771,7 @@ int  CMonster::AdjustDefence		(int nDef)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-int CMonster::AdjustMagicDef(int nDef)
+int CAiNpc::AdjustMagicDef(int nDef)
 {
 	int nAddDef = 0;
 
@@ -2787,7 +2786,7 @@ int CMonster::AdjustMagicDef(int nDef)
 	return nDef;
 }
 //////////////////////////////////////////////////////////////////////
-void CMonster::SetEudemonAddi(CItem*	pEudemon)
+void CAiNpc::SetEudemonAddi(CItem*	pEudemon)
 {
 	ASSERT(pEudemon);
 
@@ -2801,7 +2800,7 @@ void CMonster::SetEudemonAddi(CItem*	pEudemon)
 }
 
 //////////////////////////////////////////////////////////////////////
-/*bool CMonster::DropTrap(TRAP_INFO &trapInfo, UINT ulLifePeriod)
+/*bool CAiNpc::DropTrap(TRAP_INFO &trapInfo, UINT ulLifePeriod)
 {
 
 	POINT	pos;
@@ -2828,7 +2827,7 @@ void CMonster::SetEudemonAddi(CItem*	pEudemon)
 }*/
 
 //////////////////////////////////////////////////////////////////////
-int CMonster::GetNameType(int nAtkerLev, int nMonsterLev)
+int CAiNpc::GetNameType(int nAtkerLev, int nMonsterLev)
 {
 	int nDeltaLev = nAtkerLev - nMonsterLev;
 
@@ -2843,7 +2842,7 @@ int CMonster::GetNameType(int nAtkerLev, int nMonsterLev)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CMonster::KickBack()
+bool CAiNpc::KickBack()
 {
 	// Monster不需要踢回，CallPet和Eudemon才需要
 //	if (!((this->IsEudemon() || this->IsCallPet()) && m_pOwner))
@@ -2857,13 +2856,13 @@ bool CMonster::KickBack()
 }
 
 //////////////////////////////////////////////////////////////////////
-int CMonster::AdjustWeaponDamage(int nDamage)
+int CAiNpc::AdjustWeaponDamage(int nDamage)
 {
 	return MulDiv(nDamage, GetDefence2(), DEFAULT_DEFENCE2);
 }
 
 //////////////////////////////////////////////////////////////////////
-int CMonster::AdjustMagicDamage(int nDamage)
+int CAiNpc::AdjustMagicDamage(int nDamage)
 {
 	IStatus* pStatus = QueryStatus(STATUS_MAGICDAMAGE);
 	if(pStatus)
@@ -2873,7 +2872,7 @@ int CMonster::AdjustMagicDamage(int nDamage)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CMonster::AdjustFrenzy2Dmg(int nDamage)
+int CAiNpc::AdjustFrenzy2Dmg(int nDamage)
 {
 	IStatus* pStatus = QueryStatus(STATUS_FRENZY2);
 	if (pStatus)
@@ -2897,7 +2896,7 @@ int	setAtkModePotential[EATK_MODE_LIMIT][MAX_DIVINE_ID] =
 	{5,			-5,			-5,			-2,			2,			-5,			-3,			-2},	// ATK_MODE_DEF
 };
 
-bool CMonster::ChgAtkMode(int nAtkMode)
+bool CAiNpc::ChgAtkMode(int nAtkMode)
 {
 	CHECKF (nAtkMode < EATK_MODE_LIMIT);
 	CHECKF (IsEudemon());

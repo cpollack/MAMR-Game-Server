@@ -71,6 +71,7 @@ public:
 	virtual ~IMapGroup() {}
 	static IMapGroup* CreateNew();
 	virtual bool	Create(IMessagePort* pPort)				PURE_VIRTUAL_FUNCTION_0
+	virtual void	Init()									PURE_VIRTUAL_FUNCTION
 	virtual void	SynchroData()							PURE_VIRTUAL_FUNCTION
 	virtual bool	ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom)	PURE_VIRTUAL_FUNCTION_0
 	virtual bool	OnTimer(time_t tCurr)					PURE_VIRTUAL_FUNCTION_0

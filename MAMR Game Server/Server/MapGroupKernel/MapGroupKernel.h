@@ -29,6 +29,7 @@ public:
 
 protected: // IMapGroup
 	virtual bool	Create(IMessagePort* pPort);
+	virtual void	Init();
 	virtual void	SynchroData();
 	virtual bool	ProcessMsg(OBJID idPacket, void* buf, int nType, int nFrom);
 	virtual bool	OnTimer(time_t tCurr);

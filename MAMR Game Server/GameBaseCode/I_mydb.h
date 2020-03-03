@@ -155,7 +155,7 @@ extern IDatabase*	CreateDatabase(const char* szDBServer = NULL, const char* szLo
 #define		_TBL_MERCENARYTASK		_TBL_PREHEAD "mercenary_task"
 #define     _TBL_ANNOUNCE           _TBL_PREHEAD "announce"
 //#define		_TBL_MISSION_ITEM		_TBL_PREHEAD "mission_item"
-#define		_TBL_MONSTERTYPE		_TBL_PREHEAD "monstertype"
+#define		_TBL_MONSTERTYPE		_TBL_PREHEAD "monster"
 #define		_TBL_NPC				_TBL_PREHEAD "npc"
 #define		_TBL_PASSWAY			_TBL_PREHEAD "passway"
 #define		_TBL_PET				_TBL_PREHEAD "pet"

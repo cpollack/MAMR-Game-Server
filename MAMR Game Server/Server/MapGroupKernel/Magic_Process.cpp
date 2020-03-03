@@ -2713,7 +2713,7 @@ bool CMagic::ProcessSorbSoul()
 
 	// TODO: 吸收尸体的灵魂转换为魔力
 	// 通过前面的CheckCondition判断，以下条件判断已经是冗余的
-	CMonster* pMonster = NULL;
+	CAiNpc* pMonster = NULL;
 	if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) 
 		&& (pMonster->GetMaskData() & MASK_DISABLE_SORB_SOUL) == 0)
 	{
@@ -2992,7 +2992,7 @@ bool CMagic::CollectTargetSet_Team(ROLE_SET& setRole)
 {
 	// 如果是幻兽则需要先获得主人
 	CUser* pUser = NULL;
-	CMonster* pMonster = NULL;
+	CAiNpc* pMonster = NULL;
 	if (m_pOwner->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 		pUser = pMonster->QueryOwnerUser();
 	else
@@ -3034,7 +3034,7 @@ bool CMagic::CollectTargetSet_Team(ROLE_SET& setRole)
 			setRole.push_back(pTarget->QueryRole());
 		for (int k=0; k<pTarget->GetEudemonAmount(); k++)
 		{
-			CMonster* pEudemon = pTarget->QueryEudemonByIndex(i);
+			CAiNpc* pEudemon = pTarget->QueryEudemonByIndex(i);
 			if (pEudemon)
 			{
 				posThis.x = pEudemon->GetPosX();
@@ -3392,7 +3392,7 @@ bool CMagic::ProcessStealMoney()
 		m_pOwner->BroadcastRoomMsg(&msg, INCLUDE_SELF);
 
 	int nMoneyStolen = 0;
-	CMonster* pMonster = NULL;
+	CAiNpc* pMonster = NULL;
 	CUser* pUser = NULL;
 	if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 	{

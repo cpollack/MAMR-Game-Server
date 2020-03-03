@@ -41,6 +41,7 @@ BOOL CMsgNpcInfo::Create(CNpc* pNpc, int nMode)
 	m_pInfo->wCellY		= pNpc->GetPosY();
 
 	strcpy(m_pInfo->szName, pNpc->GetName());
+	for (int i = 0; i < 15; i++) m_pInfo->bColorSets[i] = 0;
 
 	m_unMsgType	=_MSG_NPCINFO;
 	m_unMsgSize	=sizeof(MSG_Info);

@@ -175,7 +175,7 @@ void CMsgAction::Process(void *pInfo)
 		m_pInfo->idUser	= pRole->GetID();
 
 	// stop fight
-	switch(m_pInfo->dwAction)
+	/*switch(m_pInfo->dwAction)
 	{
 	case actionQueryFriendInfo:
 	case actionQueryEnemyInfo:
@@ -191,12 +191,45 @@ void CMsgAction::Process(void *pInfo)
 	default:
 		pRole->ClrAttackTarget();
 		break;
-	}
+	}*/
 
 	// actions...
 	DEBUG_TRY	// VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 	switch(m_pInfo->dwAction)
 	{
+	case actionNone:
+		{
+		pUser->SetPos(m_pInfo->unPosX, m_pInfo->unPosY);
+		}
+		break;
+	case actionChgDir:
+		{
+		pRole->SetDir(m_pInfo->dwDir);
+		pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
+		}
+		break;
+	case actionPosition:
+		{
+		//pUser->TransPos(m_pInfo->unPosX, m_pInfo->unPosY);
+		pUser->JumpPos(m_pInfo->unPosX, m_pInfo->unPosY);
+		pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
+		}
+		break;
+	case actionFlyMap:
+		{
+			if (pUser && !pUser->IsAlive()) {
+				pUser->SendSysMsg(STR_DIE);
+				return;
+			}
+
+			if (!pUser)
+				break;
+			pUser->FlyMap(ID_NONE, m_pInfo->unPosX, m_pInfo->unPosY, m_pInfo->dwPassage);		// 回应actionFlyMap. call - may be delete this;
+		}
+		break;
+
+	//Unconfirmed actions
+
 	case actionQueryTeamMember:
 		/*{
 			if (pUser)
@@ -289,20 +322,6 @@ void CMsgAction::Process(void *pInfo)
 			}
 		}
 		break;*/
-	case actionChgDir:
-		{
-			pRole->SetDir(m_pInfo->dwDir);
-			pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
-		}
-		break;
-	case actionPosition:
-		{
-			//My Code here
-			//pRole->SetPosition
-			//does not exist
-			pUser->TransPos(m_pInfo->unPosX, m_pInfo->unPosY);
-		}
-		break;
 	case actionEmotion:
 		/*{
 			if (pUser)
@@ -354,24 +373,6 @@ void CMsgAction::Process(void *pInfo)
 			pUser->ChangeMap();				// 注意：没有回应actionChgMap，而是回应actionFlyMap. call - may be delete this;
 		}
 		break;
-	case actionFlyMap:
-		{
-			if (pUser && !pUser->IsAlive())
-			{
-					pUser->SendSysMsg(STR_DIE);
-					return;
-			}
-
-			ASSERT(!"actionFlyMap");		// 好象不应该支持吧？
-			return ;//////////////////////////////////////////////////
-
-			if(!pUser)
-				break;
-			pRole->ProcessOnMove(MOVEMODE_CHGMAP);
-			//OBJID idMap = m_pInfo->idTarget;
-			//pUser->FlyMap(idMap, m_pInfo->unPosX, m_pInfo->unPosY);		// 回应actionFlyMap. call - may be delete this;
-		}
-		break;
 	case actionChgWeather:
 		{
 			ASSERT(!"仅下传此消息");
@@ -385,7 +386,7 @@ void CMsgAction::Process(void *pInfo)
 	case actionDie:
 		{
 			// 自杀
-			CMonster* pMonster;
+			CAiNpc* pMonster;
 			if(pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 			{
 				if(!pMonster->IsDeleted())

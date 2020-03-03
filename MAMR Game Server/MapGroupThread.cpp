@@ -66,10 +66,14 @@ void CMapGroupThread::OnDestroy()
 //////////////////////////////////////////////////////////////////////
 void CMapGroupThread::OnInit()	
 { 
+	m_pMapGroup->Init();
+
 	m_tNextClock = clock() + CLOCKS_PER_SEC; 
+
 	char	szText[1024];
 	sprintf(szText, "#%u: map group kernel thread running¡£", m_pMsgPort->GetID());
 	m_pMsgPort->Send(MSGPORT_SHELL, SHELL_PRINTTEXT, STRING_TYPE(szText), szText);
+
 
 	m_pMapGroup->SynchroData();
 }

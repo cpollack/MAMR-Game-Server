@@ -37,7 +37,7 @@ protected:
 	char*				m_szVal;	//CSTRING
 	int					m_nIndex;
 	MYSQL_FIELD			m_Field;
-	CMyField *			m_pMyField;		//paled 指向根对象，用于更新。
+	CMyField *			m_pMyField;		//paled Points to the root object for updating.
 
 	friend class	CMyRecordset;
 	friend class	CMyRecord;
@@ -59,6 +59,11 @@ public:
 
 // Operator
 public:
+	operator bool() {
+		if (this) return true;
+		else return false;
+	}
+
 	operator int	()
 	{	if ( m_ulType == FIELD_TYPE_SHORT
 				|| m_ulType == FIELD_TYPE_TINY

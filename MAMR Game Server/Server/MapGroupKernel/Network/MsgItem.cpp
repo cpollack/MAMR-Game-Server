@@ -295,7 +295,7 @@ void CMsgItem::Process(void *pInfo)
 		break;
 	case ITEMACT_EUDEMON_ATKMODE:
 		{
-			CMonster* pEudemon = pUser->QueryEudemon(m_pInfo->id);
+		CAiNpc* pEudemon = pUser->QueryEudemon(m_pInfo->id);
 			if (pEudemon)
 				pEudemon->ChgAtkMode(m_pInfo->dwData);
 		}

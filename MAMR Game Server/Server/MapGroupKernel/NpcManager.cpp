@@ -113,10 +113,10 @@ bool CNpcManager::DelAllMonster()
 //////////////////////////////////////////////////////////////////////
 bool CNpcManager::CreateMonster(const ST_CREATENEWNPC* pInfo)
 {
-	CMonsterPtr pNpc = CMonster::CreateNew();
+	CAiNpc* pNpc = CAiNpc::CreateNew();
 	if(pNpc)
 	{
-		CNpcType*	pType = MonsterType()->GetObj(pInfo->usType);
+		CNpcType*	pType = NpcType()->GetObj(pInfo->usType);
 		if(pType)
 		{
 			ST_CREATENEWNPC	info;
@@ -144,10 +144,10 @@ bool CNpcManager::CreateSynPet(const ST_CREATENEWNPC* pInfo, LPCTSTR pszName/*=N
 {
 	CHECKF(pInfo);
 
-	CMonsterPtr pPet = CMonster::CreateNew();
+	CAiNpc* pPet = CAiNpc::CreateNew();
 	if(pPet)
 	{
-		CNpcType*	pType = MonsterType()->GetObj(pInfo->usType);
+		CNpcType*	pType = NpcType()->GetObj(pInfo->usType);
 		if(pType)
 		{
 			ST_CREATENEWNPC	info;
@@ -170,14 +170,14 @@ bool CNpcManager::CreateSynPet(const ST_CREATENEWNPC* pInfo, LPCTSTR pszName/*=N
 }
 
 //////////////////////////////////////////////////////////////////////
-CMonster* CNpcManager::CreateCallPet(CUser* pUser, OBJID idType, int x, int y)
+CAiNpc* CNpcManager::CreateCallPet(CUser* pUser, OBJID idType, int x, int y)
 {
 	CHECKF(pUser);
 
-	CMonsterPtr pPet = CMonster::CreateNew();
+	CAiNpc* pPet = CAiNpc::CreateNew();
 	if(pPet)
 	{
-		CNpcType*	pType = MonsterType()->GetObj(idType);
+		CNpcType*	pType = NpcType()->GetObj(idType);
 		if(pType)
 		{
 			ST_CREATENEWNPC	info;
@@ -208,14 +208,14 @@ CMonster* CNpcManager::CreateCallPet(CUser* pUser, OBJID idType, int x, int y)
 }
 
 //////////////////////////////////////////////////////////////////////
-CMonster* CNpcManager::CreateEudemon(CUser* pUser, CItem* pItem, int x, int y)
+CAiNpc* CNpcManager::CreateEudemon(CUser* pUser, CItem* pItem, int x, int y)
 {
 	CHECKF(pUser);
 
-	CMonsterPtr pEudemon = CMonster::CreateNew();
+	CAiNpc* pEudemon = CAiNpc::CreateNew();
 	if(pEudemon)
 	{
-		CNpcType*	pType = MonsterType()->GetObj(pItem->GetInt(ITEMDATA_MONSTERTYPE));
+		CNpcType*	pType = NpcType()->GetObj(pItem->GetInt(ITEMDATA_MONSTERTYPE));
 		if(pType)
 		{
 			ST_CREATENEWNPC	info;

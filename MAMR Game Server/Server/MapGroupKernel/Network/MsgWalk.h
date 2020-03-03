@@ -29,8 +29,10 @@ protected:
 		MSGHEAD_DEFINE
 
 		OBJID		idUser;
-		UCHAR		ucDir;
-		UCHAR		ucMode;
+		WORD		wPosX;
+		WORD		wPosY;
+		WORD		wDestX;
+		WORD		wDestY;
 	}MSG_Info;
 
 	MSG_Info*	m_pInfo;

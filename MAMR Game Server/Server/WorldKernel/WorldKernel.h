@@ -8,7 +8,6 @@
 #include <time.h>
 #include <winsock2.h>
 #include "I_mydb.h"
-using namespace world_kernel;
 #include "Network/NetMsgW.h"
 #include "I_Shell.h"
 #include "T_Singlemap.h"

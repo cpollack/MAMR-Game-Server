@@ -11,8 +11,8 @@
 #include "SynWorldShell.h"
 #include "WorldKernel.h"
 
-char	world_kernel::szID[256];
-char	world_kernel::szSynTable[256];
+char	szWorldSynID[] = "id";
+char	szWorldSynTable[] = _TBL_SYNDICATE;
 
 //////////////////////////////////////////////////////////////////////
 const int	SYNMONEY_LIMIT		= 2000000000;		// 基金的限制额

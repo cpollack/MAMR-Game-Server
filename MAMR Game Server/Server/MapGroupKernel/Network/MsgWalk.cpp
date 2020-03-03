@@ -36,8 +36,8 @@ BOOL CMsgWalk::Create(OBJID idPlayer, int nDir, int nMode /*= MOVEMODE_WALK*/)
 	m_unMsgType	=_MSG_WALK;
 
 	m_pInfo->idUser		=idPlayer;
-	m_pInfo->ucDir		=nDir;
-	m_pInfo->ucMode		=nMode;
+	//m_pInfo->ucDir		=nDir;
+	//m_pInfo->ucMode		=nMode;
 
 	return true;
 }
@@ -74,7 +74,9 @@ void CMsgWalk::Process(void *pInfo)
 	}
 	//xxxCHECK(pRole->GetID() == m_pInfo->idUser);
 
-	int nDir = m_pInfo->ucDir%8;
+	pRole->BroadcastRoomMsg(this);
+
+	/*int nDir = m_pInfo->ucDir%8;
 	int nNewX = pRole->GetPosX()+_DELTA_X[nDir];
 	int nNewY = pRole->GetPosY()+_DELTA_Y[nDir];
 
@@ -170,16 +172,16 @@ void CMsgWalk::Process(void *pInfo)
 				}
 			}
 		}
-	}
+	}*/
 
-	DEBUG_TRY
+	/*DEBUG_TRY
 	// stop fight
 	if(m_pInfo->ucMode != MOVEMODE_SHIFT)
 		pRole->ProcessOnMove(m_pInfo->ucMode);
-	DEBUG_CATCH("ProcessOnMove")
+	DEBUG_CATCH("ProcessOnMove")*/
 
 	// fill id
-	DEBUG_TRY
+	//DEBUG_TRY
 //*
 //	pRole->BroadcastRoomMsg(this, EXCLUDE_SELF);
 
@@ -195,7 +197,7 @@ void CMsgWalk::Process(void *pInfo)
 /*else
 	pRole->SendMsg(this);
 //*/
-	bool bRunMode = (m_pInfo->ucMode >= MOVEMODE_RUN_DIR0 && m_pInfo->ucMode <= MOVEMODE_RUN_DIR7);
+	/*bool bRunMode = (m_pInfo->ucMode >= MOVEMODE_RUN_DIR0 && m_pInfo->ucMode <= MOVEMODE_RUN_DIR7);
 	pRole->MoveToward(nDir, !bRunMode);		// return true: 是n步模数
 	// 如果是，跑步模式，移动第二步
 	if (bRunMode)
@@ -211,6 +213,6 @@ void CMsgWalk::Process(void *pInfo)
 		sprintf(szMsg, "%sWALK: (%d,%d)", pRole->GetName(), pRole->GetPosX(), pRole->GetPosY());
 	//LOGWARNING(szMsg);
 	DebugSave(szMsg);
-#endif
+#endif*/
 	DEBUG_CATCH("CMsgWalk::Process")
 }

@@ -226,12 +226,36 @@ enum NPCTYPEDATA
 
 		NPCTYPEDATA_PROFESSION,				// Ö°Òµ±àºÅ
 };
+char	szNpcTypeTable[];
+typedef	CGameData<NPCTYPEDATA, szNpcTypeTable, szID>	CNpcTypeData;
+typedef	ISingleMap2<CNpcTypeData>		INpcTypeSet;
+typedef	CSingleMap2<CNpcTypeData>		CNpcTypeSet;
+#define	CNpcType	CNpcTypeData
+
+enum MONSTERDATA {
+	MONSTERDATA_ID = 0,
+	MONSTERDATA_NAME,
+	MONSTERDATA_BASE_ATTACK,
+	MONSTERDATA_BASE_DEFENCE,
+	MONSTERDATA_BASE_DEXTERITY,
+	MONSTERDATA_BASE_LIFE,
+	MONSTERDATA_GROWPOINT,
+	MONSTERDATA_LIFERISE,
+	MONSTERDATA_RATE_ATTACK,
+	MONSTERDATA_RATE_DEFENCE,
+	MONSTERDATA_RATE_DEXTERITY,
+	MONSTERDATA_LOOK,
+	MONSTERDATA_CLASS,
+	MONSTERDATA_INDEXNUM,
+	MONSTERDATA_HUE0,
+	MONSTERDATA_SAT0,
+	MONSTERDATA_BRIGHT0, //x3
+};
 char	szMonsterTypeTable[];
-typedef	CGameData<NPCTYPEDATA, szMonsterTypeTable, szID>	CMonsterTypeData;
+typedef	CGameData<MONSTERDATA, szMonsterTypeTable, szID>	CMonsterTypeData;
 typedef	ISingleMap2<CMonsterTypeData>		IMonsterTypeSet;
 typedef	CSingleMap2<CMonsterTypeData>		CMonsterTypeSet;
-
-#define	CNpcType	CMonsterTypeData
+#define	CMonsterType	CMonsterTypeData
 
 //////////////////////////////////////////////////////////////////////
 enum REBIRTHDATA

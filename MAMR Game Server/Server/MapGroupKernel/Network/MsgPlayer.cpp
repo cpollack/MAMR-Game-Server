@@ -49,85 +49,42 @@ BOOL CMsgPlayer::Create(IRole* pRole)
 	// init
 	this->Init();
 
+	CUser* pUser = NULL;
+	pRole->QueryObj(OBJ_USER, IPP_OF(pUser));
+	const UserInfoStruct* pInfo = pUser->GetInfo();
+
 	// fill info now
 	m_pInfo->id			= pRole->GetID();
-	//m_pInfo->i64Status	= pRole->GetEffect();
-	m_pInfo->dwStatus[0]	= pRole->GetEffect() & 0xFFFFFFFF;
-	m_pInfo->dwStatus[1]	= (pRole->GetEffect() >> 32) & 0xFFFFFFFF;
-	m_pInfo->dwLookFace	= pRole->GetLookFace();
-	m_pInfo->usHair		= (USHORT)pRole->GetHair();
+	m_pInfo->wPosX = pRole->GetPosX();
+	m_pInfo->wPosY = pRole->GetPosY();
 
-	m_pInfo->cLength	= pRole->GetLength();
-	m_pInfo->cFat		= pRole->GetFat();
-	
-	m_pInfo->dwArmorType	= pRole->GetArmorTypeID();
-	m_pInfo->dwWeaponRType	= pRole->GetWeaponRTypeID();
-	m_pInfo->dwMountType	= pRole->GetMountTypeID();
-	
-	CMonster* pMonster = NULL;
-	if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsEudemon() && pMonster->QueryOwnerUser())
-		m_pInfo->idOwner	= pMonster->QueryOwnerUser()->GetID();
-	else
-		m_pInfo->dwSynID_Rank	= (pRole->GetSynRankShow()<<MASK_RANK_SHIFT) | (pRole->GetSynID()&MASK_SYNID);
+	m_pInfo->bLook = pInfo->dwLook;
+	m_pInfo->bFace = pInfo->dwFace;
+	m_pInfo->bState = 0;// pInfo->dwStatus ?
+	m_pInfo->bDirection = pRole->GetDir();
+	m_pInfo->bEmotion = 0; // emotion handling?
 
-	CUser* pUser = NULL;
-	if (pRole->QueryObj(OBJ_USER, IPP_OF(pUser)))
-	{
-		m_pInfo->dwMantleType		= pUser->GetMantleTypeID();
-		
-		m_pInfo->ucActionSpeed		= pUser->AdjustSpeed(pUser->GetSpeed());
-		m_pInfo->ucTutorLevel		= pUser->GetTutorLevel();
-		m_pInfo->ucMercenaryRank	= pUser->GetMercenaryRank();
-		m_pInfo->ucNobilityRank		= pUser->GetNobilityRank();
-	}
-	else
-	{
-		m_pInfo->usMaxLife		= pRole->GetMaxLife();
-		m_pInfo->usMonsterLife	= pRole->GetLife();
+	m_pInfo->bRank = pUser->GetRankType();
+	m_pInfo->bReborn = pUser->GetReborn();
+	m_pInfo->bRankDetails = (pUser->GetMasterType() << 4) | pUser->GetAlignment();
 
-		if (pMonster)
-			m_pInfo->idMonsterType	= pMonster->GetType();
-	}
+	m_pInfo->wLevel = pInfo->ucLevel;
+	m_pInfo->dwPK = pInfo->sPk;
 
-
-	m_pInfo->usPosX		= pRole->GetPosX();
-	m_pInfo->usPosY		= pRole->GetPosY();
-	m_pInfo->ucDir		= pRole->GetDir();
-	m_pInfo->ucPose		= pRole->GetPose();
-
-	if (IsSceneID(pRole->GetID()))
-	{
-		CNpc* pNpc;
-		IF_OK(pRole->QueryObj(OBJ_NPC, IPP_OF(pNpc)))
-		{
-			if(pNpc->GetType()==_STATUARY_NPC)
-			{
-				m_pInfo->usStatuaryLife	 = pRole->GetLife() / STATUARY_LIFE_SCALE;
-				m_pInfo->usStatuaryFrame = pNpc->GetInt(STATUARYDATA_FRAME);
-			}
-			else
-			{
-				m_pInfo->usLife	 = pRole->GetLife();
-				//m_pInfo->usLevel = pNpc->GetInt(NPCDATA_MAXLIFE);
-			}
-		}
-	}
-	else if (IsNpcID(pRole->GetID()))
-	{
-		m_pInfo->usLife	 = pRole->GetLife();
-		m_pInfo->usLevel = pRole->GetLev();
-	}
-/*	else
-	{
-		CUser*	pUser;
-		if (pRole->QueryObj(OBJ_USER, IPP_OF(pUser)))
-		{
-			m_pInfo->ucSprite	= pUser->GetSpriteFace();
-		}
-	}*/
+	m_pInfo->dwSyndicateID = pInfo->idSyndicate;
+	m_pInfo->dwSubgroupID = pInfo->idSubgroup;
+	m_pInfo->wSyndicateRank = pInfo->wSynRank;
 
 	BOOL bSucMake	=true;
-	bSucMake	&=m_StrPacker.AddString((char*)pRole->GetName());
+	bSucMake &= m_StrPacker.AddString((char*)pRole->GetName());
+	bSucMake &= m_StrPacker.AddString((char*)pInfo->szNickname);
+	bSucMake &= m_StrPacker.AddString((char*)pInfo->szMate);
+
+	for (int i = 0; i < 25; i++) m_pInfo->bColorSets[i] = 0;
+
+	//if (m_pInfo->dwSyndicateID > 0) bSucMake &= m_StrPacker.AddString((char*)pInfo->szSyndicate);
+	//if (m_pInfo->dwSubgroupID > 0) bSucMake &= m_StrPacker.AddString((char*)pInfo->szBranch);
+	//if (m_pInfo->wSyndicateRank > 0) bSucMake &= m_StrPacker.AddString((char*)pInfo->szSynidcateRank);
 
 	m_unMsgType	=_MSG_PLAYER;
 	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();

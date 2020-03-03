@@ -219,6 +219,11 @@ struct ST_CREATENEWNPC
 	unsigned char	ucOwnerType;
 };
 
+struct ST_CREATENEWMONSTER { //Is this really needed?
+	OBJID id;
+	int iLevel;
+};
+
 struct CreateSyndicateInfo
 {
 	OBJID		idSyn;

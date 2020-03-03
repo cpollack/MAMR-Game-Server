@@ -43,21 +43,21 @@ enum GAMEMAPDATA{
 	GAMEMAPDATA_BGMUSIC,
 	GAMEMAPDATA_BGMUSIC_SHOW,
 	GAMEMAPDATA_FIGHTMUSIC,
+	GAMEMAPDATA_PASSWAYCOUNT,
+	GAMEMAPDATA_PASSWAY0_MAPID,
+	GAMEMAPDATA_PASSWAY0_MAPDOC,
+	GAMEMAPDATA_PASSWAY0_MAPPORTAL,
 	GAMEMAPDATA_PORTALCOUNT=68,
 	GAMEMAPDATA_PORTAL0_X,
 	GAMEMAPDATA_PORTAL0_Y,
-	//GAMEMAPDATA_REBORN_MAPID,
-	//GAMEMAPDATA_REBORN_PORTAL,
-	//GAMEMAPDATA_RESOURCE_LEV,
-	//GAMEMAPDATA_OWNERTYPE,
-	//GAMEMAPDATA_LINKMAP,
-	//GAMEMAPDATA_LINK_X,
-	//GAMEMAPDATA_LINK_Y,
-//	GAMEMAPDATA_CASTLE,              //1 NORMAL ,2 CENTRE  //add huang 2003.12.30 // 要加城堡分类
-	GAMEMAPDATA_OWNERID_,			// don't use directly
-    //GAMEMAPDATA_MAPGROUP,
+	GAMEMAPDATA_OFFICE_MAP_ID,
+	GAMEMAPDATA_OFFICE_MAP_X,
+	GAMEMAPDATA_OFFICE_MAP_Y,
+	GAMEMAPDATA_OWNERID,
 	GAMEMAPDATA_IDXSERVER,
 };
+const int GAMEMAP_PASSWAYLEN = 3;
+const int GAMEMAP_PORTALLEN = 2;
 char	szMapTable[];
 typedef	CGameData<GAMEMAPDATA,szMapTable, szID>	CGameMapData;
 
@@ -149,7 +149,7 @@ struct	NewMapInfo{
 
 #include "WeatherRegion.h"
 ///////////////////////////////////////////////////////
-const bool	WITH_BLOCK		= true;
+const bool	WITH_BLOCK		= false; //Disabled map blocks as they are not yet used with MAM
 typedef	vector<IMapThing*>	MAPTHING_SET;
 class CGameMap : public CGameObj
 {
@@ -219,7 +219,7 @@ protected:
 	DWORD	m_dwLightRGB;
 
 public: // get
-	int		GetOwnerID()					{ return m_pData->GetInt(GAMEMAPDATA_OWNERID_); }
+	int		GetOwnerID()					{ return m_pData->GetInt(GAMEMAPDATA_OWNERID); }
 	//int		GetOwnerType()					{ return m_pData->GetInt(GAMEMAPDATA_OWNERTYPE); }
 	int		GetWidth()						{ return m_pMapData->GetMapWidth(); }
 	int		GetHeight()						{ return m_pMapData->GetMapHeight(); }
@@ -275,6 +275,7 @@ public: // application
 	void	CollectMapThing(MAPTHING_SET& psetMapThing, const POINT pos, int nRange, OBJID idObjTypeUnion);	// idObjTypeUnion 支持多类型对象
 	bool	FindDropItemCell(int nRange, POINT* pos);			// pos: in/out
 	bool	GetPassageMap(OBJID* pidMap, POINT* pposTarget, const POINT& pos);
+	bool	GetPassageMap(OBJID* pidMap, POINT* pposTarget, const int idxPassage);
 	bool	GetRebornMap(OBJID* pidMap, POINT* pposTarget);
 	bool	SetStatus(int nStatus, bool flag);				// return false: no change
 	void	SetSynID(OBJID idSyn, bool bWithAllNpc);				// true: set all syna npc syn id, yet.

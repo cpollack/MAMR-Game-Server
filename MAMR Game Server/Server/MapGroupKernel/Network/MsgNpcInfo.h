@@ -40,7 +40,7 @@ protected:
 		WORD	wCellY;
 
 		char szName[_MAX_NAMESIZE];
-		BYTE bColorSets[25];
+		BYTE bColorSets[15];
 	}MSG_Info;
 
 	MSG_Info*	m_pInfo;

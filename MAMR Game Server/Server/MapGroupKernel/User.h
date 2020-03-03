@@ -263,6 +263,7 @@ class CPackage;
 class CTransformation;
 class CAgent;
 class CTaskDetail;
+class CAiNpc;
 class CUser : public CGameObj, public CRole, public IUserStorage, IChangeTeam
 {
 protected:
@@ -339,7 +340,7 @@ public: // IRole
 	virtual DWORD	GetDefence			();
 	virtual DWORD	GetDefence2			();
 
-	virtual DWORD	GetDegree			();
+	//virtual DWORD	GetDegree			();
 	//virtual DWORD	GetDexterity		();
 
 	virtual DWORD	GetDdg				();
@@ -560,7 +561,7 @@ public:	// map ----------------------
 	OBJID		GetRecordMapID					();
 	bool		ChangeMap						();
 //	enum { FLYMAP_ERROR=-1, FLYMAP_NORMAL, FLYMAP_MAPGROUP };
-	int 		FlyMap							(OBJID idMap, int nPosX, int nPosY);		// return false: can't fly
+	int 		FlyMap							(OBJID idMap, int nPosX, int nPosY, int idxPassage = -1);		// return false: can't fly
 	void		GotoJail						(void);
 	virtual bool		SendSelfToBlock			();
 	
@@ -710,6 +711,7 @@ public:	//-------- 不知道的类型 -----------------------
 	DWORD		GetForce			()				{ return m_data.GetForce();}
 
 	void		SetDegree			(DWORD dwDegree);
+	DWORD		GetDegree			()				{ return m_data.GetDegree(); }
 
 	void		SetSpeed			(DWORD dwSpeed);
 	DWORD		GetSpeed			()				{ return m_data.GetSpeed();}
@@ -955,11 +957,11 @@ protected:
 
 public: // call pet -----------------------------------------------
 	bool		CallPet(OBJID idMonsterType, int x, int y, int nKeepSecs=0);
-	CMonster*	QueryCallPet()			{ return m_pCallPet; }
+	CAiNpc*	QueryCallPet()			{ return m_pCallPet; }
 	void		KillCallPet(bool bNow=false);
 	OBJID		GetCallPetID();
 protected:
-	CAutoLink<CMonster>		m_pCallPet;			// may be null
+	CAutoLink<CAiNpc>		m_pCallPet;			// may be null
 	CTimeOut				m_tCallPet;			// no active for keep alive
 
 	//---任务系统---begin
@@ -971,9 +973,9 @@ public: // eudemon -- zlong 2004-02-05  ----------------------------------------
 	void		CallBackEudemon(OBJID idItem, bool bNow=true);
 	//========
 	int			GetEudemonAmount()			{ return m_setEudemon.size(); }
-	CMonster*	QueryEudemonByIndex(int nIdx);
-	CMonster*	QueryEudemonByID(OBJID idEudemon);
-	CMonster*	QueryEudemon(OBJID idItem);
+	CAiNpc*	QueryEudemonByIndex(int nIdx);
+	CAiNpc*	QueryEudemonByID(OBJID idEudemon);
+	CAiNpc*	QueryEudemon(OBJID idItem);
 	//========
 
 	bool		HatchEudemon(CItem* pItem);
@@ -993,7 +995,7 @@ protected:
 protected:
 	//========
 	struct ST_EUDEMON {
-		CAutoLink<CMonster>		pEudemon;
+		CAutoLink<CAiNpc>		pEudemon;
 		CItemPtr				pEudemonItem;
 		CTimeOut				tEudemon;
 	};

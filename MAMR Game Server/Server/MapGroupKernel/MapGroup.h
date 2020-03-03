@@ -102,6 +102,7 @@ public:
 
 public: // create
 	bool	Create(PROCESS_ID idProcess, ISocket* pSocket, IDatabase* pDb, IMessagePort* pMsgPort);
+	void	Init();
 	void	Destroy();
 	void	OnTimer(time_t tCurr);
 	IUserManager*	CreateNewUserManager();
@@ -272,6 +273,7 @@ inline IMagicTypeSet*	MagicTypeSet()			{ extern IMagicTypeSet* g_setMagicType; C
 inline IMagicTypeSet*	AutoMagicTypeSet()		{ extern IMagicTypeSet* g_setAutoMagicType; CHECKF(g_setAutoMagicType); return g_setAutoMagicType; }
 inline IMagicTrackSet*	MagicTrackSet()			{ extern IMagicTrackSet* g_setMagicTrack; CHECKF(g_setMagicTrack); return g_setMagicTrack; }
 inline ITrapTypeSet*	TrapTypeSet()			{ extern ITrapTypeSet* g_setTrapType; CHECKF(g_setTrapType); return g_setTrapType; }
+inline INpcTypeSet*		NpcType()				{ extern INpcTypeSet* g_setNpcType; CHECKF(g_setNpcType); return g_setNpcType; }
 inline IMonsterTypeSet*	MonsterType()			{ extern IMonsterTypeSet* g_setMonsterType; CHECKF(g_setMonsterType); return g_setMonsterType; }
 inline IRebirthSet*		RebirthSet()			{ extern IRebirthSet* g_setRebirth; CHECKF(g_setRebirth); return g_setRebirth; }
 inline CItemAddition*	ItemAddition()			{ extern CItemAddition* g_pItemAddition; CHECKF(g_pItemAddition); return g_pItemAddition; }

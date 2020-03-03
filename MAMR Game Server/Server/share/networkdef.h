@@ -15,8 +15,13 @@ const unsigned short _MSG_NONE			=0;
 const unsigned short _MSG_GENERAL		=1000;
 
 //Cleaned
+const unsigned short _MSG_WALK		= _MSG_GENERAL + 5;
+const unsigned short _MSG_ACTION	= _MSG_GENERAL + 7;
 const unsigned short _MSG_USERINFO	= _MSG_GENERAL + 8;
+const unsigned short _MSG_DIRECTION = _MSG_GENERAL + 18;
 const unsigned short _MSG_MAPINFO	= _MSG_GENERAL + 31;
+const unsigned short _MSG_PLAYER	= _MSG_GENERAL + 32;
+
 const unsigned short _MSG_ROLE		= _MSG_GENERAL + 50;
 const unsigned short _MSG_CONNECT	= _MSG_GENERAL + 52;
 
@@ -29,19 +34,15 @@ const unsigned short _MSG_LOGIN			=_MSG_GENERAL+2;
 const unsigned short _MSG_LOGIN_c		=_MSG_GENERAL+2; //special login override, original used for npc server?
 const unsigned short _MSG_LOGOUT		=_MSG_GENERAL+3;
 const unsigned short _MSG_TALK			=_MSG_GENERAL+4;
-const unsigned short _MSG_WALK			=_MSG_GENERAL+5;
-const unsigned short _MSG_ACTION		=_MSG_GENERAL + 7;
-const unsigned short _MSG_ITEMINFO		=_MSG_GENERAL+6;
+const unsigned short _MSG_ITEMINFO		= _MSG_GENERAL + 6;
 const unsigned short _MSG_ITEM			=_MSG_GENERAL+9;
 const unsigned short _MSG_ATTACK		=_MSG_GENERAL + 10;
 const unsigned short _MSG_ACCIDENT		=_MSG_GENERAL+11;
 const unsigned short _MSG_TICK			=_MSG_GENERAL+12;
 const unsigned short _MSG_ROOM			=_MSG_GENERAL+13;
-const unsigned short _MSG_PLAYER		=_MSG_GENERAL+14;
 const unsigned short _MSG_NAME			=_MSG_GENERAL+15;
 const unsigned short _MSG_WEATHER		=_MSG_GENERAL+16;
 const unsigned short _MSG_USERATTRIB	=_MSG_GENERAL+17;
-const unsigned short _MSG_DIRECTION		=_MSG_GENERAL+18;
 const unsigned short _MSG_FRIEND		=_MSG_GENERAL+19;
 const unsigned short _MSG_EFFECT		=_MSG_GENERAL+20;
 const unsigned short _MSG_QUIZGAME		=_MSG_GENERAL+21;

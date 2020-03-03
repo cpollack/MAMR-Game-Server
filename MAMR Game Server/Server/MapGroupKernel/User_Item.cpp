@@ -990,7 +990,7 @@ bool CUser::ChkUseItem(CItem* pItem, IRole* pTarget)
 	}
 	else
 	{
-		CMonster* pMonster = NULL;
+		CAiNpc* pMonster = NULL;
 		if (!pTarget->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 			return false;
 

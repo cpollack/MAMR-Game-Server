@@ -11,15 +11,18 @@
 
 #include "NetMsg.h"
 
-enum {	actionNone				=0, 
-		actionChgDir			=1, 
-		actionPosition			=92, 
+enum {	//Verified
+		actionNone				= 0, 
+		actionChgDir			= 1, 
+		actionPosition			= 2, 
+		actionFlyMap			= 8, //Leave map
+
+	//OLD
 		actionEmotion			=93,
 		actionBroadcastPos		=94,
 		actionDivorce			=95,
 		actionSelfUnfreeze		=96,
 		actionChgMap			=97,			// 无需参数
-		actionFlyMap			=98,
 		actionChgWeather		=99,
 		actionFireworks			=910,
 		actionDie				=911,
@@ -164,8 +167,11 @@ protected:
 
 		OBJID		idUser;
 		USHORT		unPosX, unPosY;
-		DWORD		dwDir;
-		DWORD		dwAction;
+		union {
+			DWORD	dwDir;
+			DWORD	dwPassage;
+		};
+		DWORD	dwAction;
 
 		DWORD		dwTimeStamp;
 	}MSG_Info;

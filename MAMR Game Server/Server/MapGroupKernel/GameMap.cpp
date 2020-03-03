@@ -70,11 +70,11 @@ bool CGameMap::Create(PROCESS_ID idProcess, IRecordset* pRes)
 	if(!m_pData || !m_pData->Create(pRes))
 		return false;
 
-	LOGMSG("Load map file [%d]...", m_pData->GetInt(GAMEMAPDATA_MAPDOC));
+	//LOGMSG("Loadind map file [%d]...", m_pData->GetInt(GAMEMAPDATA_MAPDOC));
 	m_pMapData	= IMapData::CreateNew(m_pData->GetInt(GAMEMAPDATA_MAPDOC), MAPDATA_VERSION);
 	if(!m_pMapData)
 	{
-		LOGERROR("地图文件[%d]加载失败！", m_pData->GetInt(GAMEMAPDATA_MAPDOC));
+		LOGERROR("Map file [%d] failed to load!", m_pData->GetInt(GAMEMAPDATA_MAPDOC));
 		return false;
 	}
 
@@ -282,7 +282,7 @@ void CGameMap::BroadcastBlockMsg(IMapThing* pThing, CNetMsg* pMsg, bool bSendSel
 	//? 这个函数的逻辑有点乱：(
 	void*	pObj	= NULL;
 	IRole*	pRole	= NULL;
-	CMonster* pMonster = NULL;
+	CAiNpc* pMonster = NULL;
 //@不发非玩家消息到NPC服务器	bool	bSendToNpc = (!pThing->QueryObj(OBJ_MONSTER, IPP_OF(pObj)) || bSendSelf);
 	bool	bSendToNpc = (pThing->QueryObj(OBJ_USER, IPP_OF(pObj)) 
 							|| (pThing->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && (pMonster->IsCallPet() || pMonster->IsEudemon()))
@@ -356,7 +356,7 @@ void CGameMap::BroadcastBlockMsg(int nPosX, int nPosY, CNetMsg* pMsg)
 		if(pTarget && pTarget->QueryRole(IPP_OF(pRole)) && pRole->GetDistance(nPosX, nPosY) <= CELLS_PER_VIEW)
 		{
 			// monster
-			CMonster* pMonster = NULL;			
+			CAiNpc* pMonster = NULL;
 			if (pTarget->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && !bSendNpcAlready)
 			{
 				if (pMonster->IsCallPet() || pMonster->IsEudemon())
@@ -422,8 +422,8 @@ void CGameMap::MoveTo(IRole* pRole, int nNewPosX, int nNewPosY, BOOL bLeaveBlock
 	if(bEnterBlock)
 		m_pMapData->IncRole(nNewPosX, nNewPosY);
 
-	if(Block(pRole->GetPosX()) == Block(nNewPosX) && Block(pRole->GetPosY()) == Block(nNewPosY))
-		return;
+	//if(Block(pRole->GetPosX()) == Block(nNewPosX) && Block(pRole->GetPosY()) == Block(nNewPosY))
+	//	return;
 
 	IMapThing* pThing = pRole->QueryMapThing();
 	CHECK(pThing);
@@ -462,6 +462,7 @@ void CGameMap::ClearRegionInfo(CUser* pUser)
 //////////////////////////////////////////////////////////////////////
 void CGameMap::ChangeRegion(CUser* pUser, int nNewPosX, int nNewPosY)
 {
+	if (!m_setWeather) return;
 	for(int i = 0; i < m_setWeather->GetAmount(); i++)
 	{
 		CWeatherRegion* pRegion = m_setWeather->GetObjByIndex(i);
@@ -781,6 +782,39 @@ bool CGameMap::GetPassageMap(OBJID* pidMap, POINT* pposTarget, const POINT& pos)
 }
 
 //////////////////////////////////////////////////////////////////////
+bool CGameMap::GetPassageMap(OBJID* pidMap, POINT* pposTarget, const int idxPassage) {
+	if (idxPassage == PASSAGE_NONE)
+		return false;
+
+	OBJID	idTargetMap = ID_NONE;
+	int		idxPortal = -1;
+
+	//Get target map and portal ID
+	idTargetMap = m_pData->GetInt(GAMEMAPDATA(GAMEMAPDATA_PASSWAY0_MAPID + (idxPassage * GAMEMAP_PASSWAYLEN)));
+	idxPortal = m_pData->GetInt(GAMEMAPDATA(GAMEMAPDATA_PASSWAY0_MAPPORTAL + (idxPassage * GAMEMAP_PASSWAYLEN)));
+
+	if (idTargetMap == ID_NONE || idxPortal == -1) {
+		LOGWARNING("Map [%d] passageway [%d] or target map [%d] is invalid.", GetID(), idxPassage, idTargetMap);
+		return false;
+	}
+
+	POINT	posNew;
+	CGameMapData* pTargetMap = MapManager()->QuerySystemMapSet()->GetObj(idTargetMap);
+	IF_NOT(pTargetMap) {
+		LOGERROR("Target map [%d] was not found during passage lookup.", idTargetMap);
+		return false;
+	}
+
+	posNew.x = pTargetMap->GetInt(GAMEMAPDATA(GAMEMAPDATA_PORTAL0_X + (idxPortal * GAMEMAP_PORTALLEN)));
+	posNew.y = pTargetMap->GetInt(GAMEMAPDATA(GAMEMAPDATA_PORTAL0_Y + (idxPortal * GAMEMAP_PORTALLEN)));
+
+	*pidMap = idTargetMap;
+	*pposTarget = posNew;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
 bool CGameMap::SetStatus(int nStatus, bool flag)
 {
 	int	nOldStatus = m_nStatus;
@@ -905,7 +939,7 @@ OBJID CGameMap::CreateDynaMap(PROCESS_ID idProcess, const NewMapInfo* pInfo)
 		return false;
 	m_pData->SetStr(GAMEMAPDATA_NAME, pInfo->szName, _MAX_NAMESIZE);
 	//m_pData->SetInt(GAMEMAPDATA_OWNERTYPE,		pInfo->nOwnerType);
-	m_pData->SetInt(GAMEMAPDATA_OWNERID_,		pInfo->idOwner);
+	m_pData->SetInt(GAMEMAPDATA_OWNERID,		pInfo->idOwner);
 	m_pData->SetInt(GAMEMAPDATA_MAPDOC,			pInfo->nMapDoc);
 	m_pData->SetInt(GAMEMAPDATA_TYPE,			pInfo->nType);
 	//m_pData->SetInt(GAMEMAPDATA_MAPGROUP,		pInfo->nMapGroup);

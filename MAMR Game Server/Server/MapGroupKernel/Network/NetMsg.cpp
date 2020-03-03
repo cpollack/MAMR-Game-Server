@@ -145,17 +145,23 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 	CNetMsg* pMsg	=NULL;
 	switch(idMsg)
 	{
+		//Implemented Messages
+	case _MSG_WALK:
+		pMsg = new CMsgWalk;
+		break;
+	case _MSG_ACTION:
+		pMsg = new CMsgAction;
+		break;
 	case _MSG_DIRECTION:
 		pMsg = new CMsgDirection;
 		break;
+
+		//Old Messages, not yet implemented
 	/*case _MSG_TALK:
 		pMsg	=new CMsgTalk;
 		break;
 	case _MSG_MESSAGEBOARD:
 		pMsg	=new CMsgMessageBoard;
-		break;
-	case _MSG_ACTION:
-		pMsg	=new CMsgAction;
 		break;
 	case _MSG_USERINFO:
 		pMsg	=new CMsgUserInfo;
@@ -186,9 +192,6 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 		break;
 	case _MSG_AINPCINFO:
 		pMsg	=new CMsgMonsterInfo;
-		break;
-	case _MSG_WALK:
-		pMsg	=new CMsgWalk;
 		break;
 	case _MSG_WALKEX:
 		pMsg	=new CMsgWalkEx;

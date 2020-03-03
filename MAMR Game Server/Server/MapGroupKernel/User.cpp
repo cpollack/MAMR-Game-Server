@@ -429,8 +429,6 @@ bool CUser::EnterMap()
 	CMapPtr pMap = GetMap();
 	if(pMap)
 	{
-		UpdateBroadcastSet();
-
 		pMap->EnterRoom(this->QueryMapThing(), WITH_BLOCK);
 	
 		//pMap->SendRegionInfo(this);
@@ -438,7 +436,9 @@ bool CUser::EnterMap()
 		pMap->SendMapInfo(this);
 		pMap->SendBlockInfo((IRole*)this); //Send after changing maps, not before
 
-//		SendSelfToBlock();
+		UpdateBroadcastSet();
+
+		SendSelfToBlock();
 	}
 
 //	if(!GetMap()->IsWingEnable())
@@ -1070,19 +1070,19 @@ void CUser::ProcessAfterMove()
 //////////////////////////////////////////////////////////////////////
 void CUser::ProcessOnMove(int nMoveMode)
 {
-	if(QueryBooth())
-		QueryBooth()->LeaveMap();
+	//if(QueryBooth()) //Mam uses pet booths, which stay?
+	//	QueryBooth()->LeaveMap();
 
-	if (nMoveMode != MOVEMODE_TRACK)
-		SetPose(_ACTION_STANDBY);
+	//if (nMoveMode != MOVEMODE_TRACK)
+	//	SetPose(_ACTION_STANDBY);
 
 	// stop fight
-	if(nMoveMode != MOVEMODE_TRACK && nMoveMode != MOVEMODE_JUMPMAGICATTCK 
+	/*if(nMoveMode != MOVEMODE_TRACK && nMoveMode != MOVEMODE_JUMPMAGICATTCK 
 		&& nMoveMode != MOVEMODE_COLLIDE && nMoveMode != MOVEMODE_SYNCHRO)
 	{
 		ClrAttackTarget();
-	}
-
+	}*/
+	
 	if(nMoveMode == MOVEMODE_RUN || nMoveMode == MOVEMODE_JUMP || nMoveMode == MOVEMODE_WALK
 		|| (nMoveMode >= MOVEMODE_RUN_DIR0 && nMoveMode <= MOVEMODE_RUN_DIR7))		// && QueryMagic()->IsKeepBow()
 	{
@@ -1551,22 +1551,22 @@ DWORD CUser::GetDefence2()
 }*/
 
 //////////////////////////////////////////////////////////////////////
-DWORD CUser::GetDegree()
+/*DWORD CUser::GetDegree()
 {
 	//if(QueryTransformation())
 	//	return QueryTransformation()->GetDegree();
 
 	int nDegree = m_data.GetDegree();
 
-	/*for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
-	{
-		CItem* pEquip = this->GetEquipItemByPos(i);
-		if(pEquip)
-			nDex += pEquip->GetDexteriy();
-	}*/
+	//for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
+	//{
+	//	CItem* pEquip = this->GetEquipItemByPos(i);
+	//	if(pEquip)
+	//		nDex += pEquip->GetDexteriy();
+	//}
 
 	return nDegree;
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////
 DWORD CUser::GetDodge()
@@ -1927,7 +1927,8 @@ bool CUser::LeaveMap()
 	if(pMap)
 	{
 		// BeKill的时候调用了DecRole，因此这里需要判断是否为死亡状态，以免LeaveRoom的时候多减一次角色数
-		pMap->LeaveRoom(QueryMapThing(), this->IsAlive());	//WITH_BLOCK);
+		//pMap->LeaveRoom(QueryMapThing(), this->IsAlive());	//WITH_BLOCK);
+		pMap->LeaveRoom(QueryMapThing(), false);	// Turn off block?
 		StandTurnoff();
 		pMap->ClearRegionInfo(this);
 
@@ -2295,12 +2296,12 @@ bool CUser::TransferShield(bool bMagic, IRole* pAtker, int nDamage)
 		return false;
 
 	int nMagicType = pStatus->GetPower();
-	vector<CMonster*>	setEudemon;
+	vector<CAiNpc*>	setEudemon;
 
 	// 寻找符合条件的已出征幻兽
 	for (int i=0; i<this->GetEudemonAmount(); i++)
 	{
-		CMonster* pEudemon = this->QueryEudemonByIndex(i);
+		CAiNpc* pEudemon = this->QueryEudemonByIndex(i);
 		if (pEudemon && pEudemon->QueryMagic() && pEudemon->QueryMagic()->FindMagic(nMagicType))
 			setEudemon.push_back(pEudemon);
 	}
@@ -3153,7 +3154,7 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 	}
 	else	// kill by monster
 	{
-		CMonster* pMonster = NULL;
+		CAiNpc* pMonster = NULL;
 		if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 		{
 			CUser* pUser = pMonster->QueryOwnerUser();
@@ -3767,12 +3768,19 @@ void CUser::GotoJail(void)
 
 //////////////////////////////////////////////////////////////////////
 // return false: can't fly
-int CUser::FlyMap(OBJID idMap, int nPosX, int nPosY)				// call - may be delete this;
+int CUser::FlyMap(OBJID idMap, int nPosX, int nPosY, int idxPassage)				// call - may be delete this;
 {
 	if(m_pMap == NULL)			// not in map
 	{
-		LOGWARNING("玩家出现连续切屏。");
+		LOGWARNING("The player cuts the screen continuously.");
 		return FLYMAP_ERROR;
+	}
+
+	POINT	posNew;
+	posNew.x = nPosY;
+	posNew.y = nPosY;
+	if (idxPassage >= 0) {
+		m_pMap->GetPassageMap(&idMap, &posNew, idxPassage);
 	}
 
 	if (idMap == ID_NONE)
@@ -3782,17 +3790,17 @@ int CUser::FlyMap(OBJID idMap, int nPosX, int nPosY)				// call - may be delete 
 	if(!CMapGroup::IsValidMapGroupProcessID(idProcess) || idProcess == m_idProcess)
 	{
 		CGameMap* pNewMap = MapManager()->GetGameMap(idMap);
-		if(!pNewMap || !pNewMap->IsValidPoint(nPosX, nPosY))
-		{
-			LOGMSG("FLY 地图[%u]的坐标[%u][%u]非法!", idMap, nPosX, nPosY);
-			return FLYMAP_ERROR;
-		}
+		//if(!pNewMap || !pNewMap->IsValidPoint(nPosX, nPosY))
+		//{
+		//	LOGMSG("FLY The coordinates of the map [%u] [%u] [%u] are illegal!", idMap, nPosX, nPosY);
+		//	return FLYMAP_ERROR;
+		//}
 
 		DEBUG_TRY	// VVVVVVVVVVVVVV
 		LeaveMap();
 		m_pMap		= pNewMap;
-		m_nPosX		= nPosX;
-		m_nPosY		= nPosY;
+		m_nPosX		= posNew.x;
+		m_nPosY		= posNew.y;
 
 		// 发送回应消息
 		CMsgAction	msg;
@@ -6839,7 +6847,7 @@ bool CUser::Transform(DWORD dwType, int nKeepSecs, bool bSynchro/*=true*/)
 		bBack = true;
 	}
 
-	CNpcType* pType = MonsterType()->GetObj(dwType);
+	CNpcType* pType = NpcType()->GetObj(dwType);
 	CHECKF(pType);
 
 	CTransformation* pTransform = CTransformation::CreateNew();		// VVVVVVVVVVVVVVVVVVVVVVVVvv
@@ -6889,7 +6897,7 @@ bool CUser::CallPet(OBJID idMonsterType, int x, int y, int nKeepSecs/*=0*/)
 {
 	KillCallPet();
 
-	CMonster* pMonster = NpcManager()->CreateCallPet(this, idMonsterType, x, y);
+	CAiNpc* pMonster = NpcManager()->CreateCallPet(this, idMonsterType, x, y);
 	CHECKF(pMonster);
 	m_pCallPet = pMonster->QueryLink();
 
@@ -7217,7 +7225,7 @@ bool CUser::IsImmunity(IRole* pRole)
 	}
 	else if(IsNpcID(idRole))	// is monster
 	{
-		CMonster* pMonster = NULL;
+		CAiNpc* pMonster = NULL;
 		CHECKF(pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)));
 		if(pMonster->GetMasterID() == GetID())		// call pet of mine
 			return true;
@@ -7376,7 +7384,7 @@ void CUser::SetCrimeStatus(int nStatus/*=STATUS_CRIME*/, int nTime/*=CRIME_KEEP_
 		CRole::AttachStatus(QueryCallPet()->QueryRole(), nStatus, nPower, nTime);
 	for (int i=0; i<GetEudemonAmount(); i++)
 	{
-		CMonster* pEudemon = QueryEudemonByIndex(i);
+		CAiNpc* pEudemon = QueryEudemonByIndex(i);
 		if (pEudemon)
 			CRole::AttachStatus(pEudemon->QueryRole(), nStatus, nPower, nTime);
 	}
@@ -7714,7 +7722,7 @@ bool CUser::CreateEudemon(CItem* pItem, int x, int y)
 	if (QueryEudemon(pItem->GetID()))
 		return false;
 	DetachEudemon(pItem);
-	CMonster* pMonster = NpcManager()->CreateEudemon(this, pItem, x, y);
+	CAiNpc* pMonster = NpcManager()->CreateEudemon(this, pItem, x, y);
 	CHECKF(pMonster);
 
 	ST_EUDEMON* ptEudemon = new ST_EUDEMON;
@@ -7831,7 +7839,7 @@ void CUser::CallBackAllEudemon(bool bNow/*=true*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-CMonster* CUser::QueryEudemon(OBJID idItem)
+CAiNpc* CUser::QueryEudemon(OBJID idItem)
 {
 	CHECKF (idItem != ID_NONE);
 	ST_EUDEMON* ptEudemon = this->QueryEudemonSt(idItem);
@@ -7842,7 +7850,7 @@ CMonster* CUser::QueryEudemon(OBJID idItem)
 }
 
 //////////////////////////////////////////////////////////////////////
-CMonster* CUser::QueryEudemonByID(OBJID idEudemon)
+CAiNpc* CUser::QueryEudemonByID(OBJID idEudemon)
 {
 	CHECKF (idEudemon != ID_NONE);
 	EUDEMON_SET::iterator it=m_setEudemon.begin();
@@ -7857,7 +7865,7 @@ CMonster* CUser::QueryEudemonByID(OBJID idEudemon)
 }
 
 //////////////////////////////////////////////////////////////////////
-CMonster* CUser::QueryEudemonByIndex(int nIdx)
+CAiNpc* CUser::QueryEudemonByIndex(int nIdx)
 {
 	CHECKF (nIdx >= 0 && nIdx < m_setEudemon.size());
 	ST_EUDEMON* ptEudemon = m_setEudemon[nIdx];
@@ -8086,7 +8094,7 @@ void CUser::AwardEudemonExp(OBJID idItem, int nExp, bool bGemEffect/*= true*/)
 			if (msg.Create(pEudemonItem, ITEMINFO_UPDATE))
 				this->SendMsg(&msg);
 
-			CMonster* pEudemon = ptEudemon->pEudemon;
+			CAiNpc* pEudemon = ptEudemon->pEudemon;
 			pEudemon->AddAttrib(_USERATTRIB_POTENTIAL, ADD_POTENTIAL_LEVUP, SYNCHRO_TRUE);
 			
 			if (pEudemon->QueryMagic())
@@ -8128,7 +8136,7 @@ bool CUser::AttachEudemon(OBJID idItem)
 	CHECKF (idItem != ID_NONE);
 
 	CItem* pItem = this->GetItem(idItem);
-	CMonster* pEudemon = this->QueryEudemon(idItem);
+	CAiNpc* pEudemon = this->QueryEudemon(idItem);
 
 	if (!(pItem && pEudemon))
 		return false;

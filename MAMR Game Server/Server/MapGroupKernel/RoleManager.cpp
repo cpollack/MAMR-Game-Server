@@ -48,7 +48,7 @@ bool CRoleManager::LoadAllPet()		//??? 最好由AI服务器分段创建
 	{
 		for(int i = 0; i < pRes->RecordCount(); i++, pRes->MoveNext())
 		{
-			CMonster* pMonster = CMonster::CreateNew();
+			CAiNpc* pMonster = CAiNpc::CreateNew();
 			IF_OK(pMonster)
 			{
 				if(pMonster->Create(m_idProcess, pRes))			// false: not this map group
@@ -75,7 +75,7 @@ IRole* CRoleManager::QueryRole(CNetMsg* pMsg, OBJID idRole)
 		CUserPtr pUser = UserManager()->GetUserBySocketID(pMsg->GetSocketID());
 		if(pUser)
 		{
-			CMonster* pEudemon = NULL;
+			CAiNpc* pEudemon = NULL;
 			if (idRole && idRole == pUser->GetCallPetID())
 				return pUser->QueryCallPet()->QueryRole();
 			else if (idRole && (pEudemon = pUser->QueryEudemonByID(idRole)))
@@ -112,8 +112,8 @@ void CRoleManager::OnTimer(time_t tCurr)
 		{
 			DEBUG_TRY
 			pRole->OnTimer(tCurr);			// 可能删除MONSTER
-			if(pRole->IsDelThis())
-				m_setRole->DelObj(pRole->GetID());
+			//if(pRole->IsDelThis()) //Roles don't delete by timer since we don't have roaming monsters, lets disable this for now. Plus, NPC doesnt have a override for IsDelThis()
+			//	m_setRole->DelObj(pRole->GetID());
 			DEBUG_CATCH("@CRoleManager::OnTimer@")
 		}
 	}
@@ -236,7 +236,7 @@ int CRoleManager::CountNpcByType(OBJID idMap, int nType)
 int CRoleManager::CountMonsterByName(OBJID idMap, LPCTSTR szName)
 {
 	int		nCount = 0;
-	CMonster*	pMonster;
+	CAiNpc*	pMonster;
 	for(IRoleSet::Iter i = m_setRole->Begin(); i != m_setRole->End(); i++)
 	{
 		IRole* pRole = m_setRole->GetObjByIter(i);
@@ -250,7 +250,7 @@ int CRoleManager::CountMonsterByName(OBJID idMap, LPCTSTR szName)
 int CRoleManager::CountMonsterByGenID(OBJID idMap, OBJID idGen)
 {
 	int		nCount = 0;
-	CMonster*	pMonster;
+	CAiNpc*	pMonster;
 	for(IRoleSet::Iter i = m_setRole->Begin(); i != m_setRole->End(); i++)
 	{
 		IRole* pRole = m_setRole->GetObjByIter(i);

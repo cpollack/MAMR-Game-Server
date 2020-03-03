@@ -905,7 +905,7 @@ bool CGameAction::ProcessActionMonster(CActionData* pAction, LPCTSTR szParam, CU
 	IF_NOT (pAction)
 		return false;
 
-	CMonster* pMonster = NULL;
+	CAiNpc* pMonster = NULL;
 	IF_NOT (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 		return false;
 
@@ -2287,7 +2287,7 @@ bool CGameAction::ProcessActionMap(CActionData* pAction, LPCTSTR szParam, CUser*
 			CRoleSet::Iterator pRole = RoleManager()->QuerySet()->NewEnum();
 			while(pRole.Next())
 			{
-				CMonster* pMonster;
+				CAiNpc* pMonster;
 				if(pRole && pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster))
 					&& pMonster->GetMap()->GetID() == idMap
 					&& pRole->GetPosX() >= nRegionX && pRole->GetPosX() < nRegionX + nRegionCX
@@ -2991,7 +2991,7 @@ bool CGameAction::ProcessActionNpcOnly(CActionData* pAction, LPCTSTR szParam, CU
 			{
 				IRole* pRole = RoleManager()->QuerySet()->GetObjByIter(i);
 				i++;		//??? 提前移动，下面可能会删除当前角色
-				CMonster* pPet;
+				CAiNpc* pPet;
 				if(pRole && pRole->QueryObj(OBJ_MONSTER, IPP_OF(pPet))
 							&& pPet->GetMap()->GetID() == idMap && pPet->GetType() == idType)		// pPet->IsPet() && 
 				{
@@ -5956,7 +5956,7 @@ bool CGameAction::ProcessActionEvent(CActionData* pAction, LPCTSTR szParam, CUse
 			{
 				IRole* pRole = RoleManager()->QuerySet()->GetObjByIter(i);
 				i++;		//??? 提前移动，下面可能会删除当前角色
-				CMonster* pMonster;
+				CAiNpc* pMonster;
 				if(pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->GetGenID() == idGen)
 				{
 					if(!pMonster->IsDeleted())
@@ -6195,7 +6195,7 @@ bool CGameAction::ProcessActionEvent(CActionData* pAction, LPCTSTR szParam, CUse
 			{
 				IRole* pRole = RoleManager()->QuerySet()->GetObjByIter(i);
 				i++;		//??? 提前移动，下面可能会删除当前角色
-				CMonster* pPet;
+				CAiNpc* pPet;
 				if(pRole && pRole->QueryObj(OBJ_MONSTER, IPP_OF(pPet))
 							&& pPet->GetMap()->GetID() == idMap && pPet->GetType() == idType)		// pPet->IsPet() && 
 				{

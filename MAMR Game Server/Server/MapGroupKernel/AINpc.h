@@ -1,4 +1,4 @@
-// AINpc.h: interface for the CMonster class.
+// AINpc.h: interface for the CAiNpc class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -49,7 +49,7 @@ enum {	ATKUSER_LEAVEONLY				= 0,				// 只会逃跑
 const int	MONSTERDROPITEM_RANGE		= 2;		// 2*2+1的4次方=625次搜索
 const int	NPCDIEDELAY_SECS			= 10;		// MONSTER死亡多少秒后删除
 const int	SIMPLEMAGIC_RECRUIT			= 1005;
-const OBJID	TYPE_TASK_MONSTER			= 3000;
+const OBJID	TYPE_TASK_AINPC			= 3000;
 const bool	DEL_NOW						= true;
 
 
@@ -73,22 +73,6 @@ enum EATK_MODE {
 	EATK_MODE_LIMIT,
 };
 
-
-//////////////////////////////////////////////////////////////////////
-enum PETDATA{
-		PETDATA_OWNERID=1,
-		PETDATA_OWNERTYPE,
-		PETDATA_GENID,
-		PETDATA_TYPE,
-		PETDATA_NAME,
-		PETDATA_LIFE,
-		PETDATA_MANA,
-		PETDATA_MAPID,
-		PETDATA_RECORD_X,
-		PETDATA_RECORD_Y,
-		PETDATA_DATA,						// 可用于神兽记录NPCID
-};
-
 //////////////////////////////////////////////////////////////////////
 enum MONSTER_NAME_TYPE{
 	NAME_GREEN,			// 绿名怪
@@ -104,19 +88,16 @@ enum MONSTER_MASKDATA {
 	MASK_DISABLE_STEAL_MONEY= 2,	// 禁止偷窃金钱
 };
 
-//////////////////////////////////////////////////////////////////////
-char	szPetTable[];
-typedef		CGameData<PETDATA, szPetTable, szID>	CPetData;
 
 //////////////////////////////////////////////////////////////////////
 class CUser;
-class CMonster : public CGameObj, public CRole
+class CAiNpc : public CGameObj, public CRole
 {
 protected:
-	CMonster();
-	virtual ~CMonster();
+	CAiNpc();
+	virtual ~CAiNpc();
 public:
-	static CMonster*	CreateNew() 	{ return new CMonster; }
+	static CAiNpc*	CreateNew() 	{ return new CAiNpc; }
 
 	bool	Create(PROCESS_ID idProcess, CNpcType* pType, const struct ST_CREATENEWNPC* pInfo, LPCTSTR pszName=NULL);
 	bool	Create(PROCESS_ID idProcess, CNpcType* pType, const struct ST_CREATENEWNPC* pInfo, CUser* pUser, OBJID idItem=ID_NONE);
@@ -128,7 +109,7 @@ public:
 	virtual CUser*		QueryOwnerUser		()				{ if(IsCallPet() || IsEudemon()) return m_pOwner; return NULL; }	//@@@ 暂略 if(m_pData && m_pData->GetInt(PETDATA_OWNERTYPE) == OWNER_USER) return m_pData->GetInt(PETDATA_OWNERID); 
 protected:
 	virtual bool		QueryRole(void** ppv)	{ return *ppv=(IRole*)this,true; }
-	virtual bool		QueryObj(OBJID idObjType, void** ppv)			{ if(idObjType == OBJ_MONSTER) return *ppv=this,true; return *ppv=NULL,false; }
+	virtual bool		QueryObj(OBJID idObjType, void** ppv)			{ if(idObjType == OBJ_NPCTYPE) return *ppv=this,true; return *ppv=NULL,false; }
 public:
 	virtual IMapThing*	QueryMapThing()			{ return (IMapThing*)this; }
 	IRole*				QueryRole()				{ return (IRole*)this; }
@@ -204,7 +185,7 @@ public: // IRole
 	virtual bool	SendSysMsg(const char* fmt, ...);
 	virtual void	OnTimer(time_t tCurr);
 
-	virtual DWORD	GetSynID			()				{ return m_pData && m_pData->GetInt(PETDATA_OWNERTYPE)==OWNER_SYN ? m_pData->GetInt(PETDATA_OWNERID) : ID_NONE; }
+	virtual DWORD	GetSynID			()				{ return ID_NONE; }
 	virtual DWORD	GetSynRank			()				{ return RANK_NONE; }
 	virtual DWORD	GetSynRankShow		()				{ return RANK_NONE; }
 
@@ -260,12 +241,12 @@ public: // get attrib  ------------------------------------
 	bool		IsDeleted()			{ return m_tDie.IsActive(); }
 	void		DelMonster(bool bNow=false);			//? call this mast !IsDeleted()
 	bool		IsSynPet()				{ return m_idNpc >= PETID_FIRST && m_idNpc <= PETID_LAST; }
-	bool		IsSynMonster()			{ return (m_idNpc >= PETID_FIRST && m_idNpc <= PETID_LAST) && !m_pData; }
+	bool		IsSynMonster()			{ return (m_idNpc >= PETID_FIRST && m_idNpc <= PETID_LAST); }
 	bool		IsCallPet()				{ return m_idNpc >= CALLPETID_FIRST && m_idNpc <= CALLPETID_LAST; }
 	OBJID		GetMasterID();
-	int			GetData()			{ CHECKF(m_pData); return m_pData->GetInt(PETDATA_DATA); }
+	int			GetData()				{ return 0; }// CHECKF(m_pData); m_pData->GetInt(PETDATA_DATA);
 	OBJID		GetGenID()			{ return m_idGen; }
-	bool		IsTaskMonster()		{ return this->GetType() >= TYPE_TASK_MONSTER; }
+	bool		IsTaskMonster()		{ return this->GetType() >= TYPE_TASK_AINPC; }
 	bool		IsMagicAtk()			{ return m_pType->GetInt(NPCTYPEDATA_MAGIC_TYPE) != ID_NONE && m_pType->GetInt(NPCTYPEDATA_MAGIC_HITRATE) ==0; } 
 	OBJID		GetMagicType()			{ return m_pType->GetInt(NPCTYPEDATA_MAGIC_TYPE); }
 	bool		IsMapRoar()				{ return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_ROAR) != 0; }
@@ -335,10 +316,10 @@ public: // pet ----------------------------------------------------
 	void	SaveInfo();			//??? save all when close server!!!
 
 public: // call pet ---------------------------------
-	CAutoLink<CMonster>&	QueryLink()			{ return m_link; }
+	CAutoLink<CAiNpc>&	QueryLink()			{ return m_link; }
 protected:
 	CAutoLink<CUser>	m_pOwner;
-	CAutoLink<CMonster>	m_link;
+	CAutoLink<CAiNpc>	m_link;
 	CMagicTypeData*		m_pMagicType;			// may be null
 	CTimeOut			m_tMagic;
 
@@ -352,7 +333,7 @@ public:
 	bool	DropItem	(OBJID idItemType, OBJID idOwner, int nMagic2 = 0, int nMagic3 = 0, int nUserLuck = 0,bool bIsAllowDropUnident=false);
 
 protected:
-	CPetData*	m_pData;		// NULL: is not pet
+	//CPetData*	m_pData;		// NULL: is not pet
 
 protected:
 	bool	DropMedicine	(OBJID idOwner);

@@ -67,10 +67,8 @@ enum SYNDATA{
 		SYNDATA_REPUTE,			// 帮派声望
 		SYNDATA_PUBLISHTIME,	// 公告发布时间，格式：yyyymmdd
 };
-namespace world_kernel {
-	char	szSynTable[];
-}
-typedef	CGameData<SYNDATA, world_kernel::szSynTable, szID>	CSynBase;
+char	szSynTable[];
+typedef	CGameData<SYNDATA, szSynTable, szID>	CSynBase;
 
 const int   DISMISSSYN_MONEY_LIMIT  = 100000;           // 金钱少于此数，自动解散。//add huang 2004.1.5
 const int	DISMISSSYN_AMOUNT_LIMIT	= 20;				// 帮众少于此数，自动解散  

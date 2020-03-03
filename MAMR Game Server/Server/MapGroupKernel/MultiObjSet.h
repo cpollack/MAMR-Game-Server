@@ -84,6 +84,9 @@ void CMultiObjSet<T>::Clear()
 template<class T>
 bool CMultiObjSet<T>::AddObj(T* pObj)
 {
+	if (!(pObj && pObj->GetID())) {
+		int a = 1;
+	}
 	CHECKF(pObj && pObj->GetID());
 	ASSERT(!DelObj(pObj->GetID(), pObj->GetObjType()));
 

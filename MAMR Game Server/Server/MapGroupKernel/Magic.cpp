@@ -871,7 +871,7 @@ bool CMagic::CheckCondition(IMagicData* pData, OBJID idTarget, int x, int y)
 
 		if (nSort == MAGICSORT_SORB_SOUL)
 		{
-			CMonster* pMonster = NULL;
+			CAiNpc* pMonster = NULL;
 			if (!pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 				return false;
 			if ((pMonster->GetMaskData() & MASK_DISABLE_SORB_SOUL) == MASK_DISABLE_SORB_SOUL)
@@ -879,7 +879,7 @@ bool CMagic::CheckCondition(IMagicData* pData, OBJID idTarget, int x, int y)
 		}
 		if (nSort == MAGICSORT_STEAL_MONEY)
 		{
-			CMonster* pMonster = NULL;
+			CAiNpc* pMonster = NULL;
 			if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)))
 			{
 				if ((pMonster->GetMaskData() & MASK_DISABLE_STEAL_MONEY) == MASK_DISABLE_STEAL_MONEY)
@@ -1142,7 +1142,7 @@ bool CMagic::AutoAttackTarget(IRole* pTarget)
 {
 	int nPercentAdjust = 100;
 	// 幻兽发动技能的概率调整
-	CMonster* pMonster = NULL;
+	CAiNpc* pMonster = NULL;
 	if (m_pOwner->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsEudemon())
 	{
 		if (pMonster->GetFidelity() < 500)
@@ -1500,7 +1500,7 @@ int CMagic::CalcMagicPower(IRole* pAtker, IRole* pTarget, int* pAdjustAtk/*=0*/)
 	int	nDamage	= nAtk - nDef;
 	if (pAtker->QueryOwnerUser() && pTarget->IsMonster())
 	{
-		CMonster* pMonster;
+		CAiNpc* pMonster;
 		if (pTarget->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && !pMonster->IsEquality())
 			nDamage = 0; // CBattleSystem::CalcDamageUser2Monster(nAtk, nDef, pAtker->GetLev(), pTarget->GetLev());
 		nDamage = pTarget->AdjustMagicDamage(nDamage);
@@ -1508,7 +1508,7 @@ int CMagic::CalcMagicPower(IRole* pAtker, IRole* pTarget, int* pAdjustAtk/*=0*/)
 	}
 	else if(pAtker->IsMonster() && pTarget->QueryOwnerUser())
 	{
-		CMonster* pMonster;
+		CAiNpc* pMonster;
 		if (pAtker->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && !pMonster->IsEquality())
 			nDamage = 0; // CBattleSystem::CalcDamageMonster2User(nAtk, nDef, pAtker->GetLev(), pTarget->GetLev());
 		nDamage = pTarget->AdjustMagicDamage(nDamage);
@@ -1558,7 +1558,7 @@ void CMagic::OtherMemberAwardExp(IRole* pTarget, int nRawExp)
 	{
 		for (int i=0; i<pUser->GetEudemonAmount(); i++)
 		{
-			CMonster* pEudemon = pUser->QueryEudemonByIndex(i);
+			CAiNpc* pEudemon = pUser->QueryEudemonByIndex(i);
 			if (pEudemon && pEudemon->IsAlive() && 
 				(abs(pEudemon->GetPosX()-pTarget->GetPosX()) <= _RANGE_EXPSHARE
 				|| abs(pEudemon->GetPosY()-pTarget->GetPosY()) <= _RANGE_EXPSHARE))

@@ -576,7 +576,7 @@ void CTeam::AwardMemberExp(OBJID idKiller, IRole* pTarget, int nExp)
 		// chk all eudemons exclude killer's
 		for (int i=0; i<pUser->GetEudemonAmount(); i++)
 		{
-			CMonster* pEudemon = pUser->QueryEudemonByIndex(i);
+			CAiNpc* pEudemon = pUser->QueryEudemonByIndex(i);
 			if (pEudemon && pEudemon->IsAlive() && 
 				(abs(pEudemon->GetPosX()-pTarget->GetPosX()) <= _RANGE_EXPSHARE
 					|| abs(pEudemon->GetPosY()-pTarget->GetPosY()) <= _RANGE_EXPSHARE))
@@ -732,7 +732,7 @@ void CTeam::AttachMemberStatus(int nStatus, int nPower, int nSecs, int nTimes, O
 			// ¸ø»ÃÊÞ¼Ó×´Ì¬
 			for (int i=0; i<pUser->GetEudemonAmount(); i++)
 			{
-				CMonster* pEudemon = pUser->QueryEudemonByIndex(i);
+				CAiNpc* pEudemon = pUser->QueryEudemonByIndex(i);
 				if (pEudemon
 					&& pEudemon->GetMap()->GetID() == pLeader->GetMapID()
 					&& (pEudemon->GetDistance(pLeader->QueryMapThing()) <= _RANGE_TEAM_STATUS || STATUS_ADD_EXP == nStatus))
@@ -816,7 +816,7 @@ int CTeam::ShareDamage(int nDamage, OBJID idExclude)
 		{
 			for (int i=0; i<pMember->GetEudemonAmount(); i++)
 			{
-				CMonster* pEudemon = pMember->QueryEudemonByIndex(i);
+				CAiNpc* pEudemon = pMember->QueryEudemonByIndex(i);
 				if (pEudemon && pEudemon->GetLife()>1 && pEudemon->QueryStatus(STATUS_TEAMSPIRIT))
 					setMember.push_back(pEudemon->QueryRole());
 			}
