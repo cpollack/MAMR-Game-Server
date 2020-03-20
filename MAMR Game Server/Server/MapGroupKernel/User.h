@@ -264,6 +264,7 @@ class CTransformation;
 class CAgent;
 class CTaskDetail;
 class CAiNpc;
+class CBattle;
 class CUser : public CGameObj, public CRole, public IUserStorage, IChangeTeam
 {
 protected:
@@ -341,7 +342,7 @@ public: // IRole
 	virtual DWORD	GetDefence2			();
 
 	//virtual DWORD	GetDegree			();
-	//virtual DWORD	GetDexterity		();
+	virtual DWORD	GetDexterity		();
 
 	virtual DWORD	GetDdg				();
 	virtual DWORD	GetDodge			();
@@ -399,20 +400,22 @@ public: // IRole
 	virtual void	ProcessPk			(CUser* pTargetUser);
 	virtual bool	TransferShield		(bool bMagic, IRole* pAtker, int nDamage);
 
-	virtual int		GetHelmetTypeID		()			{ if(m_pHelmet) return m_pHelmet->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetArmorTypeID		()			{ if(m_nSynDressArmorType) return m_nSynDressArmorType; if(m_pArmor) return m_pArmor->GetInt(ITEMDATA_TYPE);  return ID_NONE;}
-	virtual int		GetWeaponRTypeID	()			{ if(m_pWeaponR) return m_pWeaponR->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetWeaponLTypeID	()			{ if(m_pWeaponL) return m_pWeaponL->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetNecklaceTypeID	()			{ if(m_pNecklace) return m_pNecklace->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetRingRTypeID		()			{ if(m_pRingR) return m_pRingR->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetRingLTypeID		()			{ if(m_pRingL) return m_pRingL->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetShoesTypeID		()			{ if(m_pShoes) return m_pShoes->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetMountTypeID		()			{ if(m_pMount) return m_pMount->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	//virtual int		GetSpriteTypeID		()			{ if(m_pSprite) return m_pSprite->GetInt(ITEMDATA_TYPE); return ID_NONE; }
-	virtual int		GetMantleTypeID		()			{ if(m_pMantle) return m_pMantle->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	//virtual int		GetHelmetTypeID		()			{ if(m_pHelmet) return m_pHelmet->GetInt(ITEMDATA_SORT); return ID_NONE; }
+	virtual int		GetWeaponTypeID() { if (m_pWeapon) return m_pWeapon->GetInt(ITEMDATA_SORT); return ID_NONE; }
+	virtual int		GetArmorTypeID		()			{ if(m_pArmor) return m_pArmor->GetInt(ITEMDATA_SORT);  return ID_NONE;}
+	virtual int		GetShoesTypeID() { if (m_pShoes) return m_pShoes->GetInt(ITEMDATA_SORT); return ID_NONE; }
+	virtual int		GetBodyAccessoryTypeID() { if (m_pBodyAccessory) return m_pBodyAccessory->GetInt(ITEMDATA_SORT); return ID_NONE; }
+	virtual int		GetHeadAccessoryTypeID() { if (m_pHeadAccessory) return m_pHeadAccessory->GetInt(ITEMDATA_SORT); return ID_NONE; }
+	//virtual int		GetWeaponLTypeID	()			{ if(m_pWeaponL) return m_pWeaponL->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	//virtual int		GetNecklaceTypeID	()			{ if(m_pNecklace) return m_pNecklace->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	//virtual int		GetRingRTypeID		()			{ if(m_pRingR) return m_pRingR->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	//virtual int		GetRingLTypeID		()			{ if(m_pRingL) return m_pRingL->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	//virtual int		GetMountTypeID		()			{ if(m_pMount) return m_pMount->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	////virtual int		GetSpriteTypeID		()			{ if(m_pSprite) return m_pSprite->GetInt(ITEMDATA_TYPE); return ID_NONE; }
+	//virtual int		GetMantleTypeID		()			{ if(m_pMantle) return m_pMantle->GetInt(ITEMDATA_TYPE); return ID_NONE; }
 
-	virtual CItem*	GetWeaponR			()			{ return m_pWeaponR; }
-	virtual CItem*	GetWeaponL			()			{ return m_pWeaponL; }
+	virtual CItem*	GetWeapon			()			{ return m_pWeapon; }
+	//virtual CItem*	GetWeaponL			()			{ return m_pWeaponL; }
 
 	virtual char*	GetMedal			()			{ return m_data.m_Info.setMedal; }
 	virtual DWORD	GetMedalSelect		()			{ return m_data.m_Info.dwMedal_select; }
@@ -447,8 +450,8 @@ public: // IRole
 	virtual bool	IsDelThis			()			{ return false; }
 	virtual bool	IsVirtuous()					{ return GetPk() < PKVALUE_REDNAME && !QueryStatus(STATUS_CRIME); }
 	virtual bool	IsEvil()						{ return GetPk() >= PKVALUE_REDNAME || QueryStatus(STATUS_CRIME); }
-	virtual bool	IsBowman			()			{ return m_pWeaponR && m_pWeaponR->IsBowSort(); }
-	virtual bool	IsShieldEquip		()			{ return m_pWeaponL && m_pWeaponL->IsShield(); }
+	//virtual bool	IsBowman			()			{ return m_pWeaponR && m_pWeaponR->IsBowSort(); }
+	//virtual bool	IsShieldEquip		()			{ return m_pWeaponL && m_pWeaponL->IsShield(); }
 	virtual bool	IsWing				()			{ return NULL; }	//QueryStatus(STATUS_WING) != NULL; }
 	virtual bool	IsSendBlockInfo		()			{ return true; }
 	virtual bool	IsAutoAllot			(void)		{ return (m_data.m_Info.ucAuto_allot != 0); }
@@ -519,9 +522,6 @@ public:	// gem effect  -------------------
 	int			GetGemMgcAtkEffect	(void);
 
 	void		SendGemEffect		(void);
-
-public:	// sprite  -- add by zlong 2003-12-05
-	int			GetSpriteFace		()			{ if(m_pSprite) return (m_pSprite->GetSpriteLevel()*5 + m_pSprite->GetSpriteType()); return 0xFF; }
 
 public: // lock key ------------------------------
 	bool		SetLock(DWORD dwKey);
@@ -818,8 +818,8 @@ public: // item ------------------------------------------
 	CItem*	GetItem			(OBJID idItem);
 	CItem*	GetItemByType	(OBJID idItemType);
 	CItem*	GetEquipItem	(OBJID idItem);
-	CItemPtr*	GetEquipItemPtr	(int nPosition);
-	CItemPtr&	GetEquipItemRef	(int nPosition)						{ CItemPtr* ppEquip = GetEquipItemPtr(nPosition); ASSERT(ppEquip); return *ppEquip; }
+	CItemPtr*	GetEquipItemPtr	(OBJID idItem);
+	CItemPtr&	GetEquipItemRef	(OBJID idItem)						{ CItemPtr* ppEquip = GetEquipItemPtr(idItem); ASSERT(ppEquip); return *ppEquip; }
 	CItem*	GetEquipItemByPos	(int nPosition);
 	bool	AddItem			(CItem* pItem, bool bSynchro, bool bUpdate = true);
 	bool	DelItem			(OBJID idItem, bool bSynchro);
@@ -968,48 +968,24 @@ protected:
 	CTaskDetail	*	m_pTaskDetail;
 	//---任务系统---end
 
-public: // eudemon -- zlong 2004-02-05  -----------------------------------------------
-	bool		CreateEudemon(CItem* pItem, int x, int y);
-	void		CallBackEudemon(OBJID idItem, bool bNow=true);
-	//========
-	int			GetEudemonAmount()			{ return m_setEudemon.size(); }
-	CAiNpc*	QueryEudemonByIndex(int nIdx);
-	CAiNpc*	QueryEudemonByID(OBJID idEudemon);
-	CAiNpc*	QueryEudemon(OBJID idItem);
-	//========
-
-	bool		HatchEudemon(CItem* pItem);
-	bool		EvolveEudemon(OBJID idEudemonItem, int nType);
-	bool		Evolve2Eudemon(OBJID idEudemonItem, int nType);
-	bool		RebornEudemon(OBJID idEudemonItem, OBJID idGem);
-	bool		EnhanceEudemon(OBJID idEudemonItem, OBJID idGem);
-
-	void		AwardEudemonExp(OBJID idItem, int nExp, bool bGemEffect = true);
-
-	bool		AttachEudemon(OBJID idItem);
-	void		DetachEudemon(CItem* pItem = NULL);
+public: // Pet
+	bool CreateAllPet();
+	void SendAllPet();
+	void SendActivePet();
+	CPet* GetMarchingPet() { return marchingPet; }
 
 protected:
-	void		CallBackAllEudemon(bool bNow=true);
-	
-protected:
-	//========
-	struct ST_EUDEMON {
-		CAutoLink<CAiNpc>		pEudemon;
-		CItemPtr				pEudemonItem;
-		CTimeOut				tEudemon;
-	};
-	typedef std::deque<ST_EUDEMON*>	EUDEMON_SET;
-	EUDEMON_SET		m_setEudemon;
+	typedef std::vector<CPet*>	PET_SET;
+	PET_SET	setPet;	
+	CPet* marchingPet;
 
-	OBJID		m_idLinkEudemonItem;
-	OBJID		m_idLinkEudemonType;
 	int			m_nLinkValue;
 	typedef std::vector<int>	LINKMAGIC_SET;
 	LINKMAGIC_SET	m_setLinkMagic;
 
-protected:
-	ST_EUDEMON*	QueryEudemonSt(OBJID idItem);
+public: //Battle
+	void SetBattle(CBattle* pBattle) { m_pBattle = pBattle; }
+	CBattle* GetBattle() { return m_pBattle; }
 
 public: // syndicate ---------------------------------------------------------------------------------
 	bool		SendAllSynInfo()		{ return m_pSyn->SendInfoToClient(); }
@@ -1220,17 +1196,11 @@ public:
 
 protected:
 
-	CItemPtr	m_pHelmet;
-	CItemPtr	m_pNecklace;	
+	CItemPtr	m_pWeapon;
 	CItemPtr	m_pArmor;	
-	CItemPtr	m_pWeaponR;	
-	CItemPtr	m_pWeaponL;	
-	CItemPtr	m_pRingR;	
-	CItemPtr	m_pRingL;	
 	CItemPtr	m_pShoes;
-	CItemPtr	m_pMount;
-	CItemPtr	m_pSprite;	// 精灵 -- add by zlong 2003-11-27
-	CItemPtr	m_pMantle;	// 披风 -- zlong 2004-02-04
+	CItemPtr	m_pBodyAccessory;
+	CItemPtr	m_pHeadAccessory;
 
 	//---jinggy---2004-11-19---装备经验值---begin
 	CTimeOut    m_arrTimeOutForEquipExp[ITEMPOSITION_EQUIPEND-ITEMPOSITION_EQUIPBEGIN];
@@ -1286,6 +1256,7 @@ private:
 
 protected: // fight
 	//CBattleSystem*		m_pBattleSystem;
+	CBattle*			m_pBattle;
 	CTimeOutMS			m_tFight;
 	CTimeOut			m_tXp;
 	CTimeOut			m_tPK;

@@ -22,11 +22,15 @@ protected: // interface
 	virtual void	SetInt		(LPCTSTR szField, int nData);
 	virtual UINT	LoadUInt	(LPCTSTR szField)					{ return (UINT)LoadInt(szField); }
 	virtual void	SetUInt		(LPCTSTR szField, UINT nData)		{ SetInt(szField, nData); }
+	virtual float	LoadFloat	(LPCSTR szField);
+	virtual double	LoadDouble	(LPCSTR szField);
 	virtual void	LoadString	(char* szData, LPCTSTR szField, int nSize);
 	virtual void	SetString	(LPCTSTR szField, LPCTSTR szData, int nSize);
 
 	// 新模式的接口，用于代替应用程序的DATA层。
 	virtual int		GetInt		(int idx);
+	virtual float	GetFloat	(int idx);
+	virtual double	GetDouble	(int idx);
 	virtual LPCTSTR	GetStr		(int idx);
 	virtual void	SetInt		(int idx, int nData);
 	virtual void	SetStr		(int idx, LPCTSTR szData, int nSize);

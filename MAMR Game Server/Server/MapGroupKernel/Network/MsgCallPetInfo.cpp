@@ -34,7 +34,7 @@ BOOL CMsgCallPetInfo::Create(OBJID id, DWORD dwLookFace, int nAIType, int usPosX
 
 	// fill info now
 	m_unMsgSize	=sizeof(MSG_Info);
-	m_unMsgType	=_MSG_PETINFO;
+	m_unMsgType	=_MSG_CALLPETINFO;
 
 	m_pInfo->id				= id;
 	m_pInfo->dwLookFace		= dwLookFace;

@@ -583,6 +583,125 @@ bool CRole::SyncTrackTo(int nPosX, int nPosY, int nDir, DWORD dwAction)
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+ELEMENTINTERACTION CRole::GetElementInteraction(CRole* pRole) {
+	if(!pRole) {
+		ASSERT("Bad CRole pointer");
+		return INTERACTION_NONE;
+	}
+
+	if (GetObjType() == OBJ_USER) return INTERACTION_NONE;
+
+	int opposingElem = pRole->GetElement();
+
+	ELEMENTINTERACTION interaction = INTERACTION_NONE;
+	switch (this->GetElement()) {
+	case ELEMENT_WATER:
+		switch (opposingElem) {
+		case ELEMENT_WATER:
+			interaction = INTERACTION_NONE;
+			break;
+		case ELEMENT_FIRE:
+			interaction = INTERACTION_RESTRAINED;
+			break;
+		case ELEMENT_METAL:
+			interaction = INTERACTION_GENERATE;
+			break;
+		case ELEMENT_WOOD:
+			interaction = INTERACTION_GENERATED;
+			break;
+		case ELEMENT_EARTH:
+			interaction = INTERACTION_RESTRAIN;
+			break;
+		}
+		break;
+	case ELEMENT_FIRE:
+		switch (opposingElem) {
+		case ELEMENT_WATER:
+			interaction = INTERACTION_RESTRAIN;
+			break;
+		case ELEMENT_FIRE:
+			interaction = INTERACTION_NONE;
+			break;
+		case ELEMENT_METAL:
+			interaction = INTERACTION_RESTRAINED;
+			break;
+		case ELEMENT_WOOD:
+			interaction = INTERACTION_GENERATE;
+			break;
+		case ELEMENT_EARTH:
+			interaction = INTERACTION_GENERATED;
+			break;
+		}
+		break;
+	case ELEMENT_METAL:
+		switch (opposingElem) {
+		case ELEMENT_WATER:
+			interaction = INTERACTION_GENERATED;
+			break;
+		case ELEMENT_FIRE:
+			interaction = INTERACTION_RESTRAIN;
+			break;
+		case ELEMENT_METAL:
+			interaction = INTERACTION_NONE;
+			break;
+		case ELEMENT_WOOD:
+			interaction = INTERACTION_RESTRAINED;
+			break;
+		case ELEMENT_EARTH:
+			interaction = INTERACTION_GENERATE;
+			break;
+		}
+		break;
+	case ELEMENT_WOOD:
+		switch (opposingElem) {
+		case ELEMENT_WATER:
+			interaction = INTERACTION_GENERATE;
+			break;
+		case ELEMENT_FIRE:
+			interaction = INTERACTION_GENERATED;
+			break;
+		case ELEMENT_METAL:
+			interaction = INTERACTION_RESTRAIN;
+			break;
+		case ELEMENT_WOOD:
+			interaction = INTERACTION_NONE;
+			break;
+		case ELEMENT_EARTH:
+			interaction = INTERACTION_RESTRAINED;
+			break;
+		}
+		break;
+	case ELEMENT_EARTH:
+		switch (opposingElem) {
+		case ELEMENT_WATER:
+			interaction = INTERACTION_RESTRAINED;
+			break;
+		case ELEMENT_FIRE:
+			interaction = INTERACTION_GENERATE;
+			break;
+		case ELEMENT_METAL:
+			interaction = INTERACTION_GENERATED;
+			break;
+		case ELEMENT_WOOD:
+			interaction = INTERACTION_RESTRAIN;
+			break;
+		case ELEMENT_EARTH:
+			interaction = INTERACTION_NONE;
+			break;
+		}
+		break;
+	}
+
+	if (interaction == INTERACTION_RESTRAIN) {
+		if (IsSuper() && pRole->IsUnevo()) interaction = INTERACTION_SUPER_RESTRAIN;
+	}
+	if (interaction == INTERACTION_RESTRAINED) {
+		if (IsUnevo() && pRole->IsSuper()) interaction = INTERACTION_SUPER_RESTRAINED;
+	}
+
+	return interaction;
+}
 
 //////////////////////////////////////////////////////////////////////
 bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
@@ -622,7 +741,7 @@ bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
 				if (pRole->GetID() != this->GetID()
 					&& (bIsCallPet || pUser || pTarget->QueryObj(OBJ_USER, IPP_OF(pTargetUser))
 						|| (pTarget->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) 
-								&& (pMonster->IsCallPet() || pMonster->IsEudemon()))))
+								&& pMonster->IsCallPet())))
 				{
 					// 自己是玩家、幻兽，或者目标是玩家、幻兽
 					setNewRole.push_back(pRole);
@@ -716,13 +835,13 @@ bool CRole::UpdateBroadcastSet(bool bClearSet/*=false*/)
 				bool bSendSelf = (pUser ||
 								(!bIsCallPet && (pRole->QueryObj(OBJ_USER, IPP_OF(pTargetUser)))
 													|| (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster))
-															&& (pMonster->IsCallPet() || pMonster->IsEudemon()))));
+															&& pMonster->IsCallPet())));
 				//AddToBCRoleSet(pRole->GetID(), bSendSelf);
 				AddToBCRoleSet(pRole->GetID(), false);
 
 				// 对方不是幻兽，且，自己是玩家或幻兽或者对方是玩家的时候才需要发送
 				pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster));
-				bool bSendTarget = ((!pMonster || (!pMonster->IsCallPet() && !pMonster->IsEudemon()))
+				bool bSendTarget = ((!pMonster || !pMonster->IsCallPet())
 										&& (pUser || bIsCallPet || pRole->QueryObj(OBJ_USER, IPP_OF(pTargetUser))));
 				//pRole->AddToBCRoleSet(GetID(), bSendTarget);
 				pRole->AddToBCRoleSet(GetID(), false);
@@ -853,7 +972,7 @@ void CRole::BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf)
 	IRole*	pRole		= NULL;
 	CAiNpc* pMonster	= NULL;
 	bool bSendToNpc	= (QueryObj(OBJ_USER, IPP_OF(pUser))
-						|| (QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && (pMonster->IsCallPet() || pMonster->IsEudemon()))
+						|| (QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsCallPet())
 						|| bSendSelf);
 
 	if (pMap->IsNewbieMap() && bSendSelf)
@@ -874,7 +993,7 @@ void CRole::BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf)
 		{
 			if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && bSendToNpc)
 			{
-				if (!pMonster->IsCallPet() && !pMonster->IsEudemon())
+				if (!pMonster->IsCallPet())
 				{
 					pRole->SendMsg(pMsg);
 					bSendToNpc = false;

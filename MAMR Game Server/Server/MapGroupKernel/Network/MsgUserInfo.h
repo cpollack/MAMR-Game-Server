@@ -45,8 +45,8 @@ protected:
 		DWORD dwMoney;
 		DWORD dwReputation;
 		DWORD dwPK;
-		DWORD dwExperience;
 		DWORD dwCultivation;
+		DWORD dwExperience;
 		DWORD dwWuxing;
 		DWORD dwKungfu;
 		DWORD dwPetRaising;

@@ -24,7 +24,8 @@ enum USERDATA{
 };
 
 char	szUserTable[];
-
+const int MAX_PETS = 5;
+const int MAX_USERSKILLS = 10;
 
 //////////////////////////////////////////////////////////////////////
 //Point auto allocation
@@ -72,6 +73,19 @@ struct	UserInfoStruct
 	DWORD			nCreative;
 	DWORD			nMedicine;
 	DWORD			nSteal;
+
+	DWORD			marchingPetId;
+	BYTE			petCount;
+	DWORD			petId[MAX_PETS];
+
+	BYTE			skillCount;
+	OBJID			skillId[MAX_USERSKILLS];
+
+	OBJID			idWeapon;
+	OBJID			idArmor;
+	OBJID			idShoes;
+	OBJID			idBody;
+	OBJID			idHead;
 
 	USHORT			usAdditional_point; //smallint(2) unsigned		可分配点数
 	UCHAR			ucAuto_allot;		//tinyint(1) unsigned		是否自动分配

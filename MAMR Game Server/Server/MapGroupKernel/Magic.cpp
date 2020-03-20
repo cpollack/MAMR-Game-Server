@@ -1141,15 +1141,6 @@ bool CMagic::UserKillTarget(IRole* pTarget)
 bool CMagic::AutoAttackTarget(IRole* pTarget)
 {
 	int nPercentAdjust = 100;
-	// 幻兽发动技能的概率调整
-	CAiNpc* pMonster = NULL;
-	if (m_pOwner->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsEudemon())
-	{
-		if (pMonster->GetFidelity() < 500)
-			nPercentAdjust = 0;
-		else
-			nPercentAdjust = 150 + 5*((pMonster->GetFidelity()-500)/50);
-	}
 	
 	for(int i = 0; i < m_setData->GetAmount(); i++)		//??? 可优化
 	{
@@ -1552,23 +1543,6 @@ void CMagic::OtherMemberAwardExp(IRole* pTarget, int nRawExp)
 	{
 		pTeam->AwardMemberExp(m_pOwner->GetID(), pTarget, nRawExp);
 	}
-
-	CUser* pUser = NULL;
-	if (m_pOwner->QueryObj(OBJ_USER, IPP_OF(pUser)))
-	{
-		for (int i=0; i<pUser->GetEudemonAmount(); i++)
-		{
-			CAiNpc* pEudemon = pUser->QueryEudemonByIndex(i);
-			if (pEudemon && pEudemon->IsAlive() && 
-				(abs(pEudemon->GetPosX()-pTarget->GetPosX()) <= _RANGE_EXPSHARE
-				|| abs(pEudemon->GetPosY()-pTarget->GetPosY()) <= _RANGE_EXPSHARE))
-			{
-				int nBattleExp = pEudemon->AdjustExp(pTarget, nRawExp);
-				bool bIncludeOwner = false;
-				pEudemon->AwardBattleExp(nBattleExp, true, bIncludeOwner);
-			}
-		}		
-	}
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1630,9 +1604,9 @@ bool CMagic::HitByWeapon()
 	if(m_pMagic->GetInt(MAGICDATA_WEAPON_HIT) == HIT_BY_WEAPON)
 		return true;
 
-	CItem* pItem = m_pOwner->GetEquipItemByPos(ITEMPOSITION_WEAPONL);
-	if(m_pMagic->GetInt(MAGICDATA_WEAPON_HIT) == HIT_BY_ITEM && pItem && pItem->GetMgcMinAtk() <= 0) // ->GetInt(ITEMDATA_MAGICATK_MIN) <= 0)
-		return true;
+	//CItem* pItem = m_pOwner->GetEquipItemByPos(ITEMPOSITION_WEAPONL);
+	//if(m_pMagic->GetInt(MAGICDATA_WEAPON_HIT) == HIT_BY_ITEM && pItem && pItem->GetMgcMinAtk() <= 0) // ->GetInt(ITEMDATA_MAGICATK_MIN) <= 0)
+	//	return true;
 
 	return false;
 }

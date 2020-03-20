@@ -9,19 +9,20 @@
 
 MYHEAP_IMPLEMENTATION(CItemType,s_heap)
 char	szItemTypeTable[] = _TBL_ITEMTYPE;
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 CItemType::CItemType()
 {
-	m_setType	= NULL;
+	pTypeSet = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 CItemType::~CItemType()
 {
-	if(m_setType)
-		m_setType->Release();
+	if(pTypeSet)
+		pTypeSet->Release();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -29,12 +30,12 @@ CItemType::~CItemType()
 //////////////////////////////////////////////////////////////////////
 bool CItemType::Create(IDatabase* pDb)
 {
-	m_setType	= CItemTypeSet::CreateNew(true);
-	CHECKF(m_setType);
+	pTypeSet = CItemTypeSet::CreateNew(true);
+	CHECKF(pTypeSet);
 
 	char szSQL[1024];
 	sprintf(szSQL, "SELECT * FROM %s", _TBL_ITEMTYPE);
-	IF_NOT_(m_setType->Create(szSQL, pDb))
+	IF_NOT_(pTypeSet->Create(szSQL, pDb))
 		return false;
 
 	return true;
@@ -43,7 +44,7 @@ bool CItemType::Create(IDatabase* pDb)
 //////////////////////////////////////////////////////////////////////
 CItemTypeData* CItemType::QueryItemType(OBJID idType)
 {
-	return m_setType->GetObj(idType);
+	return pTypeSet->GetObj(idType);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -51,29 +52,38 @@ bool CItemType::GetInfo(OBJID idType, ItemInfoStruct* pInfo)
 {
 	memset(pInfo, 0, sizeof(ItemInfoStruct));
 
-	CItemTypeData* pType = m_setType->GetObj(idType);
+	CItemTypeData* pType = pTypeSet->GetObj(idType);
 	CHECKF(pType);
 
 	pInfo->id		= ID_NONE;
+	pInfo->idType = pType->GetID();
 	pInfo->idOwner	= ID_NONE;
 	pInfo->idPlayer	= ID_NONE;
-	pInfo->idType	= pType->GetID();
-	pInfo->nAmount	= pType->GetInt(ITEMTYPEDATA_AMOUNT);
-	pInfo->nAmountLimit	= pType->GetInt(ITEMTYPEDATA_AMOUNT_LIMIT);
-	pInfo->nData	= 0;
-	pInfo->nGem1	= pType->GetInt(ITEMTYPEDATA_GEM1);
-	pInfo->nGem2	= pType->GetInt(ITEMTYPEDATA_GEM2);
-	pInfo->nIdent	= pType->GetInt(ITEMTYPEDATA_IDENT);
-	pInfo->nMagic1	= pType->GetInt(ITEMTYPEDATA_MAGIC1);
-	pInfo->nMagic2	= pType->GetInt(ITEMTYPEDATA_MAGIC2);
-	pInfo->nMagic3	= pType->GetInt(ITEMTYPEDATA_MAGIC3);
 	pInfo->nPosition	= ITEMPOSITION_NONE;
 
-	//---jinggy---2004-11-19---begin
-	pInfo->dwWarGhostExp = 0;
-	pInfo->dwGemAtkType = ID_NONE;
-	pInfo->dwAvailabeTime = 0;
-	//---jinggy---2004-11-19---end
+	pInfo->cost = pType->GetInt(ITEMTYPEDATA_COST);
+	pInfo->look = pType->GetInt(ITEMTYPEDATA_LOOK);
+	pInfo->sort = pType->GetInt(ITEMTYPEDATA_SORT);
+	pInfo->levelReq = pType->GetInt(ITEMTYPEDATA_LEVELREQ);
+
+	pInfo->life = pType->GetInt(ITEMTYPEDATA_LIFE);
+	pInfo->power = pType->GetInt(ITEMTYPEDATA_POWER);
+	pInfo->attack = pType->GetInt(ITEMTYPEDATA_ATTACK);
+	pInfo->defence = pType->GetInt(ITEMTYPEDATA_DEFENCE);
+	pInfo->dexterity = pType->GetInt(ITEMTYPEDATA_DEXTERITY);
+
+	pInfo->antiPoison = pType->GetInt(ITEMTYPEDATA_ANTIPOISON);
+	pInfo->antiFreeze = pType->GetInt(ITEMTYPEDATA_ANTIFREEZE);
+	pInfo->antiSleep = pType->GetInt(ITEMTYPEDATA_ANTISLEEP);
+	pInfo->antiChaos = pType->GetInt(ITEMTYPEDATA_ANTICHAOS);
+
+	pInfo->idAction = pType->GetInt(ITEMTYPEDATA_ACTION);
+	pInfo->exp = pType->GetInt(ITEMTYPEDATA_EXP);
+	pInfo->iClass = pType->GetInt(ITEMTYPEDATA_CLASS);
+	pInfo->sacrifice = pType->GetInt(ITEMTYPEDATA_SACRIFICE);
+
+	strcpy(pInfo->szName, pType->GetStr(ITEMTYPEDATA_NAME));
+	strcpy(pInfo->szInventor, pType->GetStr(ITEMTYPEDATA_INVENTOR));
 
 	return true;
 }

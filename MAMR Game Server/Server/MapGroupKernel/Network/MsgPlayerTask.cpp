@@ -111,7 +111,7 @@ void CMsgPlayerTask::Process(void *pInfo)
 	// 奖金检查
 	if (pUser->GetMoney() < m_pInfo->dwMoney)
 	{
-		pUser->SendSysMsg(STR_NOT_SO_MUCH_MONEY);
+		pUser->SendSysMsg(STR_NOT_ENOUGH_MONEY);
 		return;
 	}
 	// 奖品检查
@@ -126,11 +126,11 @@ void CMsgPlayerTask::Process(void *pInfo)
 				pUser->SendSysMsg(STR_ITEM_INEXIST);
 				return;
 			}
-			if (!pItem->IsExchangeEnable())
+			/*if (!pItem->IsExchangeEnable())
 			{
 				//pUser->SendSysMsg(STR_NOT_FOR_TASK_PRIZE);
 				return;
-			}
+			}*/
 		}
 	}
 
@@ -146,14 +146,9 @@ void CMsgPlayerTask::Process(void *pInfo)
 				// 出错处理...
 				return;
 			}
-			if (pItem->IsEudemon())
-			{
-				pUser->CallBackEudemon(pItem->GetID());
-				pUser->DetachEudemon(pItem);
-			}
 
 			// 简单一点，仅仅改变position，不改变物品的owner_id
-			pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_PLAYERTASK, true);
+			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_PLAYERTASK, true);
 			pUser->DelItem(m_pInfo->infoItem[i].idItem, true);
 		}
 	}

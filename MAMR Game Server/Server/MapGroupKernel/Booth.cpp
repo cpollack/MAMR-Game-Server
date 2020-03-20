@@ -108,20 +108,15 @@ bool CBooth::AddItem(OBJID idItem, int nMoney)
 		return false;
 
 	// add by zlong 2003-11-24 ---- can not sell chest item
-	if (pItem->IsChestItem() || !pItem->IsExchangeEnable())
+	/*if (pItem->IsChestItem() || !pItem->IsExchangeEnable())
 	{
 		m_pUser->SendSysMsg(STR_NOT_DISCARDABLE);
 		return false;
-	}
-	if (pItem->IsEudemon())
-	{
-		m_pUser->CallBackEudemon(pItem->GetID());
-		m_pUser->DetachEudemon(pItem);
-	}
+	}*/
 
 	GOODS_ST	info;
 	info.idItem		= idItem;
-	info.nType		= pItem->GetInt(ITEMDATA_TYPE);
+	info.nType		= pItem->GetInt(ITEMDATA_SORT);
 	info.nMoney		= nMoney;
 
 	for(int i = 0; i < m_setGoods.size(); i++)
@@ -193,7 +188,7 @@ bool CBooth::BuyItem(CUser* pTarget, OBJID idItem)
 
 	if(pTarget->GetMoney() < nMoney)
 	{
-		pTarget->SendSysMsg(STR_NOT_SO_MUCH_MONEY);
+		pTarget->SendSysMsg(STR_NOT_ENOUGH_MONEY);
 		return false;
 	}
 
@@ -204,7 +199,8 @@ bool CBooth::BuyItem(CUser* pTarget, OBJID idItem)
 		return false;
 	}
 
-	if(pTarget->IsItemFull(pItem->GetWeight(), pItem->GetInt(ITEMDATA_TYPE), pItem->GetInt(ITEMDATA_AMOUNTLIMIT)))
+	//if (pTarget->IsItemFull(pItem->GetWeight(), pItem->GetInt(ITEMDATA_TYPE), pItem->GetInt(ITEMDATA_AMOUNTLIMIT)))
+	if(pTarget->IsItemFull(0, pItem->GetInt(ITEMDATA_SORT), 1))
 	{
 		pTarget->SendSysMsg(STR_BAG_FULL);
 		return false;
@@ -223,7 +219,7 @@ bool CBooth::BuyItem(CUser* pTarget, OBJID idItem)
 	pTarget->SaveInfo();
 
 	// log
-	if (pItem->IsNonsuchItem())
+	/*if (pItem->IsNonsuchItem())
 	{
 		::MyLogSave("gmlog/booth_item", "%s(%u) sell item:[id=%u, type=%u], dur=%d, max_dur=%d to %s(%u) cost money(%d)", 
 				m_pUser->GetName(),
@@ -235,7 +231,7 @@ bool CBooth::BuyItem(CUser* pTarget, OBJID idItem)
 				pTarget->GetName(),
 				pTarget->GetID(),
 				nMoney);
-	}
+	}*/
 
 	m_pUser->SendSysMsg(STR_BOOTH_BUY_sds, pTarget->GetName(), nMoney, pItem->GetStr(ITEMDATA_NAME));
 	DEBUG_CATCH("CBooth::BuyItem()")		// VVVVVVVVVVVVVVVVVVVVV

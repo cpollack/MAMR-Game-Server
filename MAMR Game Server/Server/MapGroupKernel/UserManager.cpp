@@ -130,9 +130,11 @@ bool CUserManager::LoginUser(SOCKET_ID idSocket, CUser* pUser)		// loginµÚ¶þ²½
 	//}
 
 	//1043 - send player color info
-	//1034 - send player pet info
-	//1033 - send pet update (marching)
-	//1016 - send player items
+	
+	pUser->SendAllPet();
+	pUser->SendActivePet();
+
+	pUser->SendItemSet();
 
 	//1035 - ?
 

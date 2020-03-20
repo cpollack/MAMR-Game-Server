@@ -15,6 +15,7 @@
 #include "WeatherRegion.h"
 #include "RoleManager.h"
 #include "Array.h"
+#include "Monster.h"
 
 //////////////////////////////////////////////////////////////////////
 #define		MAPDATA_VERSION		((LPCTSTR)true)					// DDVersion
@@ -285,7 +286,7 @@ void CGameMap::BroadcastBlockMsg(IMapThing* pThing, CNetMsg* pMsg, bool bSendSel
 	CAiNpc* pMonster = NULL;
 //@不发非玩家消息到NPC服务器	bool	bSendToNpc = (!pThing->QueryObj(OBJ_MONSTER, IPP_OF(pObj)) || bSendSelf);
 	bool	bSendToNpc = (pThing->QueryObj(OBJ_USER, IPP_OF(pObj)) 
-							|| (pThing->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && (pMonster->IsCallPet() || pMonster->IsEudemon()))
+							|| (pThing->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsCallPet())
 							|| bSendSelf);
 	// newbie map
 	if (IsNewbieMap() && bSendSelf)
@@ -307,7 +308,7 @@ void CGameMap::BroadcastBlockMsg(IMapThing* pThing, CNetMsg* pMsg, bool bSendSel
 				// monster
 				if (pTarget->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && bSendToNpc)
 				{
-					if (pMonster->IsCallPet() || pMonster->IsEudemon())
+					if (pMonster->IsCallPet())
 					{
 					}
 					else
@@ -359,7 +360,7 @@ void CGameMap::BroadcastBlockMsg(int nPosX, int nPosY, CNetMsg* pMsg)
 			CAiNpc* pMonster = NULL;
 			if (pTarget->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && !bSendNpcAlready)
 			{
-				if (pMonster->IsCallPet() || pMonster->IsEudemon())
+				if (pMonster->IsCallPet())
 				{
 				}
 				else
@@ -1276,4 +1277,62 @@ bool CGameMap::GetRandomPos(int &nX,int &nY)
 	}
 
 	return false;
+}
+
+bool CGameMap::CreateMonstersForBattle(MONSTER_SET &monsterSet, int x, int y) {
+	int maxMonster = m_pData->GetInt(GAMEMAPDATA_MAX_MONSTER);
+	int monsterCount = RandGet(maxMonster, true) + 1;
+
+	for (int i = 0; i < monsterCount; i++) {
+		int type;
+		int level;
+		int orgRate;
+		if (abs(x - m_pData->GetInt(GAMEMAPDATA_AREA1_X)) <= m_pData->GetInt(GAMEMAPDATA_AREA1_RANGE) && abs(y - m_pData->GetInt(GAMEMAPDATA_AREA1_Y)) <= m_pData->GetInt(GAMEMAPDATA_AREA1_RANGE)) {
+			if (RandGet(2) == 1) {
+				type = m_pData->GetInt(GAMEMAPDATA_AREA1_MONSTER0);
+				level = m_pData->GetInt(GAMEMAPDATA_AREA1_MONSTERLEV0);
+			}
+			else {
+				type = m_pData->GetInt(GAMEMAPDATA_AREA1_MONSTER1);
+				level = m_pData->GetInt(GAMEMAPDATA_AREA1_MONSTERLEV1);
+			}
+			orgRate = m_pData->GetInt(GAMEMAPDATA_AREA1_ORGRATE);
+		}
+		else if (abs(x - m_pData->GetInt(GAMEMAPDATA_AREA0_X)) <= m_pData->GetInt(GAMEMAPDATA_AREA0_RANGE) && abs(y - m_pData->GetInt(GAMEMAPDATA_AREA0_Y)) <= m_pData->GetInt(GAMEMAPDATA_AREA0_RANGE)) {
+			if (RandGet(2) == 1) {
+				type = m_pData->GetInt(GAMEMAPDATA_AREA0_MONSTER0);
+				level = m_pData->GetInt(GAMEMAPDATA_AREA0_MONSTERLEV0);
+			}
+			else {
+				type = m_pData->GetInt(GAMEMAPDATA_AREA0_MONSTER1);
+				level = m_pData->GetInt(GAMEMAPDATA_AREA0_MONSTERLEV1);
+			}
+			orgRate = m_pData->GetInt(GAMEMAPDATA_AREA0_ORGRATE);
+		}
+		else {
+			if (RandGet(2) == 1) {
+				type = m_pData->GetInt(GAMEMAPDATA_MONSTER_TYPE0);
+				level = m_pData->GetInt(GAMEMAPDATA_MONSTER_LEVEL0);
+			}
+			else {
+				type = m_pData->GetInt(GAMEMAPDATA_MONSTER_TYPE1);
+				level = m_pData->GetInt(GAMEMAPDATA_MONSTER_LEVEL1);
+			}
+			orgRate = m_pData->GetInt(GAMEMAPDATA_MONSTER_ORGRATE);
+		}
+
+		if (RandGet(10000) > orgRate) {
+			level = level * (double)((RandGet(3) + 99) / 100.0);
+			if (level < 1) level = 1;
+		}
+		else level = 1;
+
+		CMonster *pMonster = CMonster::CreateNew();
+		ST_CREATENEWMONSTER sMon = { type, level };
+		pMonster->Create(m_idProcess, &sMon);
+
+		monsterSet.push_back(pMonster);
+	}
+
+	return true;
 }

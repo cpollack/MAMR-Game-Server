@@ -19,18 +19,18 @@ struct	MonsterInfoStruct
 
 	WORD Level;
 
-	float Attack;
-	float Defence;
-	float Dexterity;
-	float Life;
+	double Attack;
+	double Defence;
+	double Dexterity;
+	int Life; //Life is 'current life', and is always a whole number
 
-	float baseAttack;
-	float baseDefence;
-	float baseDexterity;
-	float baseLife;
+	double baseAttack;
+	double baseDefence;
+	double baseDexterity;
+	double baseLife;
 
-	float Growth;
-	float LifeRise;
+	double Growth;
+	double LifeRise;
 	BYTE rateAttack;
 	BYTE rateDefence;
 	BYTE rateDexterity;
@@ -58,51 +58,55 @@ public: // set to info, use by CMonster
 	void			SetName(const char* pszName);
 	char*			GetName() { return info.szName; }
 
-	void			SetAttack(float fAttack) { info.Attack = fAttack; }
-	float			GetAttack() { return info.Attack; }
+	void			SetAttack(double fAttack) { info.Attack = fAttack; }
+	double			GetAttack() { return info.Attack; }
 
-	void			SetDefence(float fDef) { info.Defence = fDef; }
-	float			GetDefence() { return info.Defence; }
+	void			SetDefence(double fDef) { info.Defence = fDef; }
+	double			GetDefence() { return info.Defence; }
 
-	void			SetDexterity(float fDex) { info.Dexterity = fDex; }
-	float			GetDexterity() { return info.Dexterity; }
+	void			SetDexterity(double fDex) { info.Dexterity = fDex; }
+	double			GetDexterity() { return info.Dexterity; }
 
-	void			SetLife(float fLife) { info.Life = fLife; }
-	float			GetLife() { return info.Life; }
+	void			SetLife(int fLife) { info.Life = fLife; }
+	int				GetLife() { return info.Life; }
 
-	void			SetGrowth(float fGrow) { info.Growth = fGrow; }
-	float			GetGrowth() { return info.Growth; }
+	void			SetGrowth(double fGrow) { info.Growth = fGrow; }
+	double			GetGrowth() { return info.Growth; }
 
-	void			SetLifeRise(float fRise) { info.LifeRise = fRise; }
-	float			GetLifeRise() { return info.LifeRise; }
+	void			SetLifeRise(double fRise) { info.LifeRise = fRise; }
+	double			GetLifeRise() { return info.LifeRise; }
 
 	void			SetLevel(int nLev) { info.Level = nLev; }
 	int				GetLevel() { return info.Level; }
 
 	void			SetLook(int nLook) { info.Look = nLook; }
-	DWORD			GetLook() { return info.Look; }
+	int				GetLook() { return info.Look; }
 
-	void			SetBaseAttack(float fAttack) { info.baseAttack = fAttack; }
-	float			GetBaseAttack() { return info.baseAttack; }
+	void			SetClass(int nClass) { info.Class = nClass; }
+	int				GetClass() { return info.Class; }
 
-	void			SetBaseDefence(float fDef) { info.baseDefence = fDef; }
-	float			GetBaseDefence() { return info.baseDefence; }
+	void			SetBaseAttack(double fAttack) { info.baseAttack = fAttack; }
+	double			GetBaseAttack() { return info.baseAttack; }
 
-	void			SetBaseDexterity(float fDex) { info.baseDexterity = fDex; }
-	float			GetBaseDexterity() { return info.baseDexterity; }
+	void			SetBaseDefence(double fDef) { info.baseDefence = fDef; }
+	double			GetBaseDefence() { return info.baseDefence; }
 
-	void			SetBaseLife(float fLife) { info.baseLife = fLife; }
-	float			GetBaseLife() { return info.baseLife; }
+	void			SetBaseDexterity(double fDex) { info.baseDexterity = fDex; }
+	double			GetBaseDexterity() { return info.baseDexterity; }
+
+	void			SetBaseLife(double fLife) { info.baseLife = fLife; }
+	double			GetBaseLife() { return info.baseLife; }
 
 	void			SetRateAttack(int iRate) { info.rateAttack = iRate; }
-	float			GetRateAttack() { return info.rateAttack; }
+	int				GetRateAttack() { return info.rateAttack; }
 
 	void			SetRateDefence(int iRate) { info.rateDefence = iRate; }
-	float			GetRateDefence() { return info.rateDefence; }
+	int				GetRateDefence() { return info.rateDefence; }
 
 	void			SetRateDexterity(int iRate) { info.rateDexterity = iRate; }
-	float			GetRateDexterity() { return info.rateDexterity; }
+	int				GetRateDexterity() { return info.rateDexterity; }
 
+	HSB				GetHSB(int idx) { return info.hsb[idx]; }
 
 	MonsterInfoStruct&		GetInfo()	{ return info; }
 protected:

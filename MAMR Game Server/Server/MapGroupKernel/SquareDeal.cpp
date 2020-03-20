@@ -98,7 +98,7 @@ bool CSquareDeal::TradeOK()
 		if(!pItem)
 			return false;
 		nAmountCount++;
-		nAmountWeight	+= pItem->GetWeight();
+		//nAmountWeight	+= pItem->GetWeight();
 		int nPosition = pUserPackage->GetItemPosition(pItem);
 		if (nPosition < ITEMPOSITION_PACK_END && nPosition >= ITEMPOSITION_PACK_BEGIN)
 		{
@@ -126,7 +126,7 @@ bool CSquareDeal::TradeOK()
 		if(!pItem)
 			return false;
 		nAmountCount++;
-		nAmountWeight	+= pItem->GetWeight();
+		//nAmountWeight	+= pItem->GetWeight();
 		int nPosition = pUserPackage->GetItemPosition(pItem);
 		if (nPosition < ITEMPOSITION_PACK_END && nPosition >= ITEMPOSITION_PACK_BEGIN)
 		{
@@ -164,25 +164,13 @@ bool CSquareDeal::TradeOK()
 				bool bSynchro = SYNCHRO_FALSE;
 				//bool bSynchro = pItem->WarGhostLevelReset();
 
-				// 不是夫妻交易幻兽要扣亲密度
-				if (pItem->IsEudemon() && !pUser1->IsMate(pUser2))
-				{
-					int nDecFidelity = EUDEMON_DEC_FIDELITY_WHEN_DEAL;
-					if (pUser1->GetFriend(pUser2->GetID()))
-						nDecFidelity /= 2;		// 好友交易少扣一半的亲密度
-					int nFidelity = pItem->GetInt(ITEMDATA_FIDELITY);
-					nFidelity = __max(0, (nFidelity - nDecFidelity));
-					pItem->SetInt(ITEMDATA_FIDELITY, nFidelity, true);
-					bSynchro = SYNCHRO_TRUE;
-				}
-
 				ASSERT(pUser1->PopItem(pItem->GetID(), SYNCHRO_FALSE, UPDATE_FALSE));
 				ASSERT(pUser2->AddItem(pItem, bSynchro, UPDATE_TRUE));
 				
-				if(pItem->IsNonsuchItem())
+				/*if(pItem->IsNonsuchItem())
 				{
 					::MyLogSave("gmlog/trade_item", STR_NONSUCH_TRADE_sssu, pUser1->GetName(), pUser2->GetName(), pItem->GetStr(ITEMDATA_NAME), pItem->GetID());
-				}
+				}*/
 			}
 		}
 		for(int i = 0; i < m_setItem2.size(); i++)
@@ -194,25 +182,13 @@ bool CSquareDeal::TradeOK()
 				bool bSynchro = SYNCHRO_FALSE;
 				//bool bSynchro = pItem->WarGhostLevelReset();
 
-				// 不是夫妻交易幻兽要扣亲密度
-				if (pItem->IsEudemon() && !pUser2->IsMate(pUser1))
-				{
-					int nDecFidelity = EUDEMON_DEC_FIDELITY_WHEN_DEAL;
-					if (pUser2->GetFriend(pUser1->GetID()))
-						nDecFidelity /= 2;		// 好友交易少扣一半的亲密度
-					int nFidelity = pItem->GetInt(ITEMDATA_FIDELITY);
-					nFidelity = __max(0, (nFidelity - nDecFidelity));
-					pItem->SetInt(ITEMDATA_FIDELITY, nFidelity, true);
-					bSynchro = SYNCHRO_TRUE;
-				}
-
 				ASSERT(pUser2->PopItem(pItem->GetID(), SYNCHRO_FALSE, UPDATE_FALSE));
 				ASSERT(pUser1->AddItem(pItem, bSynchro, UPDATE_TRUE));
 
-				if(pItem->IsNonsuchItem())
+				/*if(pItem->IsNonsuchItem())
 				{
 					::MyLogSave("gmlog/trade_item", STR_NONSUCH_TRADE_sssu, pUser2->GetName(), pUser1->GetName(), pItem->GetStr(ITEMDATA_NAME), pItem->GetID());
-				}
+				}*/
 			}
 		}
 		pUser1->SendSysMsg(STR_TRADE_SUCCEED);
@@ -274,10 +250,10 @@ bool CSquareDeal::XSquareDeal1::AddItem(CItem* pItem)
 	if(find(This()->m_setItem1.begin(), This()->m_setItem1.end(), pItem->GetID()) != This()->m_setItem1.end())
 		return false;
 
-	if(!This()->m_pUser2->AddItem(pItem, This()->m_setItem1.size()+1, This()->m_nAllWeight1 + pItem->GetWeight()))
-		return false;
+	//if(!This()->m_pUser2->AddItem(pItem, This()->m_setItem1.size()+1, This()->m_nAllWeight1 + pItem->GetWeight()))
+	//	return false;
 
-	This()->m_nAllWeight1	+= pItem->GetWeight();
+	//This()->m_nAllWeight1	+= pItem->GetWeight();
 	This()->m_setItem1.push_back(pItem->GetID());
 	return true;
 }
@@ -348,10 +324,10 @@ bool CSquareDeal::XSquareDeal2::AddItem(CItem* pItem)
 	if(find(This()->m_setItem2.begin(), This()->m_setItem2.end(), pItem->GetID()) != This()->m_setItem2.end())
 		return false;
 
-	if(!This()->m_pUser1->AddItem(pItem, This()->m_setItem2.size()+1, This()->m_nAllWeight2 + pItem->GetWeight()))
-		return false;
+	//if(!This()->m_pUser1->AddItem(pItem, This()->m_setItem2.size()+1, This()->m_nAllWeight2 + pItem->GetWeight()))
+	//	return false;
 
-	This()->m_nAllWeight2	+= pItem->GetWeight();
+	//This()->m_nAllWeight2	+= pItem->GetWeight();
 	This()->m_setItem2.push_back(pItem->GetID());
 	return true;
 }

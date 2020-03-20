@@ -29,6 +29,8 @@ const DWORD _IDMSK_MONSTER = 0xc0000000;
 extern DWORD NEXT_MONSTERID;
 extern DWORD GetNext_MonsterID();
 
+typedef std::vector<CMonster*> MONSTER_SET;
+
 //////////////////////////////////////////////////////////////////////
 /*enum PETDATA { 
 	PETDATA_OWNERID = 1,
@@ -89,6 +91,7 @@ public: // IRole
 								//	virtual LPCTSTR	GetMate()							{ return NOMATE_NAME; }
 	virtual LPCTSTR	GetTitle() { return TITILE_NONE; }
 
+	virtual DWORD	GetLook() { return pData->GetLook(); }
 	virtual DWORD 	GetHair() { return 0; }
 	virtual int 	GetPosX() { return m_nPosX; }
 	virtual int 	GetPosY() { return m_nPosY; }
@@ -131,7 +134,7 @@ public: // IRole
 	//virtual int 	AdjustMagicDamage(int nDamage);
 	//virtual void	SetFightPause(int nInterval) { m_nFightPause = nInterval; }
 
-	virtual DWORD	GetLook() { return pData->GetLook(); }
+	virtual ELEMENT GetElement() { return element; }
 
 	//virtual void	BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf = false);
 	//virtual void	BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf = false);
@@ -198,6 +201,9 @@ public: // get attrib  ------------------------------------
 	//bool		IsEquality() { return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_EQUALITY) != 0; }
 	//bool		IsEudemon() { return (m_idNpc >= EUDEMON_ID_FIRST && m_idNpc <= EUDEMON_ID_LAST); }
 	//static int	GetNameType(int nAtkerLev, int nMonsterLev);
+
+	bool IsSuper() { return (pData->GetClass() / 10000) == 1; }
+	bool IsUnevo() { return (pData->GetClass() / 10000) == 7; }
 
 public:	// modify attrib ------------------------------
 	//virtual void	SetDir(int nDir) { m_nDir = nDir % 8; }
@@ -290,6 +296,7 @@ protected: // attrib
 	//int			m_nPose;
 	//	CGameMap*	m_pMap;
 
+	ELEMENT element;
 	int		LifeCurrent;
 	//int			m_nCurrMana;
 

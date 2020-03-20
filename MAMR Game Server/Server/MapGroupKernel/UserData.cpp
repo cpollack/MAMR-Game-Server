@@ -60,11 +60,6 @@ bool CUserData::LoadInfo(void)
 	m_Info.dwLast_login		= m_pRes->LoadDWord("last_login");
 	m_Info.dwLook			= m_pRes->LoadDWord("look");
 	m_Info.dwFace			= m_pRes->LoadDWord("face");
-	//m_Info.dwHair			= m_pRes->LoadDWord("hair");
-	//m_pRes->LoadString(m_Info.setMedal, "medal", MEDAL_BUFSIZE);
-	//m_Info.dwMedal_select	= m_pRes->LoadDWord("medal_select");
-	//m_pRes->LoadString(m_Info.setTitle, "title", TITLE_BUFSIZE);
-	//m_Info.dwTitle_select	= m_pRes->LoadDWord("title_select");
 	m_Info.dwMoney			= m_pRes->LoadDWord("money");
 	m_Info.dwMoney_saved	 = m_pRes->LoadDWord("money_saved");
 	m_Info.dwReputation		= m_pRes->LoadDWord("repute");
@@ -74,8 +69,7 @@ bool CUserData::LoadInfo(void)
 	m_Info.idAccount		= m_pRes->LoadDWord("account_id");
 	m_Info.idRecordmap		= m_pRes->LoadDWord("recordmap_id");
 	m_Info.idSyndicate		= m_pRes->LoadDWord("syndicate_id");
-	//m_Info.nPotential		= m_pRes->LoadInt("potential");
-	m_Info.nExp				= m_pRes->LoadInt("exp");
+	m_Info.nExp				= m_pRes->LoadUInt("exp");
 	m_Info.ucLevel			= m_pRes->LoadInt("level");
 	m_Info.dwCultivation	= m_pRes->LoadInt("degree_lev");
 	m_Info.dwTaskMask		= m_pRes->LoadInt("task_mask");
@@ -90,7 +84,6 @@ bool CUserData::LoadInfo(void)
 	m_Info.usAdditional_point	= m_pRes->LoadDWord("additional_point");
 	//m_Info.ucAuto_allot			= m_pRes->LoadUInt("auto_allot");
 
-	//Redo this section to reflect mam
 	m_Info.usLife		= m_pRes->LoadDWord("life");
 	m_Info.usPower		= m_pRes->LoadDWord("power");
 	m_Info.usPhysique	= m_pRes->LoadDWord("physique");
@@ -98,29 +91,40 @@ bool CUserData::LoadInfo(void)
 	m_Info.usForce		= m_pRes->LoadDWord("force");
 	m_Info.usSpeed		= m_pRes->LoadDWord("speed");
 	m_Info.usDegree		= m_pRes->LoadDWord("degree");
-	//m_Info.dwMaxlifePercent		= m_pRes->LoadDWord("maxlife_percent");
 
 	m_Info.nSmith = m_pRes->LoadDWord("exp_smith");
 	m_Info.nCreative = m_pRes->LoadDWord("exp_creative");
 	m_Info.nMedicine = m_pRes->LoadDWord("exp_medicine");
 	m_Info.nSteal = m_pRes->LoadDWord("exp_steal");
 
-
 	m_Info.ucMetempsychosis		= m_pRes->LoadDWord("metempsychosis");
 
-	//pets
-	//skills
-	//weapon/armor/shoes/treasure0/treasure1 _id
+	m_Info.petCount = m_pRes->LoadInt("pet_count");
+	m_Info.marchingPetId = m_pRes->LoadInt("petused_id");
+	for (int i = 0; i < MAX_PETS; i++) {
+		if (i < m_Info.petCount) {
+			char str[8];
+			sprintf(str, "pet%u_id", i);
+			m_Info.petId[i] = m_pRes->LoadUInt(str);
+		}
+		else m_Info.petId[i] = 0;
+	}
 
-	//m_Info.ucNobility			= m_pRes->LoadDWord("nobility");
-	//m_Info.ucProfession			= m_pRes->LoadDWord("profession");
-	//m_Info.usSoul				= m_pRes->LoadDWord("soul");
-	//m_Info.nTutorExp			= m_pRes->LoadInt("tutor_exp");
-	//m_Info.ucTutorLevel			= m_pRes->LoadDWord("tutor_level");
-	//m_Info.ucMercenaryRank		= m_pRes->LoadUInt("mercenary_rank");
-	//m_Info.dwMercenaryExp		= m_pRes->LoadDWord("mercenary_exp");
-	//m_Info.ucNobilityRank		= m_pRes->LoadUInt("nobility_rank");
-	//m_Info.dwExploit			= m_pRes->LoadDWord("exploit");
+	m_Info.skillCount = m_pRes->LoadInt("skill_count");
+	for (int i = 0; i < MAX_USERSKILLS; i++) {
+		if (i < m_Info.skillCount) {
+			char str[12];
+			sprintf(str, "skill%u_id", i);
+			m_Info.skillId[i] = m_pRes->LoadUInt(str);
+		}
+		else m_Info.skillId[i] = 0;
+	}
+
+	m_Info.idWeapon = m_pRes->LoadUInt("weapon_id");
+	m_Info.idArmor = m_pRes->LoadUInt("armor_id");
+	m_Info.idShoes = m_pRes->LoadUInt("shoes_id");
+	m_Info.idBody = m_pRes->LoadUInt("treasure0_id");
+	m_Info.idHead = m_pRes->LoadUInt("treasure1_id");
 
 	return true;
 }

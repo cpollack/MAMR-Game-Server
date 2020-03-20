@@ -18,14 +18,25 @@ const unsigned short _MSG_GENERAL		=1000;
 const unsigned short _MSG_WALK		= _MSG_GENERAL + 5;
 const unsigned short _MSG_ACTION	= _MSG_GENERAL + 7;
 const unsigned short _MSG_USERINFO	= _MSG_GENERAL + 8;
+const unsigned short _MSG_ITEMINFO  = _MSG_GENERAL + 16;
 const unsigned short _MSG_DIRECTION = _MSG_GENERAL + 18;
 const unsigned short _MSG_MAPINFO	= _MSG_GENERAL + 31;
 const unsigned short _MSG_PLAYER	= _MSG_GENERAL + 32;
+const unsigned short _MSG_PETACTION = _MSG_GENERAL + 33;
+const unsigned short _MSG_PETINFO   = _MSG_GENERAL + 34;
+const unsigned short _MSG_COLOR	    = _MSG_GENERAL + 43;
 
 const unsigned short _MSG_ROLE		= _MSG_GENERAL + 50;
 const unsigned short _MSG_CONNECT	= _MSG_GENERAL + 52;
 
-const unsigned short _MSG_NPCINFO	= _MSG_GENERAL + 1030;
+const unsigned short _MSG_BATTLEACT		= _MSG_GENERAL + 1000;
+const unsigned short _MSG_NORMALACT		= _MSG_GENERAL + 1001;
+const unsigned short _MSG_BATTLE		= _MSG_GENERAL + 1005;
+const unsigned short _MSG_ENEMY			= _MSG_GENERAL + 1007;
+const unsigned short _MSG_FIGHTER		= _MSG_GENERAL + 1008;
+const unsigned short _MSG_BATTLERESULT	= _MSG_GENERAL + 1009;
+const unsigned short _MSG_BATTLEROUND	= _MSG_GENERAL + 1012;
+const unsigned short _MSG_NPCINFO		= _MSG_GENERAL + 1030;
 
 //Uncleaned
 
@@ -34,14 +45,13 @@ const unsigned short _MSG_LOGIN			=_MSG_GENERAL+2;
 const unsigned short _MSG_LOGIN_c		=_MSG_GENERAL+2; //special login override, original used for npc server?
 const unsigned short _MSG_LOGOUT		=_MSG_GENERAL+3;
 const unsigned short _MSG_TALK			=_MSG_GENERAL+4;
-const unsigned short _MSG_ITEMINFO		= _MSG_GENERAL + 6;
 const unsigned short _MSG_ITEM			=_MSG_GENERAL+9;
 const unsigned short _MSG_ATTACK		=_MSG_GENERAL + 10;
 const unsigned short _MSG_ACCIDENT		=_MSG_GENERAL+11;
 const unsigned short _MSG_TICK			=_MSG_GENERAL+12;
 const unsigned short _MSG_ROOM			=_MSG_GENERAL+13;
 const unsigned short _MSG_NAME			=_MSG_GENERAL+15;
-const unsigned short _MSG_WEATHER		=_MSG_GENERAL+16;
+const unsigned short _MSG_WEATHER		=_MSG_GENERAL+16 + 100;
 const unsigned short _MSG_USERATTRIB	=_MSG_GENERAL+17;
 const unsigned short _MSG_FRIEND		=_MSG_GENERAL+19;
 const unsigned short _MSG_EFFECT		=_MSG_GENERAL+20;
@@ -74,8 +84,8 @@ const unsigned short _MSG_SYNINFO		=_MSG_GENERAL+114;
 const unsigned short _MSG_NPC			=_MSG_GENERAL+1031;
 const unsigned short _MSG_DIALOG		=_MSG_GENERAL+1032;
 const unsigned short _MSG_FRIENDINFO	=_MSG_GENERAL+1033;
-const unsigned short _MSG_TIME			=_MSG_GENERAL+1034;
-const unsigned short _MSG_PETINFO		=_MSG_GENERAL+1035;
+const unsigned short _MSG_TIME			=_MSG_GENERAL+1034; 
+const unsigned short _MSG_CALLPETINFO	=_MSG_GENERAL+1035;
 const unsigned short _MSG_DATAARRAY		=_MSG_GENERAL+1036;
 const unsigned short _MSG_EUDEMONATTRIB	=_MSG_GENERAL+1037;
 const unsigned short _MSG_SCHOOLMEMBER	=_MSG_GENERAL+1038;

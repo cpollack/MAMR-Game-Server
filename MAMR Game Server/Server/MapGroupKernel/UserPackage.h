@@ -19,13 +19,11 @@
 
 ////////////////////////////////////////////////////////////////
 // 背包容量上限
-const int	_MAX_EUDEMONSIZE				= 3;				// 幻兽最大数量
-const int	_MAX_EUDEMONEGGSIZE				= 6;				// 幻兽蛋最大数量
-const int	_MAX_GHOSTGEMSIZE				= 40;				// 魔魂宝石最大数量
-const int	_MAX_USERITEMSIZE				= 40;				// 普通物品背包最大数量
-const int	_MAX_ALLUSERITEMSIZE			= _MAX_EUDEMONSIZE + _MAX_EUDEMONEGGSIZE + _MAX_GHOSTGEMSIZE + _MAX_USERITEMSIZE + (ITEMPOSITION_EQUIPEND - ITEMPOSITION_EQUIPBEGIN);		// + 装备数量
+const int	_MAX_USERITEMSIZE				= 15;				// 普通物品背包最大数量
+const int	_MAX_ALLUSERITEMSIZE			= _MAX_USERITEMSIZE + (ITEMPOSITION_EQUIPEND - ITEMPOSITION_EQUIPBEGIN);		// + 装备数量
 
-const int	_MAX_PACK_TYPE	= ITEMPOSITION_PACK_END - ITEMPOSITION_PACK_BEGIN;
+//for now we will just have one item pack, the main inv
+const int	_MAX_PACK_TYPE = 1;// ITEMPOSITION_PACK_END - ITEMPOSITION_PACK_BEGIN;
 /*
 enum PACK_TYPE {
 	_PACK_NORMAL			= ITEMPOSITION_BACKPACK,			// 普通物品背包
@@ -36,10 +34,6 @@ enum PACK_TYPE {
 */
 const int	_MAX_PACK_SIZES[_MAX_PACK_TYPE] = {
 	_MAX_USERITEMSIZE,				// 普通物品背包容量
-	_MAX_GHOSTGEMSIZE,				// 魔魂宝石最大数量
-	_MAX_EUDEMONEGGSIZE,			// 幻兽蛋最大数量
-	_MAX_EUDEMONSIZE,				// 幻兽最大数量
-
 };
 
 

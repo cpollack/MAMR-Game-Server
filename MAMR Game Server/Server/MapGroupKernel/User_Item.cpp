@@ -10,6 +10,7 @@
 //#include "MapItem.h"
 #include "Package.h"
 
+const int USERITEM_MASK = 100000000;
 const int	MINI_ADDLIFE_DRAG				= 100;
 //const int	ADDLIFE_FIRST_PERCENT			= 40;
 //const int	ADDLIFE_NEXT_PERCENT			= 20;
@@ -23,16 +24,19 @@ bool CUser::CreateAllItem(IDatabase* pDb)
 {
 	ASSERT(m_pPackage);
 
-	// 载入背包物品
+	// Backpack, we can explore implementing this later
 	if (!m_pPackage->Create(this, pDb))
 	{
 		return false;
 	}
 
+	int itemFirst = USERITEM_MASK + (GetID() * 100);
+	int itemLast = itemFirst + 19;
+
 	// 载入装备物品
 	SQLBUF		szSQL;
 	//sprintf(szSQL, "SELECT * FROM %s WHERE owner_id=%u && position<=%u LIMIT %d", _TBL_ITEM, GetID(), ITEMPOSITION_USER_LIMIT, _MAX_ALLUSERITEMSIZE);
-	sprintf(szSQL, "SELECT * FROM %s WHERE owner_id=%u && position >= %u && position<%u LIMIT %d", _TBL_ITEM, GetID(), ITEMPOSITION_EQUIPBEGIN, ITEMPOSITION_EQUIPEND, ITEMPOSITION_EQUIPEND - ITEMPOSITION_EQUIPBEGIN);
+	sprintf(szSQL, "SELECT * FROM %s WHERE id >= %u AND id <= %u", _TBL_ITEM, itemFirst, itemLast);
 	IRecordset*	pRes = pDb->CreateNewRecordset(szSQL);
 	if(pRes)
 	{
@@ -43,24 +47,31 @@ bool CUser::CreateAllItem(IDatabase* pDb)
 			{
 				if(pItem->Create(pRes, pDb))
 				{
-					int nPosition = pItem->GetInt(ITEMDATA_POSITION);
-					CItemPtr& refpEquip = GetEquipItemRef(nPosition);
-					if(!refpEquip)				//? 防止两个物品的POSITION相同 paled
+					OBJID idItem = pItem->GetInt(ITEMDATA_ID);
+					CItemPtr* ppEquip = GetEquipItemPtr(idItem);
+					if(!ppEquip)
 					{
-						refpEquip = pItem;
-						EquipMagicItem(pItem, nPosition);
+						m_pPackage->AddItem(pItem);
 					}
 					else
 					{
-						char err[256];
-						sprintf(err,"Found same position of user equip.The Item ID: %d",pItem->GetID());
-						LOGWARNING(err);
-						pItem->ReleaseByOwner();
+						CItemPtr& refpEquip = *ppEquip;
+						if (!refpEquip) {
+							refpEquip = pItem;
+							//EquipMagicItem(pItem, nPosition);
+							//setting it to item ptr is the same as equipping
+						}
+						else {
+							char err[256];
+							sprintf(err, "Found same position of user equip.The Item ID: %d", pItem->GetID());
+							LOGWARNING(err);
+							pItem->ReleaseByOwner();
+						}
 					}
 				}
 				else
 				{
-					LOGERROR("玩家[%s]无法加载物品[%u]", GetName(), pItem->GetID());
+					LOGERROR("Player[%s] cannot load item[%u]", GetName(), pItem->GetID());
 					pItem->ReleaseByOwner();
 				}
 			}
@@ -70,35 +81,23 @@ bool CUser::CreateAllItem(IDatabase* pDb)
 		pRes->Release();
 	}
 
-	UpdateWeight();
+	//UpdateWeight();
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 void CUser::SaveItemInfo()
 {
-	if(m_pHelmet)
-		m_pHelmet->SaveInfo();
-	if(m_pNecklace)
-		m_pNecklace->SaveInfo();
-	if(m_pArmor)
+	if(m_pWeapon)
+		m_pWeapon->SaveInfo();
+	if (m_pArmor)
 		m_pArmor->SaveInfo();
-	if(m_pWeaponR)
-		m_pWeaponR->SaveInfo();
-	if(m_pWeaponL)
-		m_pWeaponL->SaveInfo();
-	if(m_pRingR)
-		m_pRingR->SaveInfo();
-	if(m_pRingL)
-		m_pRingL->SaveInfo();
 	if(m_pShoes)
 		m_pShoes->SaveInfo();
-	if(m_pMount)
-		m_pMount->SaveInfo();
-	if(m_pSprite)
-		m_pSprite->SaveInfo();
-	if (m_pMantle)
-		m_pMantle->SaveInfo();
+	if (m_pBodyAccessory)
+		m_pBodyAccessory->SaveInfo();
+	if (m_pHeadAccessory)
+		m_pHeadAccessory->SaveInfo();
 
 	m_pPackage->SaveAllInfo();
 }
@@ -106,99 +105,48 @@ void CUser::SaveItemInfo()
 //////////////////////////////////////////////////////////////////////
 void CUser::DeleteAllItem()
 {
-	SAFE_RELEASEBYOWNER(m_pHelmet);
-	SAFE_RELEASEBYOWNER(m_pNecklace);
+	SAFE_RELEASEBYOWNER(m_pWeapon);
 	SAFE_RELEASEBYOWNER(m_pArmor);
-	SAFE_RELEASEBYOWNER(m_pWeaponR);
-	SAFE_RELEASEBYOWNER(m_pWeaponL);
-	SAFE_RELEASEBYOWNER(m_pRingR);
-	SAFE_RELEASEBYOWNER(m_pRingL);
 	SAFE_RELEASEBYOWNER(m_pShoes);
-	SAFE_RELEASEBYOWNER(m_pMount);
-	SAFE_RELEASEBYOWNER(m_pSprite);
-	SAFE_RELEASEBYOWNER(m_pMantle);
+	SAFE_RELEASEBYOWNER(m_pBodyAccessory);
+	SAFE_RELEASEBYOWNER(m_pHeadAccessory);
 
 	m_pPackage->ClearAll();
 
-	UpdateWeight();
+	//UpdateWeight();
 }
 
 //////////////////////////////////////////////////////////////////////
 void CUser::SendAllItemInfo()
 {
-	if(m_pHelmet)
+	if (m_pWeapon)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pHelmet, ITEMINFO_ADDITEM))
-			this->SendMsg(&msg);
-	}
-	if(m_pNecklace)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pNecklace, ITEMINFO_ADDITEM))
+		if (msg.Create(m_pWeapon, ITEMINFO_EQUIPITEM, GetID()))
 			this->SendMsg(&msg);
 	}
 	if(m_pArmor)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pArmor, ITEMINFO_ADDITEM))
-			this->SendMsg(&msg);
-	}
-	if(m_pWeaponR)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pWeaponR, ITEMINFO_ADDITEM))
-			this->SendMsg(&msg);
-	}
-	if(m_pWeaponL)
-	{
-		// auto correct (enable since arrow)
-//		if (m_pWeaponR && m_pWeaponR->GetItemSort() == ITEMSORT_WEAPON2)
-		{
-//			ASSERT(!"auto unquiponly when error weapon, may be not backpack room.");
-//			this->UnEquipOnly(ITEMPOSITION_WEAPONL);
-		}
-//		else
-		{
-			CMsgItemInfo	msg;
-			if(msg.Create(m_pWeaponL, ITEMINFO_ADDITEM))
-				this->SendMsg(&msg);
-		}
-	}
-	if(m_pRingR)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pRingR, ITEMINFO_ADDITEM))
-			this->SendMsg(&msg);
-	}
-	if(m_pRingL)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pRingL, ITEMINFO_ADDITEM))
+		if(msg.Create(m_pArmor, ITEMINFO_EQUIPITEM, GetID()))
 			this->SendMsg(&msg);
 	}
 	if(m_pShoes)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pShoes, ITEMINFO_ADDITEM))
+		if(msg.Create(m_pShoes, ITEMINFO_EQUIPITEM, GetID()))
 			this->SendMsg(&msg);
 	}
-	if(m_pMount)
+	if (m_pBodyAccessory)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pMount, ITEMINFO_ADDITEM))
+		if (msg.Create(m_pBodyAccessory, ITEMINFO_EQUIPITEM, GetID()))
 			this->SendMsg(&msg);
 	}
-	if(m_pSprite)
+	if (m_pHeadAccessory)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pSprite, ITEMINFO_ADDITEM))
-			this->SendMsg(&msg);
-	}
-	if(m_pMantle)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pMantle, ITEMINFO_ADDITEM))
+		if (msg.Create(m_pHeadAccessory, ITEMINFO_EQUIPITEM, GetID()))
 			this->SendMsg(&msg);
 	}
 
@@ -210,16 +158,10 @@ void CUser::SendAllEquipInfoTo(CUser* pRecv)
 {
 	CHECK(pRecv);
 
-	if(m_pHelmet)
+	if (m_pWeapon)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pHelmet, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
-			pRecv->SendMsg(&msg);
-	}
-	if(m_pNecklace)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pNecklace, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
+		if (msg.Create(m_pWeapon, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
 			pRecv->SendMsg(&msg);
 	}
 	if(m_pArmor)
@@ -228,52 +170,22 @@ void CUser::SendAllEquipInfoTo(CUser* pRecv)
 		if(msg.Create(m_pArmor, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
 			pRecv->SendMsg(&msg);
 	}
-	if(m_pWeaponR)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pWeaponR, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
-			pRecv->SendMsg(&msg);
-	}
-	if(m_pWeaponL)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pWeaponL, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
-			pRecv->SendMsg(&msg);
-	}
-	if(m_pRingR)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pRingR, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
-			pRecv->SendMsg(&msg);
-	}
-	if(m_pRingL)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pRingL, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
-			pRecv->SendMsg(&msg);
-	}
 	if(m_pShoes)
 	{
 		CMsgItemInfo	msg;
 		if(msg.Create(m_pShoes, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
 			pRecv->SendMsg(&msg);
 	}
-	if(m_pMount)
+	if (m_pBodyAccessory)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pMount, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
+		if (msg.Create(m_pBodyAccessory, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
 			pRecv->SendMsg(&msg);
 	}
-	if(m_pSprite)
+	if (m_pHeadAccessory)
 	{
 		CMsgItemInfo	msg;
-		if(msg.Create(m_pSprite, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
-			pRecv->SendMsg(&msg);
-	}
-	if(m_pMantle)
-	{
-		CMsgItemInfo	msg;
-		if(msg.Create(m_pMantle, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
+		if (msg.Create(m_pHeadAccessory, ITEMINFO_OTHERPLAYER_EQUIPMENT, GetID()))
 			pRecv->SendMsg(&msg);
 	}
 }
@@ -311,28 +223,16 @@ CItem* CUser::FindSpaceTransSpell()
 //////////////////////////////////////////////////////////////////////
 CItem* CUser::GetEquipItem(OBJID idItem)
 {
-	if(m_pHelmet && m_pHelmet->GetID() == idItem)
-		return m_pHelmet;
-	else if(m_pNecklace && m_pNecklace->GetID() == idItem)
-		return m_pNecklace;
+	if (m_pWeapon && m_pWeapon->GetID() == idItem)
+		return m_pWeapon;
 	else if(m_pArmor && m_pArmor->GetID() == idItem)
 		return m_pArmor;
-	else if(m_pWeaponR && m_pWeaponR->GetID() == idItem)
-		return m_pWeaponR;
-	else if(m_pWeaponL && m_pWeaponL->GetID() == idItem)
-		return m_pWeaponL;
-	else if(m_pRingR && m_pRingR->GetID() == idItem)
-		return m_pRingR;
-	else if(m_pRingL && m_pRingL->GetID() == idItem)
-		return m_pRingL;
 	else if(m_pShoes && m_pShoes->GetID() == idItem)
 		return m_pShoes;
-	else if(m_pMount && m_pMount->GetID() == idItem)
-		return m_pMount;
-	else if(m_pSprite && m_pSprite->GetID() == idItem)
-		return m_pSprite;
-	else if(m_pMantle && m_pMantle->GetID() == idItem)
-		return m_pMantle;
+	else if (m_pBodyAccessory && m_pBodyAccessory->GetID() == idItem)
+		return m_pBodyAccessory;
+	else if (m_pHeadAccessory && m_pHeadAccessory->GetID() == idItem)
+		return m_pHeadAccessory;
 
 	return NULL;
 }
@@ -348,33 +248,27 @@ CItem* CUser::GetEquipItemByPos(int nPosition)
 }
 
 //////////////////////////////////////////////////////////////////////
-CItemPtr* CUser::GetEquipItemPtr(int nPosition)
+CItemPtr* CUser::GetEquipItemPtr(OBJID idItem)
 {
-	switch(nPosition)
+	if (m_data.m_Info.idWeapon == idItem) return &m_pWeapon;
+	if (m_data.m_Info.idArmor == idItem) return &m_pArmor;
+	if (m_data.m_Info.idShoes == idItem) return &m_pShoes;
+	if (m_data.m_Info.idBody == idItem) return &m_pBodyAccessory;
+	if (m_data.m_Info.idHead == idItem) return &m_pHeadAccessory;
+
+	/*switch(nPosition)
 	{
-	case	ITEMPOSITION_HELMET:
-		return &m_pHelmet;
-	case	ITEMPOSITION_NECKLACE:
-		return &m_pNecklace;
+	case	ITEMPOSITION_WEAPON:
+		return &m_pWeapon;
 	case	ITEMPOSITION_ARMOR:
 		return &m_pArmor;
-	case	ITEMPOSITION_WEAPONR:
-		return &m_pWeaponR;
-	case	ITEMPOSITION_WEAPONL:
-		return &m_pWeaponL;
-	case	ITEMPOSITION_RINGR:
-		return &m_pRingR;
-	case	ITEMPOSITION_RINGL:
-		return &m_pRingL;
 	case	ITEMPOSITION_SHOES:
 		return &m_pShoes;
-	case	ITEMPOSITION_MOUNT:
-		return &m_pMount;
-	case	ITEMPOSITION_SPRITE:
-		return &m_pSprite;
-	case	ITEMPOSITION_MANTLE:
-		return &m_pMantle;
-	}
+	case	ITEMPOSITION_BODY:
+		return &m_pBodyAccessory;
+	case	ITEMPOSITION_HEAD:
+		return &m_pHeadAccessory;
+	}*/
 
 	return NULL;
 }
@@ -401,11 +295,11 @@ bool CUser::AddItem (CItem* pItem, bool bSynchro, bool bUpdate /*= true*/)
 {
 	CHECKF(pItem);
 	
-	if (pItem->GetInt(ITEMDATA_OWNERID) != GetID())
-		pItem->SetInt(ITEMDATA_OWNERID, GetID());
+	//if (pItem->GetInt(ITEMDATA_OWNERID) != GetID())
+	//	pItem->SetInt(ITEMDATA_OWNERID, GetID());
 
-	if (pItem->GetInt(ITEMDATA_PLAYERID) != GetID())
-		pItem->SetInt(ITEMDATA_PLAYERID, GetID());
+	//if (pItem->GetInt(ITEMDATA_PLAYERID) != GetID())
+	//	pItem->SetInt(ITEMDATA_PLAYERID, GetID());
 	
 	if (!m_pPackage->AddItem(pItem, bUpdate))
 		return false;
@@ -439,8 +333,8 @@ CItem* CUser::PopItem (OBJID idItem, bool bSynchro, bool bUpdate)			// 立即清除O
 	CItemPtr pItem = m_pPackage->PopItem(idItem);
 	if (pItem)
 	{
-		pItem->SetInt(ITEMDATA_PLAYERID, ID_NONE, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_OWNERID, ID_NONE, bUpdate);			// 立即清除OWNER
+		//pItem->SetInt(ITEMDATA_PLAYERID, ID_NONE, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_OWNERID, ID_NONE, bUpdate);			// 立即清除OWNER
 		if(bSynchro)
 		{
 			CMsgItem msg;
@@ -462,8 +356,8 @@ CItem* CUser::AwardItem(int nItemType, bool bSynchro, bool bIdentOK/*=false*/, b
 	info.idOwner	= GetID();
 	info.idPlayer	= GetID();
 	info.nPosition	= this->QueryPackage()->GetItemPositionByType(nItemType);
-	if(bIdentOK)
-		info.nIdent	&= ~_ITEM_STATUS_NOT_IDENT;
+	//if(bIdentOK)
+	//	info.nIdent	&= ~_ITEM_STATUS_NOT_IDENT;
 
 	return AwardItem(&info, bSynchro, bAutoCombine);
 }
@@ -475,13 +369,13 @@ CItem* CUser::AwardItem(ItemInfoStruct* pInfo, bool bSynchro, bool bAutoCombine/
 
 	// check weight
 	int nItemType = pInfo->idType;
-	if(GetWeight() + CItem::GetWeight(nItemType) > GetWeightLimit())
+/*	if(GetWeight() + CItem::GetWeight(nItemType) > GetWeightLimit())
 	{
 		this->SendSysMsg(STR_HEAVEY_BAG);
 		return NULL;
-	}
+	}*/
 
-	if(bAutoCombine && CItem::IsCountable(nItemType))
+	/*if(bAutoCombine && CItem::IsCountable(nItemType))
 	{
 		//CItemTypeData* pType = ItemType()->QueryItemType(pInfo->idType);
 		//CHECKF(pType);
@@ -504,7 +398,7 @@ CItem* CUser::AwardItem(ItemInfoStruct* pInfo, bool bSynchro, bool bAutoCombine/
 				return CombineNewItem(pItem, pInfo, bSynchro);
 			}
 		}
-	}
+	}*/
 
 	if (m_pPackage->IsPackFull(m_pPackage->GetItemPositionByType(nItemType)))
 	{
@@ -518,7 +412,7 @@ CItem* CUser::AwardItem(ItemInfoStruct* pInfo, bool bSynchro, bool bAutoCombine/
 	CItemPtr pItem = CItem::CreateNew();
 	CHECKF(pItem);
 	bool INSERT_TRUE = true;
-	if(!pItem->Create(GameDataDefault()->GetGameItemData(), pInfo, GameDataDefault()->GetEudemonData(), INSERT_TRUE, pInfo->id))
+	if(!pItem->Create(GameDataDefault()->GetGameItemData(), pInfo, INSERT_TRUE, pInfo->id))
 	{
 		pItem->ReleaseByOwner();
 
@@ -578,11 +472,11 @@ bool CUser::EraseEquip(int nPosition, bool bSynchro)		// 同时操作数据库
 		if(msg.Create(idItem, ITEMACT_DROPEQUIPMENT, nPosition))
 			this->SendMsg(&msg);
 
-		if(nPosition == ITEMPOSITION_HELMET
+		if(nPosition == ITEMPOSITION_WEAPON
 				|| nPosition == ITEMPOSITION_ARMOR
-				|| nPosition == ITEMPOSITION_WEAPONR
-				|| nPosition == ITEMPOSITION_WEAPONL
-				|| nPosition == ITEMPOSITION_MANTLE )
+				|| nPosition == ITEMPOSITION_SHOES
+				|| nPosition == ITEMPOSITION_BODY
+				|| nPosition == ITEMPOSITION_HEAD )
 		{
 			CMsgPlayer msgPlayer;
 			if (msgPlayer.Create(this->QueryRole()))
@@ -591,7 +485,7 @@ bool CUser::EraseEquip(int nPosition, bool bSynchro)		// 同时操作数据库
 	}
 
 //	UnequipMagicItem(nPosition);				// 在下次 SetAtkTarget()时删除
-	UpdateWeight();
+	//UpdateWeight();
 	return true;
 }
 
@@ -613,60 +507,25 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 		if (this->IsWing())
 			return false;
 
-		if(pItem->IsHelmet())
+		if(pItem->IsWeapon())
 		{
-			nPosition	= ITEMPOSITION_HELMET;
-		}
-		else if(pItem->IsNecklace())
-		{
-			nPosition	= ITEMPOSITION_NECKLACE;
+			nPosition	= ITEMPOSITION_WEAPON;
 		}
 		else if(pItem->IsArmor())
 		{
 			nPosition	= ITEMPOSITION_ARMOR;
 		}
-		else if(pItem->IsHoldEnable())
-		{
-			if(pItem->IsArrowSort())
-			{
-				nPosition	= ITEMPOSITION_WEAPONL;
-			}
-			else if(pItem->IsWeapon2())
-			{
-				nPosition	= ITEMPOSITION_WEAPONR;
-			}
-			else if(pItem->IsWeapon1() && (!m_pWeaponR || m_pWeaponL))
-			{
-				nPosition	= ITEMPOSITION_WEAPONR;
-			}
-			else // if(pItem->IsWeapon1() && !m_pWeaponL || pItem->IsShield())
-			{
-				nPosition	= ITEMPOSITION_WEAPONL;
-			}
-		}
-		else if(pItem->IsRing())
-		{
-			nPosition	= ITEMPOSITION_RINGR;
-		}
-		else if (pItem->IsBangle())
-		{
-			nPosition	= ITEMPOSITION_RINGL;
-		}
 		else if(pItem->IsShoes())
 		{
 			nPosition	= ITEMPOSITION_SHOES;
 		}
-		else if(pItem->IsMount())
+		else if (pItem->IsBodyAccessory())
 		{
-			nPosition	= ITEMPOSITION_MOUNT;
+			nPosition = ITEMPOSITION_BODY;
 		}
-		else if(pItem->IsSprite())
+		else if (pItem->IsHeadAccessory())
 		{
-			nPosition	= ITEMPOSITION_SPRITE;
-		}
-		else if(pItem->IsMantle())
-		{
-			nPosition	= ITEMPOSITION_MANTLE;
+			nPosition = ITEMPOSITION_HEAD;
 		}
 	}
 
@@ -686,109 +545,24 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 	bool	bRet	= false;
 	switch(nPosition)
 	{
-	case	ITEMPOSITION_HELMET:
+	case	ITEMPOSITION_WEAPON:
+	{
+		if (pItem->IsWeapon())
 		{
-			if(pItem->IsHelmet())
-			{
-				UnEquipOnly(nPosition);
-				m_pHelmet = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_HELMET);
-				bRet	= true;
-			}
+			UnEquipOnly(nPosition);
+			m_pWeapon = pItem;
+			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
+			bRet = true;
 		}
-		break;
-	case	ITEMPOSITION_NECKLACE:
-		{
-			if(pItem->IsNecklace())
-			{
-				UnEquipOnly(nPosition);
-				m_pNecklace = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_NECKLACE);
-				bRet	= true;
-			}
-		}
-		break;
+	}
+	break;
 	case	ITEMPOSITION_ARMOR:
 		{
 			if(pItem->IsArmor())
 			{
 				UnEquipOnly(nPosition);
 				m_pArmor = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
-				bRet	= true;
-			}
-		}
-		break;
-	case	ITEMPOSITION_WEAPONR:
-		{
-			if(pItem->IsHoldEnable())
-			{
-				if(pItem->IsWeapon2())
-				{
-					if(!( m_pWeaponR && m_pWeaponL && !IsBackPackSpare(2, 0, ID_NONE, ITEMPOSITION_BACKPACK) ))
-					{
-						UnEquipOnly(ITEMPOSITION_WEAPONR);
-						if(m_pWeaponL && !(m_pWeaponL->IsArrow() && pItem->IsBow() || m_pWeaponL->IsDart() && pItem->IsCrossBow()))
-							UnEquipOnly(ITEMPOSITION_WEAPONL);
-
-						m_pWeaponR = pItem;
-						pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_WEAPONR);
-						bRet	= true;
-					}
-				}
-				else if(pItem->IsWeapon1())
-				{
-					if(!(m_pWeaponL && (m_pWeaponL->IsArrow() || m_pWeaponL->IsDart()) && !IsBackPackSpare(2, 0, ID_NONE, ITEMPOSITION_BACKPACK) ))
-					{
-						UnEquipOnly(ITEMPOSITION_WEAPONR);
-						if(m_pWeaponL && m_pWeaponL->IsArrowSort())
-							UnEquipOnly(ITEMPOSITION_WEAPONL);
-
-						m_pWeaponR = pItem;
-						pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_WEAPONR);
-						bRet	= true;
-					}
-				}
-			}
-		}
-		break;
-	case	ITEMPOSITION_WEAPONL:
-		{
-			if(pItem->IsHoldEnable())
-			{
-				if(m_pWeaponR)
-				{
-					if( m_pWeaponR->IsWeapon1() && (pItem->IsWeapon1()||pItem->IsShield())
-						|| m_pWeaponR->IsBow() && pItem->IsArrow() || m_pWeaponR->IsCrossBow() && pItem->IsDart() )
-					{
-						UnEquipOnly(nPosition);
-						m_pWeaponL = pItem;
-						pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_WEAPONL);
-						UnequipMagicItem(ITEMPOSITION_WEAPONL);		//paled: need not
-						bRet	= true;
-					}
-				}
-			}
-		}
-		break;
-	case	ITEMPOSITION_RINGR:
-		{
-			if(pItem->IsRing())
-			{
-				UnEquipOnly(nPosition);
-				m_pRingR = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_RINGR);
-				bRet	= true;
-			}
-		}
-		break;
-	case	ITEMPOSITION_RINGL:
-		{
-			if(pItem->IsBangle())
-			{
-				UnEquipOnly(nPosition);
-				m_pRingL = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_RINGL);
+				//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
 				bRet	= true;
 			}
 		}
@@ -799,44 +573,33 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 			{
 				UnEquipOnly(nPosition);
 				m_pShoes = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
+				//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
 				bRet	= true;
 			}
 		}
 		break;
-	case	ITEMPOSITION_MOUNT:
+	case	ITEMPOSITION_BODY:
+	{
+		if (pItem->IsBodyAccessory())
 		{
-			if(pItem->IsMount())
-			{
-				UnEquipOnly(nPosition);
-				m_pMount = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_MOUNT);
-				bRet	= true;
-			}
+			UnEquipOnly(nPosition);
+			m_pBodyAccessory = pItem;
+			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
+			bRet = true;
 		}
-		break;
-	case	ITEMPOSITION_SPRITE:	// add by zlong 2003-11-27
+	}
+	break;
+	case	ITEMPOSITION_HEAD:
+	{
+		if (pItem->IsHeadAccessory())
 		{
-			if (pItem->IsSprite())
-			{
-				UnEquipOnly(nPosition);
-				m_pSprite = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SPRITE);
-				bRet	= true;
-			}
+			UnEquipOnly(nPosition);
+			m_pHeadAccessory = pItem;
+			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
+			bRet = true;
 		}
-		break;
-	case	ITEMPOSITION_MANTLE:
-		{
-			if (pItem->IsMantle())
-			{
-				UnEquipOnly(nPosition);
-				m_pMantle = pItem;
-				pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_MANTLE);
-				bRet	= true;
-			}
-		}
-		break;
+	}
+	break;
 	default:
 		ASSERT(!"switch");
 	} // switch
@@ -845,28 +608,17 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 
 	if(bRet)
 	{
-
-
-		//---jinggy---2004-11-19--启动设备经验值记数器---begin		
-		if(pItem->GetWarGhostLevel()==MAX_LEVEL_WARLEVEL-1)
-			UpdateEquipmentExp_Startup(nPosition,EQUIPMENT_EXP_ADD_SECS_AFTER9);
-		else if(pItem->GetWarGhostLevel()<MAX_LEVEL_WARLEVEL-1)
-			UpdateEquipmentExp_Startup(nPosition,EQUIPMENT_EXP_ADD_SECS);
-		//---jinggy---2004-11-19--启动设备经验值记数器---end
-
-
 		if(bSynchro)
 		{
 			CMsgItem msg;
 			if(msg.Create(idItem, ITEMACT_EQUIP, nPosition))
 				this->SendMsg(&msg);
 
-			if(nPosition == ITEMPOSITION_HELMET
-					|| nPosition == ITEMPOSITION_ARMOR
-					|| nPosition == ITEMPOSITION_WEAPONR
-					|| nPosition == ITEMPOSITION_WEAPONL
-					|| nPosition == ITEMPOSITION_MANTLE
-					|| nPosition == ITEMPOSITION_MOUNT )
+			if (nPosition == ITEMPOSITION_WEAPON
+				|| nPosition == ITEMPOSITION_ARMOR
+				|| nPosition == ITEMPOSITION_SHOES
+				|| nPosition == ITEMPOSITION_BODY
+				|| nPosition == ITEMPOSITION_HEAD)
 			{
 				CMsgPlayer msgPlayer;
 				if (msgPlayer.Create(this->QueryRole()))
@@ -895,24 +647,24 @@ bool CUser::TryItem(OBJID idItem, int nPosition)
 	if (pItem->IsTaskItem())
 		return false;
 
-	if (pItem->GetInt(ITEMDATA_REQ_LEVEL) && pItem->GetInt(ITEMDATA_REQ_LEVEL) > GetLev())		// 综合等级
+	if (pItem->GetInt(ITEMDATA_LEVELREQ) && pItem->GetInt(ITEMDATA_LEVELREQ) > GetLev())		// 综合等级
 		return false;
 
-	if (pItem->IsNeedIdent())
-		return false;
+	//if (pItem->IsNeedIdent())
+	//	return false;
 
-	if (pItem->GetInt(ITEMDATA_REQ_SEX) && 
-			(pItem->GetInt(ITEMDATA_REQ_SEX) & (1<<GetSex())) == 0)
-		return false;
+	//if (pItem->GetInt(ITEMDATA_REQ_SEX) && 
+	//		(pItem->GetInt(ITEMDATA_REQ_SEX) & (1<<GetSex())) == 0)
+	//	return false;
 
-	if(pItem->IsMount() && pItem->GetInt(ITEMDATA_AMOUNT) == 0)
-		return false;
+	//if(pItem->IsMount() && pItem->GetInt(ITEMDATA_AMOUNT) == 0)
+	//	return false;
 
 	// rebirth ------------------------------------------------
 	if(this->GetMetempsychosis() && GetLev() >= 70)
 		return true;		//!
 
-	if (pItem->GetInt(ITEMDATA_REQ_PROF) != 0)
+	/*if (pItem->GetInt(ITEMDATA_REQ_PROF) != 0)
 	{
 		int nRequireProfSort	= (pItem->GetInt(ITEMDATA_REQ_PROF)%1000)/10;
 		int nRequireProfLevel	= pItem->GetInt(ITEMDATA_REQ_PROF)%10;
@@ -937,20 +689,20 @@ bool CUser::TryItem(OBJID idItem, int nPosition)
 
 		if (nProfLevel < nRequireProfLevel)
 			return false;
-	}
+	}*/
 
 //	if (pItem->GetInt(ITEMDATA_REQ_SKILL) && pItem->IsWeapon() && 
 //				pItem->GetInt(ITEMDATA_REQ_SKILL) > GetWeaponSkillLev(pItem->GetInt(ITEMDATA_TYPE)))
 //		return false;
 
-	if ((pItem->GetInt(ITEMDATA_REQ_FORCE) && pItem->GetInt(ITEMDATA_REQ_FORCE) > GetForce())
+	//if ((pItem->GetInt(ITEMDATA_REQ_FORCE) && pItem->GetInt(ITEMDATA_REQ_FORCE) > GetForce())
 	//	|| (pItem->GetInt(ITEMDATA_REQ_DEX) && pItem->GetInt(ITEMDATA_REQ_DEX) > GetDex())
 	//	|| (pItem->GetInt(ITEMDATA_REQ_HEALTH) && pItem->GetInt(ITEMDATA_REQ_HEALTH) > GetHealth())
 	//	|| (pItem->GetInt(ITEMDATA_REQ_SOUL) && pItem->GetInt(ITEMDATA_REQ_SOUL) > GetSoul())
-		)
-	{
-		return false;
-	}
+	//	)
+	//{
+	//	return false;
+	//}
 
 	return true;
 }
@@ -961,7 +713,7 @@ bool CUser::ChkUseItem(CItem* pItem, IRole* pTarget)
 	CHECKF (pItem);
 	CHECKF (pTarget);
 
-	USHORT	usTarget = pItem->GetInt(ITEMDATA_TARGET);
+	/*USHORT	usTarget = pItem->GetInt(ITEMDATA_TARGET);
 	if (usTarget == TARGET_NONE)
 	{
 		if (pTarget->GetID() == this->GetID())
@@ -995,8 +747,7 @@ bool CUser::ChkUseItem(CItem* pItem, IRole* pTarget)
 			return false;
 
 		// 判断目标类型
-		if (!((usTarget&TARGET_MONSTER) && pMonster->IsMonster())
-			&& !((usTarget&TARGET_EUDEMON) && pMonster->IsEudemon()))
+		if (!((usTarget&TARGET_MONSTER) && pMonster->IsMonster()))
 			return false;
 
 		// 判断限制条件
@@ -1012,7 +763,7 @@ bool CUser::ChkUseItem(CItem* pItem, IRole* pTarget)
 			|| (!(usTarget&TARGET_BODY) && !pMonster->IsAlive()))
 			return false;
 	}
-
+	*/
 	return true;
 }
 
@@ -1029,7 +780,8 @@ bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
 	if (!ChkUseItem(pItem, this->QueryRole()))
 		return false;
 
-	if(pItem->IsActionItem() || pItem->IsGhostGem())
+	//if(pItem->IsActionItem() || pItem->IsGhostGem())
+	if (pItem->GetInt(ITEMDATA_ACTION))
 	{
 /*
 		if (pItem->IsGhostGem())
@@ -1092,13 +844,13 @@ bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
 	else if(pItem->IsEatEnable())
 	{
 		int	nAddLife	= pItem->GetInt(ITEMDATA_LIFE);
-		int	nAddMana	= pItem->GetInt(ITEMDATA_MANA);
+		int	nAddMana	= pItem->GetInt(ITEMDATA_POWER);
 
 //		if(nAddLife >= MINI_ADDLIFE_DRAG && m_setSlowHealUp2Life.Size() > 1)		// 限制吃药速度
 //			return false;
 
 		DEBUG_TRY	// VVVVVVVVVVVVVV
-		int nTimes = pItem->GetInt(ITEMDATA_ATKSPEED);	// 补血的次数
+		int nTimes = 1; // pItem->GetInt(ITEMDATA_ATKSPEED);	// 补血的次数
 		IF_NOT(SpendItem(pItem))		//??? 能吃的一定能删除, 先删除，防作弊
 			return false;
 
@@ -1212,9 +964,6 @@ bool CUser::UseItemTo(OBJID idTarget, OBJID idItem)
 {
 	if (idTarget == ID_NONE)
 		return false;
-
-	if (!this->TryItem(idItem, ITEMPOSITION_GHOSTGEM_PACK))
-		return false;
 		
 	CItemPtr pItem = GetItem(idItem);
 	if(!pItem)
@@ -1241,7 +990,8 @@ bool CUser::UseItemTo(OBJID idTarget, OBJID idItem)
 	if (!ChkUseItem(pItem, pTarget))
 		return false;
 
-	if(pItem->IsActionItem() || pItem->IsGhostGem())
+	//if (pItem->IsActionItem() || pItem->IsGhostGem())
+	if(pItem->GetInt(ITEMDATA_ACTION))
 	{
 		CHECKF(pItem->GetInt(ITEMDATA_ACTION));
 
@@ -1301,16 +1051,16 @@ bool CUser::UnEquipItem(int nPosition, bool bSynchro)
 	if(!pEquip)
 		return false;
 
-	if(nPosition == ITEMPOSITION_WEAPONR && m_pWeaponL && (m_pWeaponL->IsShield() || m_pWeaponL->IsArrowSort()))
-	{
-		if(!IsBackPackSpare(2, 0, ID_NONE, ITEMPOSITION_BACKPACK))
-			return false;
-	}
-	else
-	{
+	//if(nPosition == ITEMPOSITION_WEAPONR && m_pWeaponL && (m_pWeaponL->IsShield() || m_pWeaponL->IsArrowSort()))
+	//{
+	//	if(!IsBackPackSpare(2, 0, ID_NONE, ITEMPOSITION_BACKPACK))
+	//		return false;
+	//}
+	//else
+	//{
 		if(!IsBackPackSpare(1, 0, ID_NONE, ITEMPOSITION_BACKPACK))
 			return false;
-	}
+	//}
 
 	CItemPtr pItem = UnEquipOnly(nPosition);
 	CHECKF(pItem);
@@ -1321,7 +1071,7 @@ bool CUser::UnEquipItem(int nPosition, bool bSynchro)
 	//---jinggy---2004-11-19--启动设备经验值记数器---end
 
 	// 无右手武器
-	if(!m_pWeaponR && m_pWeaponL)
+	/*if(!m_pWeaponR && m_pWeaponL)
 	{
 		if(m_pWeaponL->IsWeapon1())
 		{
@@ -1332,7 +1082,7 @@ bool CUser::UnEquipItem(int nPosition, bool bSynchro)
 		{
 			UnEquipOnly(ITEMPOSITION_WEAPONL);
 		}
-	}
+	}*/
 
 	if(bSynchro)
 	{
@@ -1340,11 +1090,11 @@ bool CUser::UnEquipItem(int nPosition, bool bSynchro)
 		if(msg.Create(pItem->GetID(), ITEMACT_UNEQUIP, nPosition))
 			this->SendMsg(&msg);
 
-		if(nPosition == ITEMPOSITION_HELMET
+		if(nPosition == ITEMPOSITION_WEAPON
 				|| nPosition == ITEMPOSITION_ARMOR
-				|| nPosition == ITEMPOSITION_WEAPONR
-				|| nPosition == ITEMPOSITION_WEAPONL
-				|| nPosition == ITEMPOSITION_MANTLE )
+				|| nPosition == ITEMPOSITION_SHOES
+				|| nPosition == ITEMPOSITION_BODY
+				|| nPosition == ITEMPOSITION_HEAD )
 		{
 			CMsgPlayer msgPlayer;
 			if (msgPlayer.Create(this->QueryRole()))
@@ -1407,8 +1157,8 @@ void CUser::BuyItem (OBJID idNpc, OBJID idType)
 	IF_NOT (pType)
 		return;
 
-	int nPrice = pType->GetInt(ITEMTYPEDATA_PRICE);
-	nPrice = pNpc->QueryShop()->Rebate(nPrice, GetSynID(), GetSynRankShow());
+	int nCost = pType->GetInt(ITEMTYPEDATA_COST);
+	nCost = pNpc->QueryShop()->Rebate(nCost, GetSynID(), GetSynRankShow());
 
 	//---jinggy---过是向帮派NPC买东西，帮派成员有优惠---begin	
 /*	
@@ -1425,9 +1175,9 @@ void CUser::BuyItem (OBJID idNpc, OBJID idType)
 	//---jinggy---过是向帮派NPC买东西，帮派成员有优惠---end
 
 
-	if(this->GetMoney() < nPrice)
+	if(this->GetMoney() < nCost)
 	{
-		this->SendSysMsg(STR_NOT_SO_MUCH_MONEY);
+		this->SendSysMsg(STR_NOT_ENOUGH_MONEY);
 		return;
 	}
 
@@ -1437,7 +1187,7 @@ void CUser::BuyItem (OBJID idNpc, OBJID idType)
 		return;
 	}
 
-	ASSERT(this->SpendMoney(nPrice, SYNCHRO_TRUE));
+	ASSERT(this->SpendMoney(nCost, SYNCHRO_TRUE));
 	UpdateWeight();
 }
 
@@ -1457,13 +1207,13 @@ void CUser::SellItem(OBJID idNpc, OBJID idItem)
 		return;
 	}
 
-	if (!pItem->IsSellEnable())
+	/*if (!pItem->IsSellEnable())
 	{
 		this->SendSysMsg(STR_NOT_SELL_ENABLE);
 		return;
-	}
+	}*/
 
-	if (pItem->IsNonsuchItem())
+	/*if (pItem->IsNonsuchItem())
 	{
 		::MyLogSave("gmlog/sell_item", "%s(%u) sell item:[id=%u, type=%u], dur=%d, max_dur=%d", 
 				this->GetName(),
@@ -1472,7 +1222,7 @@ void CUser::SellItem(OBJID idNpc, OBJID idItem)
 				pItem->GetInt(ITEMDATA_TYPE),
 				pItem->GetInt(ITEMDATA_AMOUNT),
 				pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-	}
+	}*/
 
 	DEBUG_TRY	// VVVVVVVVVVVVVV
 	DWORD	dwMoney = pItem->GetSellPrice();
@@ -1516,21 +1266,10 @@ bool CUser::DropItem(OBJID idItem, int x, int y)
 			pItem	= refpEquip;
 			refpEquip	= NULL;
 
-			// 丢弃幻兽要扣亲密度
-			if (pItem->IsEudemon())
-			{
-				CallBackEudemon(pItem->GetID());
-				DetachEudemon(pItem);
-				int nFidelity = __max(0, pItem->GetInt(ITEMDATA_FIDELITY) - EUDEMON_DEC_FIDELITY_WHEN_DEAL);
-				pItem->SetInt(ITEMDATA_FIDELITY, nFidelity);
-			}
-			//丢弃物品重新设置战魂经验值
-			//pItem->WarGhostLevelReset();
-
 			pItem->GetInfo(&info);
-			bDropItem	= pItem->IsExchangeEnable();
+			//bDropItem	= pItem->IsExchangeEnable();
 
-			if (pItem->IsNonsuchItem())
+			/*if (pItem->IsNonsuchItem())
 			{
 				::MyLogSave("gmlog/drop_item", "%s(%u) drop equip:[id=%u, type=%u], dur=%d, max_dur=%d", 
 						this->GetName(),
@@ -1539,7 +1278,7 @@ bool CUser::DropItem(OBJID idItem, int x, int y)
 						pItem->GetInt(ITEMDATA_TYPE),
 						pItem->GetInt(ITEMDATA_AMOUNT),
 						pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-			}
+			}*/
 
 			pItem->DeleteRecord();				//??? 防作弊，提前删除
 			pItem->ReleaseByOwner();
@@ -1552,7 +1291,7 @@ bool CUser::DropItem(OBJID idItem, int x, int y)
 		pItem = GetItem(idItem);
 		if (pItem)
 		{
-			if (pItem->IsNonsuchItem())
+			/*if (pItem->IsNonsuchItem())
 			{
 				::MyLogSave("gmlog/drop_item", "%s(%u) drop item:[id=%u, type=%u], dur=%d, max_dur=%d", 
 						this->GetName(),
@@ -1561,23 +1300,12 @@ bool CUser::DropItem(OBJID idItem, int x, int y)
 						pItem->GetInt(ITEMDATA_TYPE),
 						pItem->GetInt(ITEMDATA_AMOUNT),
 						pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-			}
+			}*/
 
 			if (pItem->IsDiscardable())
 			{
-				// 丢弃幻兽要扣亲密度
-				if (pItem->IsEudemon())
-				{
-					CallBackEudemon(pItem->GetID());
-					DetachEudemon(pItem);
-					int nFidelity = __max(0, pItem->GetInt(ITEMDATA_FIDELITY) - EUDEMON_DEC_FIDELITY_WHEN_DEAL);
-					pItem->SetInt(ITEMDATA_FIDELITY, nFidelity);
-				}
-				//丢弃物品重新设置战魂经验值
-				//pItem->WarGhostLevelReset();
-
 				pItem->GetInfo(&info);
-				bDropItem	= pItem->IsExchangeEnable();
+				//bDropItem	= pItem->IsExchangeEnable();
 				char szPrompt[255];
 				sprintf(szPrompt,STR_DROPITEM_PROMPT,pItem->GetStr(ITEMDATA_NAME));			
 				this->SendSysMsg(szPrompt);
@@ -1612,7 +1340,7 @@ bool CUser::DropItem(OBJID idItem, int x, int y)
 		}*/
 	}
 
-	UpdateWeight();
+	//UpdateWeight();
 	return true;
 }
 
@@ -1655,7 +1383,7 @@ bool CUser::SplitItem		(OBJID idItem, int nNum)
 //	if(IsItemFull(0))
 //		return false;
 
-	CItemPtr pItem = GetItem(idItem);
+	/*CItemPtr pItem = GetItem(idItem);
 	if(!pItem || !pItem->IsPileEnable() || nNum <= 0 || nNum >= pItem->GetInt(ITEMDATA_AMOUNT))
 		return false;
 
@@ -1674,7 +1402,7 @@ bool CUser::SplitItem		(OBJID idItem, int nNum)
 		CMsgItem	msg;
 		IF_OK(msg.Create(pItem->GetID(), ITEMACT_SYNCHRO_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNT)))
 			SendMsg(&msg);
-	}
+	}*/
 
 	return true;
 }
@@ -1682,7 +1410,7 @@ bool CUser::SplitItem		(OBJID idItem, int nNum)
 //////////////////////////////////////////////////////////////////////
 bool CUser::CombineItem		(OBJID idItem, OBJID idOther)
 {
-	CItemPtr pItem = GetItem(idItem);
+	/*CItemPtr pItem = GetItem(idItem);
 	CItemPtr pOther = GetItem(idOther);
 	if(!pItem || !pOther || !pItem->IsPileEnable() || pItem->GetInt(ITEMDATA_TYPE) != pOther->GetInt(ITEMDATA_TYPE))
 		return false;
@@ -1712,7 +1440,7 @@ bool CUser::CombineItem		(OBJID idItem, OBJID idOther)
 			IF_OK(msg.Create(pItem->GetID(), ITEMACT_SYNCHRO_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNT)))
 				SendMsg(&msg);
 		}
-	}
+	}*/
 
 	return true;
 }
@@ -1720,14 +1448,14 @@ bool CUser::CombineItem		(OBJID idItem, OBJID idOther)
 //////////////////////////////////////////////////////////////////////
 CItem* CUser::CombineNewItem	(CItem* pItem, ItemInfoStruct* pInfo, bool bSynchro)
 {
-	CHECKF(CItem::IsCountable(pInfo->idType));
+	/*CHECKF(CItem::IsCountable(pInfo->idType));
 	CHECKF(pItem->GetInt(ITEMDATA_TYPE) == pInfo->idType);
 
-	int nNewNum		= pItem->GetInt(ITEMDATA_AMOUNT) + pInfo->nAmount;
+	int nNewNum = pItem->GetInt(ITEMDATA_AMOUNT) + 0;// pInfo->nAmount;
 	if(nNewNum > pItem->GetInt(ITEMDATA_AMOUNTLIMIT))
 	{
 		// other
-		pInfo->nAmount	= nNewNum - pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+		//pInfo->nAmount	= nNewNum - pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 
 		CItemPtr pOther = CItem::CreateNew();
 		CHECKF(pOther);
@@ -1761,7 +1489,7 @@ CItem* CUser::CombineNewItem	(CItem* pItem, ItemInfoStruct* pInfo, bool bSynchro
 		}
 
 		return pItem;
-	}
+	}*/ return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1773,19 +1501,19 @@ CItem* CUser::FindCombineItem	(OBJID idType)
 //////////////////////////////////////////////////////////////////////
 bool CUser::SpendArrow()
 {
-	CItem* pArrow = GetEquipItemByPos(ITEMPOSITION_WEAPONL);
+	CItem* pArrow = GetEquipItemByPos(ITEMPOSITION_WEAPON);
 	if(!pArrow)
 		return false;
-	CHECKF(pArrow->IsArrowSort());
+	//CHECKF(pArrow->IsArrowSort());
 
 	// spend one
-	return SpendItem(pArrow, 1, ITEMPOSITION_WEAPONL);
+	return SpendItem(pArrow, 1, ITEMPOSITION_WEAPON);
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CUser::SpendItem(CItem* pItem, int nNum/*=1*/, int nPosition/*=ITEMPOSITION_BACKPACK*/, bool bSynchro/*=true*/)	// may be erase
 {
-	if(pItem->IsPileEnable() && pItem->GetInt(ITEMDATA_AMOUNT) > nNum)
+	/*if(pItem->IsPileEnable() && pItem->GetInt(ITEMDATA_AMOUNT) > nNum)
 	{
 		pItem->SetInt(ITEMDATA_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNT) - nNum);
 
@@ -1808,9 +1536,9 @@ bool CUser::SpendItem(CItem* pItem, int nNum/*=1*/, int nPosition/*=ITEMPOSITION
 			ASSERT(nPosition >= ITEMPOSITION_EQUIPBEGIN && nPosition < ITEMPOSITION_EQUIPEND);
 			EraseEquip(nPosition, bSynchro);
 		}
-	}
+	}*/
 
-	UpdateWeight();
+	//UpdateWeight();
 	return true;
 }
 
@@ -1823,7 +1551,7 @@ bool CUser::SpendItemByType(OBJID idType, bool bSynchro)
 	if(!pItem)
 		return false;
 
-	if(pItem->IsExpend() && pItem->GetInt(ITEMDATA_AMOUNT) > 1)
+	/*if(pItem->IsExpend() && pItem->GetInt(ITEMDATA_AMOUNT) > 1)
 	{
 		pItem->SetInt(ITEMDATA_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNT) - 1);
 
@@ -1848,16 +1576,16 @@ bool CUser::SpendItemByType(OBJID idType, bool bSynchro)
 		}
 
 		EraseItem(pItem->GetID(), bSynchro);
-	}
+	}*/
 
-	UpdateWeight();
+	//UpdateWeight();
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CUser::SpendEquipItem(int nSubType, int nNum, bool bSynchro)
 {
-	CHECKF(nNum > 0);
+	/*CHECKF(nNum > 0);
 
 	CItem* pItem = NULL;
 	if (m_pWeaponR && m_pWeaponR->GetItemSubType() == nSubType && m_pWeaponR->GetInt(ITEMDATA_AMOUNT) >= nNum)
@@ -1897,7 +1625,7 @@ bool CUser::SpendEquipItem(int nSubType, int nNum, bool bSynchro)
 		this->EraseEquip(pItem->GetInt(ITEMDATA_POSITION), bSynchro);
 	}
 
-	UpdateWeight();
+	UpdateWeight();*/
 	return true;
 }
 
@@ -1909,24 +1637,23 @@ bool CUser::RepairItem		(OBJID idItem, bool bSynchro)
 	if(!pItem)
 		pItem = GetItem(idItem);
 
-	if(!( pItem && pItem->IsRepairEnable() && pItem->GetInt(ITEMDATA_AMOUNTLIMIT) > pItem->GetInt(ITEMDATA_AMOUNT) ))
+	/*if(!( pItem && pItem->IsRepairEnable() && pItem->GetInt(ITEMDATA_AMOUNTLIMIT) > pItem->GetInt(ITEMDATA_AMOUNT) ))
 	{
 		this->SendSysMsg(STR_REPAIR_FAILED);	
 		return false;
-	}
+	}*/
 
 	int nMoney		= pItem->CalcRepairMoney();
-	int	nRepair		= pItem->GetInt(ITEMDATA_AMOUNTLIMIT) - pItem->GetInt(ITEMDATA_AMOUNT);
+	int	nRepair = 0;// pItem->GetInt(ITEMDATA_AMOUNTLIMIT) - pItem->GetInt(ITEMDATA_AMOUNT);
 	if(nMoney <= 0 || nRepair <= 0)
 		return true;
 
 	//---jinggy如果玩家的武器或装备的耐久<=10%才修理，则战魂经验减3点---begin
 	if(pItem->IsEquipment()||pItem->IsWeapon())
 	{
-		int nScale = pItem->GetInt(ITEMDATA_AMOUNT)*100/pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+		int nScale = 0;// pItem->GetInt(ITEMDATA_AMOUNT) * 100 / pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 		if(nScale<=10)
 		{
-			pItem->WarGhostLevelDec(DEC_WARGHOSTEXP_FORREPAIR);
 			//通知客户端 设备属性更新
 			CMsgItemInfo msg;			
 			IF_OK (msg.Create(pItem))
@@ -1976,7 +1703,7 @@ bool CUser::RepairItem		(OBJID idItem, bool bSynchro)
 	}
 */
 
-	pItem->SetInt(ITEMDATA_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNTLIMIT), true);
+	//pItem->SetInt(ITEMDATA_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNTLIMIT), true);
 
 	if (bSynchro)
 	{
@@ -2028,7 +1755,8 @@ bool CUser::RepairAll		(bool bSynchro)
 //////////////////////////////////////////////////////////////////////
 bool CUser::IdentItem		(OBJID idItem, bool bSynchro)
 {
-	CHECKF(idItem);
+	return true;
+	/*CHECKF(idItem);
 	CItemPtr pItem = GetEquipItem(idItem);
 	if(!pItem)
 		pItem = GetItem(idItem);
@@ -2097,7 +1825,7 @@ bool CUser::IdentItem		(OBJID idItem, bool bSynchro)
 			SendSysMsg(STR_ACTION_IDENT_FAIL);
 		}		
 		return false;
-	}
+	}*/
 }				
 
 
@@ -2117,7 +1845,7 @@ void CUser::EmbedGem (OBJID idItem, OBJID idGem, int nPos)
 	ItemInfoStruct info;
 	pItem->GetInfo(&info);
 
-	switch(nPos)
+	/*switch(nPos)
 	{
 	case 1:
 		{
@@ -2167,7 +1895,7 @@ void CUser::EmbedGem (OBJID idItem, OBJID idGem, int nPos)
 			return;
 		}
 		break;
-	}
+	}*/
 
 	// update item info at client
 	CMsgItemInfo msg;
@@ -2187,7 +1915,7 @@ void CUser::TakeOutGem (OBJID idItem, int nPos)
 	ItemInfoStruct info;
 	pItem->GetInfo(&info);
 
-	switch(nPos)
+	/*switch(nPos)
 	{
 	case 1:
 		{
@@ -2241,7 +1969,7 @@ void CUser::TakeOutGem (OBJID idItem, int nPos)
 			return;
 		}
 		break;
-	}
+	}*/
 
 	// update item info at client
 	CMsgItemInfo msg;
@@ -2382,7 +2110,7 @@ bool CUser::IsMate(CUser* pUser)
 //////////////////////////////////////////////////////////////////////
 void CUser::UpdateEquipmentDurability(void)
 {
-	for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
+	/*for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
 		if (i == ITEMPOSITION_RINGR || 
 				i == ITEMPOSITION_RINGL ||
@@ -2391,13 +2119,13 @@ void CUser::UpdateEquipmentDurability(void)
 			continue;
 
 		this->AddEquipmentDurability(i, -1);
-	}
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////////
 void CUser::AddEquipmentDurability(int nPosition, int nAddValue)
 {
-	ASSERT(nAddValue < 0);
+	/*ASSERT(nAddValue < 0);
 
 	CItemPtr& refpEquip = this->GetEquipItemRef(nPosition);
 	if (!refpEquip || refpEquip->IsExpend() || refpEquip->IsNeverWear())
@@ -2435,7 +2163,7 @@ void CUser::AddEquipmentDurability(int nPosition, int nAddValue)
 					refpEquip->GetInt(ITEMDATA_AMOUNT),
 					refpEquip->GetInt(ITEMDATA_AMOUNTLIMIT));
 
-			EraseEquip(nPosition, SYNCHRO_TRUE);
+			EraseEquip(nPosition, SYNCHRO_TRUE);*/
 /*
 			CMsgItem msg;
 			if (msg.Create(refpEquip->GetID(), ITEMACT_DROPEQUIPMENT, nPosition))
@@ -2449,16 +2177,16 @@ void CUser::AddEquipmentDurability(int nPosition, int nAddValue)
 			if (msgPlayer.Create(this->QueryRole()))
 				this->BroadcastRoomMsg(&msgPlayer, EXCLUDE_SELF);
 */
-		}
-		else
-			refpEquip->SaveInfo();
-	}
+	//	}
+	//	else
+	//		refpEquip->SaveInfo();
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////
 int CUser::GetWeight()
 {
-	if(m_bUpdateWeight)
+	/*if(m_bUpdateWeight)
 	{
 		m_nAllWeight = 0;
 		if(m_pHelmet)
@@ -2479,15 +2207,13 @@ int CUser::GetWeight()
 			m_nAllWeight	+= m_pShoes->GetWeight();
 		if(m_pMount)
 			m_nAllWeight	+= m_pMount->GetWeight();
-		if(m_pSprite)
-			m_nAllWeight	+= m_pSprite->GetWeight();
 		if(m_pMantle)
 			m_nAllWeight	+= m_pMantle->GetWeight();
 
 		m_nAllWeight	+= m_pPackage->GetWeight();
 
 		m_bUpdateWeight = false;
-	}
+	}*/
 
 	return m_nAllWeight;
 }
@@ -2714,7 +2440,7 @@ int CUser::GetAuctionPackageAmount(OBJID idNpc,int nPosition/* = ITEMPOSITION_AU
 	int count = 0;
     for(int i = 0;i < m_pStorage->GetAmount();i++)
 	{
-		if(m_pStorage->GetItemByIndex(i) && m_pStorage->GetItemByIndex(i)->GetInt(ITEMDATA_TYPE)!= AUCTION_CHIP)
+		if(m_pStorage->GetItemByIndex(i) && m_pStorage->GetItemByIndex(i)->GetInt(ITEMDATA_SORT)!= AUCTION_CHIP)
 			count++;
 		if(count >= PACKAGE_AUCTION_LIMIT)
 			break;
@@ -2780,13 +2506,13 @@ OBJID CUser::ChkUpEqQuality	(CItem* pItem, bool bSendHint/*=false*/)
 	//if (pItem->GetItemSubType() == 112)
 	//	return ID_NONE;
 
-	if (pItem->GetInt(ITEMDATA_AMOUNT) < pItem->GetInt(ITEMDATA_AMOUNTLIMIT))
+	/*if (pItem->GetInt(ITEMDATA_AMOUNT) < pItem->GetInt(ITEMDATA_AMOUNTLIMIT))
 	{
 		if (bSendHint)
 			this->SendSysMsg(STR_REPAIR_THEN_IMPROVE);
 		
 		return ID_NONE;
-	}
+	}*/
 
 	int nQuality = pItem->GetQuality();
 	if (nQuality < 3 || nQuality >= 9)
@@ -2797,7 +2523,7 @@ OBJID CUser::ChkUpEqQuality	(CItem* pItem, bool bSendHint/*=false*/)
 		return ID_NONE;
 	}
 
-	OBJID idType = pItem->GetInt(ITEMDATA_TYPE);
+	OBJID idType = pItem->GetInt(ITEMDATA_SORT);
 	if (nQuality < 5)
 		idType		= (idType/10)*10+5;
 		
@@ -2840,15 +2566,15 @@ OBJID CUser::ChkUpEqLevel	(CItem* pItem, bool bSendHint/*=false*/)
 	if (nQuality < 3)
 		return ID_NONE;
 
-	if (pItem->GetInt(ITEMDATA_AMOUNT)/100 < pItem->GetInt(ITEMDATA_AMOUNTLIMIT)/100)
+	/*if (pItem->GetInt(ITEMDATA_AMOUNT)/100 < pItem->GetInt(ITEMDATA_AMOUNTLIMIT)/100)
 	{
 		if (bSendHint)
 			this->SendSysMsg(STR_REPAIR_THEN_UPGRADE);
 
 		return ID_NONE;
-	}
+	}*/
 
-	OBJID idType	= pItem->GetInt(ITEMDATA_TYPE);
+	/*OBJID idType	= pItem->GetInt(ITEMDATA_TYPE);
 	OBJID idNewType = idType;
 	if (pItem->IsShield() || pItem->IsArmor() || pItem->IsHelmet())
 	{
@@ -2935,9 +2661,10 @@ OBJID CUser::ChkUpEqLevel	(CItem* pItem, bool bSendHint/*=false*/)
 				return ID_NONE;
 			}
 		}
-	}
+	}*/
 
-	return idNewType;
+	//return idNewType;
+		return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2968,7 +2695,7 @@ bool CUser::GetUpEpQualityInfo	(CItem* pItem, int& nChance, OBJID& idNewType, bo
 		break;
 	}
 
-	int nFactor = pItem->GetInt(ITEMDATA_REQ_LEVEL);
+	int nFactor = pItem->GetInt(ITEMDATA_LEVELREQ);
 	if (nFactor > 70 )
 		nChance = nChance*(100-(nFactor-70)*1.0)/100;
 
@@ -2983,10 +2710,10 @@ bool CUser::GetUpEpLevelInfo	(CItem* pItem, int& nChance, OBJID& idNewType, bool
 	if (ID_NONE == idNewType)
 		return false;
 
-	OBJID idType = pItem->GetInt(ITEMDATA_TYPE);
+	OBJID idType = pItem->GetInt(ITEMDATA_SORT);
 
 	nChance = 100;
-	if (pItem->IsShield() || pItem->IsArmor() || pItem->IsHelmet())
+	/*if (pItem->IsShield() || pItem->IsArmor() || pItem->IsHelmet())
 	{
 		int nLev = (idType%100)/10;
 		switch(nLev)
@@ -3116,7 +2843,7 @@ bool CUser::GetUpEpLevelInfo	(CItem* pItem, int& nChance, OBJID& idNewType, bool
 		default:
 			break;
 		}
-	}
+	}*/
 
 	// change range
 	nChance = __min(100, __max(1, nChance));
@@ -3160,7 +2887,7 @@ int CUser::GetChanceUpEpLevel	(int nPosition, bool bSendHint/* = false*/)
 /////////////////////////////////////////////////////////////////////////////
 bool CUser::UpEquipmentQuality		(int nPosition)
 {
-	CItem* pItem = GetEquipItemByPos(nPosition);
+	/*CItem* pItem = GetEquipItemByPos(nPosition);
 	if (!pItem)
 		return false;
 
@@ -3209,14 +2936,14 @@ bool CUser::UpEquipmentQuality		(int nPosition)
 		pItem->SaveInfo();
 
 		// inform client
-		/*	CMsgItemInfo msg;
-		IF_OK (msg.Create(pItem, ITEMINFO_UPDATE))
-			this->SendMsg(&msg); */
+		//	CMsgItemInfo msg;
+		//IF_OK (msg.Create(pItem, ITEMINFO_UPDATE))
+		//	this->SendMsg(&msg); 
 
 		CMsgItemInfoEx msg;
 		IF_OK (msg.Create(pItem, this->GetID(), 0, ITEMINFOEX_EQUIPMENT))
 			this->BroadcastRoomMsg(&msg, true);
-	}
+	}*/
 	
 	return true;
 }
@@ -3228,7 +2955,7 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 	IF_NOT (pTreasure)
 		return;
 
-	if (pTreasure->GetInt(ITEMDATA_TYPE) != TYPE_DRAGONBALL)
+	if (pTreasure->GetInt(ITEMDATA_SORT) != TYPE_DRAGONBALL)
 	{
 		this->SendSysMsg(STR_DRAGONBALL);
 		return;
@@ -3266,17 +2993,17 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 			return;
 
 		// restore info
-		pItem->SetInt(ITEMDATA_GEM1, infoItem.nGem1, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_GEM2, infoItem.nGem2, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_GEM1, infoItem.nGem1, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_GEM2, infoItem.nGem2, UPDATE_FALSE);
 
-		pItem->SetInt(ITEMDATA_MAGIC1, infoItem.nMagic1, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_MAGIC2, infoItem.nMagic2, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_MAGIC3, infoItem.nMagic3, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_MAGIC1, infoItem.nMagic1, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_MAGIC2, infoItem.nMagic2, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_MAGIC3, infoItem.nMagic3, UPDATE_FALSE);
 
-		pItem->SetInt(ITEMDATA_DATA, infoItem.nData, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_DATA, infoItem.nData, UPDATE_FALSE);
 
 		// durability
-		int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+		/*int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 		if (::RandGet(100) < 2)
 		{
 			nAmountLimit += (::RandGet(3)+1)*100;
@@ -3292,16 +3019,16 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 
 			pItem->SetInt(ITEMDATA_AMOUNTLIMIT, nAmountLimit, UPDATE_FALSE);
 			pItem->SetInt(ITEMDATA_AMOUNT, nAmountLimit, UPDATE_FALSE);
-		}
+		}*/
 
 		// gem hole
-		if (::RandGet(100) < 1)
+		/*if (::RandGet(100) < 1)
 		{
 			if (GEM_NONE == pItem->GetInt(ITEMDATA_GEM1))
 				pItem->SetInt(ITEMDATA_GEM1, GEM_HOLE);
 			else if (GEM_NONE == pItem->GetInt(ITEMDATA_GEM2))
 				pItem->SetInt(ITEMDATA_GEM2, GEM_HOLE);
-		}
+		}*/
 
 		// save to db
 		pItem->SaveInfo();
@@ -3354,7 +3081,7 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 			*/
 			{
 				// decrease durability
-				int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+				/*int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 				if (::RandGet(100) < PERCENT_DECDUR)
 				{
 					if (nAmountLimit/100 > 1)
@@ -3371,7 +3098,7 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 				if (nAmountNew > pItem->GetInt(ITEMDATA_AMOUNTLIMIT))
 					nAmountNew = pItem->GetInt(ITEMDATA_AMOUNTLIMIT)/2;
 
-				pItem->SetInt(ITEMDATA_AMOUNT, nAmountNew);
+				pItem->SetInt(ITEMDATA_AMOUNT, nAmountNew);*/
 
 				// save to db
 				pItem->SaveInfo();
@@ -3422,7 +3149,7 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 			*/
 			
 			// decrease durability
-			int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+			/*int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 			if (::RandGet(100) < PERCENT_DECDUR)
 			{
 				if (nAmountLimit/100 > 1)
@@ -3439,7 +3166,7 @@ void CUser::UpEquipmentQuality	(OBJID idEquipment, OBJID idTreasure)
 			if (nAmountNew > pItem->GetInt(ITEMDATA_AMOUNTLIMIT))
 				nAmountNew = pItem->GetInt(ITEMDATA_AMOUNTLIMIT)/2;
 
-			pItem->SetInt(ITEMDATA_AMOUNT, nAmountNew);
+			pItem->SetInt(ITEMDATA_AMOUNT, nAmountNew);*/
 			
 			// save to db
 			pItem->SaveInfo();
@@ -3472,7 +3199,7 @@ bool CUser::UpEquipmentLevel		(int nPosition)
 	if (!pType)
 		return false;
 
-	if (pType->GetInt(ITEMTYPEDATA_REQ_LEVEL) > this->GetLev())
+	if (pType->GetInt(ITEMTYPEDATA_LEVELREQ) > this->GetLev())
 	{
 		this->SendSysMsg(_TXTATR_NORMAL, STR_NEXTEQP_OVERLEV);
 		return false;
@@ -3493,25 +3220,25 @@ bool CUser::UpEquipmentLevel		(int nPosition)
 		this->MultiDelItem(TYPE_SHOOTINGSTAR, TYPE_DIVOICEITEM, nGemCost);
 
 		// durability, 2 percent chance to increase 100-300 point
-		int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT_ORIGINAL);
-		if (::RandGet(100) < 2)
-			nAmountLimit += (::RandGet(3)+1)*100;
+		//int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT_ORIGINAL);
+		//if (::RandGet(100) < 2)
+		//	nAmountLimit += (::RandGet(3)+1)*100;
 
 		// durabal gem effect
-		nAmountLimit = nAmountLimit*(100+pItem->GetGemDurEffect())/100;
+		//nAmountLimit = nAmountLimit*(100+pItem->GetGemDurEffect())/100;
 
 		// update durability
-		pItem->SetInt(ITEMDATA_AMOUNTLIMIT, nAmountLimit, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_AMOUNT, nAmountLimit, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_AMOUNTLIMIT, nAmountLimit, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_AMOUNT, nAmountLimit, UPDATE_FALSE);
 
 		// gem hole, 1 percent chance to make a hole
-		if (::RandGet(CHANCE_MAKEHOLE) < 1)
+		/*if (::RandGet(CHANCE_MAKEHOLE) < 1)
 		{
 			if (GEM_NONE == pItem->GetInt(ITEMDATA_GEM1))
 				pItem->SetInt(ITEMDATA_GEM1, GEM_HOLE);
 			else if (GEM_NONE == pItem->GetInt(ITEMDATA_GEM2))
 				pItem->SetInt(ITEMDATA_GEM2, GEM_HOLE);
-		}
+		}*/
 
 		// save to db
 		pItem->SaveInfo();
@@ -3535,7 +3262,7 @@ bool CUser::DownEquipmentLevel		(int nPosition, int nUserLevel)
 {
 	CItem* pEquip = this->GetEquipItemByPos(nPosition);
 	CHECKF(pEquip);
-	int nOldLevel = pEquip->GetInt(ITEMDATA_REQ_LEVEL);
+	int nOldLevel = pEquip->GetInt(ITEMDATA_LEVELREQ);
 	int nNewLevel = 0;
 
 	// TODO
@@ -3552,8 +3279,8 @@ void CUser::UpEquipmentLevel (OBJID idEquipment, OBJID idTreasure)
 	IF_NOT (pTreasure)
 		return;
 
-	if (pTreasure->GetInt(ITEMDATA_TYPE) != TYPE_SHOOTINGSTAR
-			&& pTreasure->GetInt(ITEMDATA_TYPE) != TYPE_DIVOICEITEM)
+	if (pTreasure->GetInt(ITEMDATA_SORT) != TYPE_SHOOTINGSTAR
+			&& pTreasure->GetInt(ITEMDATA_SORT) != TYPE_DIVOICEITEM)
 	{
 		this->SendSysMsg(STR_METEOR);
 		return;
@@ -3572,7 +3299,7 @@ void CUser::UpEquipmentLevel (OBJID idEquipment, OBJID idTreasure)
 		return;
 
 	// divoice item effect
-	if (pTreasure->GetInt(ITEMDATA_TYPE) == TYPE_DIVOICEITEM)
+	if (pTreasure->GetInt(ITEMDATA_SORT) == TYPE_DIVOICEITEM)
 		nChance = nChance*130/100;
 
 	// show time
@@ -3593,17 +3320,17 @@ void CUser::UpEquipmentLevel (OBJID idEquipment, OBJID idTreasure)
 			return;
 
 		// restore info
-		pItem->SetInt(ITEMDATA_GEM1, infoItem.nGem1, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_GEM2, infoItem.nGem2, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_GEM1, infoItem.nGem1, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_GEM2, infoItem.nGem2, UPDATE_FALSE);
 
-		pItem->SetInt(ITEMDATA_MAGIC1, infoItem.nMagic1, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_MAGIC2, infoItem.nMagic2, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_MAGIC3, infoItem.nMagic3, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_MAGIC1, infoItem.nMagic1, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_MAGIC2, infoItem.nMagic2, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_MAGIC3, infoItem.nMagic3, UPDATE_FALSE);
 
-		pItem->SetInt(ITEMDATA_DATA, infoItem.nData, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_DATA, infoItem.nData, UPDATE_FALSE);
 
 		// durability
-		int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+		/*int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 		if (::RandGet(100) < 2)
 		{
 			nAmountLimit += (::RandGet(3)+1)*100;
@@ -3627,7 +3354,7 @@ void CUser::UpEquipmentLevel (OBJID idEquipment, OBJID idTreasure)
 				pItem->SetInt(ITEMDATA_GEM1, GEM_HOLE);
 			else if (GEM_NONE == pItem->GetInt(ITEMDATA_GEM2))
 				pItem->SetInt(ITEMDATA_GEM2, GEM_HOLE);
-		}
+		}*/
 
 		// save to db
 		pItem->SaveInfo();
@@ -3641,7 +3368,7 @@ void CUser::UpEquipmentLevel (OBJID idEquipment, OBJID idTreasure)
 	{	// failed
 
 		// decrease durability
-		int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+		/*int nAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 		if (::RandGet(100) < PERCENT_DECDUR)
 		{			
 			if (nAmountLimit/100 > 1)
@@ -3653,7 +3380,7 @@ void CUser::UpEquipmentLevel (OBJID idEquipment, OBJID idTreasure)
 
 		int nOrgAmountLimit = pItem->GetInt(ITEMDATA_AMOUNTLIMIT_ORIGINAL);
 		nAmountLimit -= nOrgAmountLimit/2;
-		pItem->SetInt(ITEMDATA_AMOUNT, nAmountLimit);
+		pItem->SetInt(ITEMDATA_AMOUNT, nAmountLimit);*/
 		
 		// save to db
 		pItem->SaveInfo();
@@ -3708,7 +3435,7 @@ void CUser::Mine(IRole* pRole)
 	if (m_pTransformation)
 		return;
 
-	if (!m_pWeaponR || !m_pWeaponR->IsPick())
+	if (!m_pWeapon->IsPick())
 	{
 		this->SendSysMsg(STR_MINE_WITH_PECKER);
 		return;
@@ -3753,7 +3480,7 @@ void CUser::ProcessMineTimer(void)
 	}
 
 	// equipment check
-	if (!m_pWeaponR || !m_pWeaponR->IsPick())
+	if (!m_pWeapon->IsPick())
 	{
 		this->SendSysMsg(STR_NEED_PICK);
 		this->StopMine();

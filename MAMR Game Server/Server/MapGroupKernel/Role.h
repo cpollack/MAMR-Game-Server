@@ -23,6 +23,33 @@ struct HSB {
 	BYTE bright;
 };
 
+struct ColorSet {
+	BYTE newHue;
+	BYTE range = 8;
+	BYTE sat;
+	BYTE bright;
+	BYTE hue;
+};
+
+enum ELEMENT {
+	ELEMENT_NONE = 0,
+	ELEMENT_WATER = 2,
+	ELEMENT_FIRE = 3,
+	ELEMENT_METAL = 4,
+	ELEMENT_WOOD = 5,
+	ELEMENT_EARTH = 6,
+};
+
+enum ELEMENTINTERACTION {
+	INTERACTION_NONE,
+	INTERACTION_RESTRAIN,
+	INTERACTION_RESTRAINED,
+	INTERACTION_SUPER_RESTRAIN,
+	INTERACTION_SUPER_RESTRAINED,
+	INTERACTION_GENERATE,
+	INTERACTION_GENERATED,
+};
+
 //////////////////////////////////////////////////////////////////////
 class CRole : public IRole, public IMapThing
 {
@@ -35,6 +62,7 @@ public: // get attrib
 	virtual LPCTSTR	GetName				()						PURE_VIRTUAL_FUNCTION_0
 
 	virtual DWORD	GetLookFace			()						PURE_VIRTUAL_FUNCTION_0
+	virtual DWORD	GetLook				()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetHair				()						PURE_VIRTUAL_FUNCTION_0
 	virtual char	GetLength			()						PURE_VIRTUAL_FUNCTION_0		// 取得角色高矮 -- zlong 2004-02-03
 	virtual char	GetFat				()						PURE_VIRTUAL_FUNCTION_0		// 取得角色胖瘦 -- zlong 2004-02-03
@@ -59,7 +87,7 @@ public: // get attrib
 	virtual DWORD	GetDefence			()						{ return 0; }
 
 	virtual DWORD	GetDegree			()						{ return 0; }
-	//virtual DWORD	GetDexterity		()						{ return 0; }
+	virtual DWORD	GetDexterity		()						{ return 0; }
 
 	virtual DWORD	GetDdg				()						{ return 0; }
 	virtual DWORD	GetDodge			()						{ return 0; }
@@ -223,6 +251,12 @@ public:	// 为了修改魔法系统而增加的部分，等魔法系统修改完再做整理 -- zlong 2005-
 	static int		AdjustDataEx(int nData, int nAdjust, int nMaxData=0);
 
 	virtual	CMagic*	QueryMagic()											{ return NULL; }
+
+	virtual bool IsSuper() { return false; }
+	virtual bool IsUnevo() { return false; }
+	virtual ELEMENT GetElement() { return ELEMENT_NONE; }
+
+	virtual ELEMENTINTERACTION GetElementInteraction(CRole* pOpposing); //Returns the interaction of the opposing role. X restrains source, X is restrained by source.
 
 protected:
 	IStatusSet*		m_setStatus;

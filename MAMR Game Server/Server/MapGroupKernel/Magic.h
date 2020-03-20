@@ -189,7 +189,7 @@ enum THROW_WEAPON{
 //////////////////////////////////////////////////////////////////////
 inline bool		IsWeaponMagic(int nType)			{ return nType >= WEAPONMAGIC_MIN && nType < WEAPONMAGIC_MAX; }
 inline int		MagicType(int idx)					{ int nType = idx + WEAPONMAGIC_OFFSET; CHECKF(IsWeaponMagic(nType)); return nType; }
-inline OBJID	POSITION2MAGIC_ID(int nPosition)	{ if(nPosition == ITEMPOSITION_WEAPONR) return WEAPONR_MAGICID; else return WEAPONL_MAGICID; }
+inline OBJID	POSITION2MAGIC_ID(int nPosition)	{ if(nPosition == ITEMPOSITION_WEAPON) return WEAPONR_MAGICID; else return WEAPONL_MAGICID; }
 void	DDALine(int x0, int y0, int x1, int y1, int nRange, vector<POINT>& vctPoint);
 
 //////////////////////////////////////////////////////////////////////

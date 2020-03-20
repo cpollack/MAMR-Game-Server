@@ -24,6 +24,7 @@
 //#include "MercenaryTask.h"
 #include "math.h"
 #include "TaskDetail.h"
+#include "Pet.h"
 
 
 
@@ -259,17 +260,11 @@ CUser::CUser()
 	m_nStep			= STEP_LOGIN;		// 地图组首先是进入地图
 
 	// item ----------------------
-	m_pWeaponR		= NULL;
-	m_pWeaponL		= NULL;
-	m_pHelmet		= NULL;
-	m_pNecklace		= NULL;
+	m_pWeapon		= NULL;
 	m_pArmor		= NULL;
-	m_pRingR		= NULL;
-	m_pRingL		= NULL;
 	m_pShoes		= NULL;
-	m_pMount		= NULL;
-	m_pSprite		= NULL;
-	m_pMantle		= NULL;
+	m_pBodyAccessory = NULL;
+	m_pHeadAccessory = NULL;
 
 	m_bUpdateWeight	= true;			// true: 需要重新计算
 
@@ -338,8 +333,6 @@ CUser::CUser()
 	m_pTaskDetail	= NULL;
 	m_bIsEnableWarGhostExp = false;
 
-	m_idLinkEudemonItem	= ID_NONE;
-	m_idLinkEudemonType	= ID_NONE;
 	m_nLinkValue		= 0;
 }
 
@@ -1331,7 +1324,7 @@ DWORD CUser::GetAtkHitRate()
 		CItemPtr& pEquip = *ppEquip;
 		if (pEquip)
 		{
-			nAtkHitRate += pEquip->GetHitRate();
+			//nAtkHitRate += pEquip->GetHitRate();
 		}
 	}
 
@@ -1353,15 +1346,15 @@ DWORD CUser::GetMinAtk()
 		CItemPtr& pEquip = *ppEquip;
 		if (pEquip)
 		{
-			int nEquipAtk = pEquip->GetMinAtk();
+			//int nEquipAtk = pEquip->GetMinAtk();
 
 
-			if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
-				nEquipAtk = nEquipAtk/2;
-			else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
-				nEquipAtk = nEquipAtk/100;
+			//if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
+			//	nEquipAtk = nEquipAtk/2;
+			//else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
+			//	nEquipAtk = nEquipAtk/100;
 
-			nMinAtk += nEquipAtk;
+			//nMinAtk += nEquipAtk;
 		}
 	}
 
@@ -1383,15 +1376,15 @@ DWORD CUser::GetMaxAtk()
 		CItemPtr& pEquip = *ppEquip;
 		if(pEquip)
 		{
-			int nEquipAtk = pEquip->GetMaxAtk();
+			//int nEquipAtk = pEquip->GetMaxAtk();
 
 
-			if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
-				nEquipAtk = nEquipAtk/2;
-			else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
-				nEquipAtk = nEquipAtk/100;
+			//if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
+			//	nEquipAtk = nEquipAtk/2;
+			//else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
+			//	nEquipAtk = nEquipAtk/100;
 
-			nMaxAtk += nEquipAtk;
+			//nMaxAtk += nEquipAtk;
 		}
 	}
 
@@ -1413,15 +1406,15 @@ DWORD CUser::GetMgcMinAtk()
 		CItemPtr& pEquip = *ppEquip;
 		if (pEquip)
 		{
-			int nEquipAtk = pEquip->GetMgcMinAtk();
+			//int nEquipAtk = pEquip->GetMgcMinAtk();
 
 
-			if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
-				nEquipAtk = nEquipAtk/2;
-			else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
-				nEquipAtk = nEquipAtk/100;
+			//if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
+			//	nEquipAtk = nEquipAtk/2;
+			//else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
+			//	nEquipAtk = nEquipAtk/100;
 
-			nMinAtk += nEquipAtk;
+			//nMinAtk += nEquipAtk;
 		}
 	}
 
@@ -1443,15 +1436,15 @@ DWORD CUser::GetMgcMaxAtk()
 		CItemPtr& pEquip = *ppEquip;
 		if(pEquip)
 		{
-			int nEquipAtk = pEquip->GetMgcMaxAtk();
+			//int nEquipAtk = pEquip->GetMgcMaxAtk();
 
 
-			if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
-				nEquipAtk = nEquipAtk/2;
-			else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
-				nEquipAtk = nEquipAtk/100;
+			//if (ITEMPOSITION_WEAPONL == i && !pEquip->IsShield())
+			//	nEquipAtk = nEquipAtk/2;
+			//else if (ITEMPOSITION_SPRITE == i)	// 精灵存储的附加属性是*100以后的值
+			//	nEquipAtk = nEquipAtk/100;
 
-			nMaxAtk += nEquipAtk;
+			//nMaxAtk += nEquipAtk;
 		}
 	}
 
@@ -1503,10 +1496,10 @@ DWORD CUser::GetDef()
 		CItemPtr& pEquip = *ppEquip;
 		if(pEquip)
 		{
-			int nEquipDef = pEquip->GetDef();
+			int nEquipDef = pEquip->GetDefence();
 
-			if (ITEMPOSITION_SPRITE == i)
-				nEquipDef = nEquipDef / 100;	// 精灵存储的附加属性是*100以后的值
+			//if (ITEMPOSITION_SPRITE == i)
+			//	nEquipDef = nEquipDef / 100;	// 精灵存储的附加属性是*100以后的值
 
 			nDef += nEquipDef;
 		}
@@ -1542,13 +1535,13 @@ DWORD CUser::GetDefence2()
 }
 
 //////////////////////////////////////////////////////////////////////
-/*DWORD CUser::GetDexterity()
+DWORD CUser::GetDexterity()
 {
 	if(QueryTransformation())
 		return QueryTransformation()->GetDexterity();
 
-	return m_data.GetDexterity();
-}*/
+	return m_data.GetSpeed();
+}
 
 //////////////////////////////////////////////////////////////////////
 /*DWORD CUser::GetDegree()
@@ -1575,7 +1568,25 @@ DWORD CUser::GetDodge()
 		return QueryTransformation()->GetDodge();
 
 	//return 0;
-	return GetSpeed();
+	int nDex = GetSpeed();
+
+	for (int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
+	{
+		CItemPtr* ppEquip = GetEquipItemPtr(i);
+		CHECKF(ppEquip);
+		CItemPtr& pEquip = *ppEquip;
+		if (pEquip)
+		{
+			int nEquipDex = pEquip->GetDexteriy();
+
+			//if (ITEMPOSITION_SPRITE == i)
+			//	nEquipDef = nEquipDef / 100;	// 精灵存储的附加属性是*100以后的值
+
+			nDex += nEquipDex;
+		}
+	}
+
+	return __max(0, nDex);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1591,8 +1602,8 @@ DWORD CUser::GetDdg()
 		CItemPtr* ppEquip = GetEquipItemPtr(i);
 		CHECKF(ppEquip);
 		CItemPtr& pEquip = *ppEquip;
-		if(pEquip)
-			nDge +=	pEquip->GetDodge();		//pEquip->GetInt(ITEMDATA_DODGE);
+		//if(pEquip)
+		//	nDge +=	pEquip->GetDodge();		//pEquip->GetInt(ITEMDATA_DODGE);
 	}
 
 	//---jinggy---begin
@@ -1603,10 +1614,6 @@ DWORD CUser::GetDdg()
 		nDge = ::CutTrail(0, AdjustData(nDge, pStatus->GetPower()));			
 	}		
 	//---jinggy---end
-
-	// 与附身型幻兽合体提高躲避率
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_ATTACH)
-		nDge += m_nLinkValue;
 
 	return __max(0, nDge);
 }
@@ -1622,8 +1629,8 @@ int	 CUser::GetLuck()
 	for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
 		CItem* pEquip = GetEquipItemByPos(i);
-		if(pEquip)
-			nLuck += pEquip->GetInt(ITEMDATA_LUCK);
+		//if(pEquip)
+		//	nLuck += pEquip->GetInt(ITEMDATA_LUCK);
 	}
 
 	ASSERT(nLuck <= 35);
@@ -1697,12 +1704,12 @@ DWORD CUser::GetMagicDef()		//? 可优化
 		CItemPtr& pEquip = *ppEquip;
 		if(pEquip)
 		{
-			int nEquipDef = pEquip->GetMgcDef();
+			//int nEquipDef = pEquip->GetMgcDef();
 
-			if (ITEMPOSITION_SPRITE == i)
-				nEquipDef = nEquipDef / 100;	// 精灵存储的附加属性是*100以后的值
+			//if (ITEMPOSITION_SPRITE == i)
+			//	nEquipDef = nEquipDef / 100;	// 精灵存储的附加属性是*100以后的值
 
-			fDef += nEquipDef;
+			//fDef += nEquipDef;
 		}
 	}
 
@@ -1825,7 +1832,7 @@ int CUser::GetPose()
 //////////////////////////////////////////////////////////////////////
 bool CUser::IsAllNonsuchEquip (void)
 {
-	CItemPtr pWeaponR = NULL;
+	/*CItemPtr pWeaponR = NULL;
 	for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
 		if (i == ITEMPOSITION_RINGL)
@@ -1864,7 +1871,7 @@ bool CUser::IsAllNonsuchEquip (void)
 		
 		if (!pEquip->IsNonsuch())
 			return false;
-	}
+	}*/
 
 	return true;
 }
@@ -1921,7 +1928,7 @@ bool CUser::LeaveMap()
 	StopMine();
 	DestroyBooth();
 	KillCallPet();
-	CallBackAllEudemon();
+	//CallBackAllEudemon(); recall walking pet?
 
 	CMapPtr pMap = GetMap();
 	if(pMap)
@@ -2092,13 +2099,13 @@ void CUser::SendGemEffect(void)
 		CItem* pEquip = GetEquipItemByPos(i);
 		if (pEquip)
 		{
-			nGem = pEquip->GetInt(ITEMDATA_GEM1);
+			/*nGem = pEquip->GetInt(ITEMDATA_GEM1);
 			if (nGem != GEM_NONE && nGem != GEM_HOLE)
 				setGem.push_back(nGem);
 
 			nGem = pEquip->GetInt(ITEMDATA_GEM2);
 			if (nGem != GEM_NONE && nGem != GEM_HOLE)
-				setGem.push_back(nGem);
+				setGem.push_back(nGem);*/
 		}
 	}	
 
@@ -2296,32 +2303,7 @@ bool CUser::TransferShield(bool bMagic, IRole* pAtker, int nDamage)
 		return false;
 
 	int nMagicType = pStatus->GetPower();
-	vector<CAiNpc*>	setEudemon;
 
-	// 寻找符合条件的已出征幻兽
-	for (int i=0; i<this->GetEudemonAmount(); i++)
-	{
-		CAiNpc* pEudemon = this->QueryEudemonByIndex(i);
-		if (pEudemon && pEudemon->QueryMagic() && pEudemon->QueryMagic()->FindMagic(nMagicType))
-			setEudemon.push_back(pEudemon);
-	}
-
-	if (setEudemon.empty())
-		return false;
-
-	nDamage = nDamage/setEudemon.size();
-	for (int i=0; i<setEudemon.size(); i++)
-	{
-		int nLostLife = ::CutOverflow(nDamage, (int)setEudemon[i]->GetLife());
-		if (nLostLife>0)
-			setEudemon[i]->AddAttrib(_USERATTRIB_LIFE, -1*nLostLife, SYNCHRO_TRUE);
-		setEudemon[i]->BeAttack(bMagic, pAtker, nDamage);
-
-		// 这里这样处理在连招中应用会导致先杀死后出连招动作的bug
-		// 等待确定解决方案
-		if (!setEudemon[i]->IsAlive())
-			pAtker->Kill(setEudemon[i], bMagic?DIE_MAGIC:DIE_NORMAL);
-	}
 	return true;
 }
 
@@ -2342,7 +2324,7 @@ bool CUser::BroadcastTeamLife(bool bMaxLife)
 bool CUser::DecEquipmentDurability(bool bBeAttack, bool bMagic, int bDurValue/*=1*/)
 {
 	int nInc = -1 * bDurValue;
-	for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
+	/*for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
 		if (!bMagic)
 		{
@@ -2378,7 +2360,7 @@ bool CUser::DecEquipmentDurability(bool bBeAttack, bool bMagic, int bDurValue/*=
 					AddEquipmentDurability(i, nInc);
 			}
 		}
-	}
+	}*/
 	return true;
 }
 
@@ -2892,8 +2874,6 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 	ClrAttackTarget();
 	if (QueryMagic())
 		QueryMagic()->AbortMagic(true);
-	CallBackAllEudemon();
-	DetachEudemon();
 //	CRole::DetachStatus(this->QueryRole(), STATUS_LOCK);
 //	CRole::DetachStatus(this->QueryRole(), STATUS_FREEZE);
 
@@ -3061,8 +3041,8 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 			{
 				CItemPtr pEquip = GetEquipItemByPos(i);
 				
-				if(pEquip && !pEquip->IsNeverDropWhenDead())
-					setPosition.push_back(i);
+				//if(pEquip && !pEquip->IsNeverDropWhenDead())
+				//	setPosition.push_back(i);
 			}
 			if (setPosition.size() > 0)
 			{
@@ -3075,12 +3055,12 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 					
 					if(pEquip)
 					{
-						if (ITEMPOSITION_WEAPONR == idPosition)
+						/*if (ITEMPOSITION_WEAPONR == idPosition)
 						{
 							CItem* pWeaponL = this->GetEquipItemByPos(ITEMPOSITION_WEAPONL);
 							if (pWeaponL)
 								pEquip = pWeaponL;
-						}
+						}*/
 						POINT	pos;
 						pos.x	= GetPosX();
 						pos.y	= GetPosY();
@@ -3136,12 +3116,6 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 			PoliceWanted().DelWanted(this->GetID());
 		}*/
 
-		// dec sprite's growth -- add by zlong 2003-12-01
-		if(m_pSprite)
-		{
-			m_pSprite->AddGrowth(-1);
-		}
-
 		// dec pk value ---- 根据2004.10.28案子增加 -- zlong
 		if (this->GetPk() > 0)
 			this->AddPk(-1*PKVALUE_DEC_PERDEATH);
@@ -3178,10 +3152,6 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 					nChance = 5;
 
 				m_pPackage->RandDropItem(_MAP_NONE, nChance);
-			}
-			if(m_pSprite)
-			{
-				m_pSprite->AddGrowth(-1);
 			}
 
 			// guard
@@ -3342,12 +3312,7 @@ bool CUser::IsAtkable(IRole* pTarget, bool bSendHint)
 		return false;
 
 	if(!pTarget->IsBeAtkable())
-		return false;
-	
-	// 不能攻击自己的幻兽
-	if (this->QueryEudemonByID(pTarget->GetID()))
-		return false;
-	
+		return false;	
 
 	CNpc* pNpc;
 	if(pTarget->QueryObj(OBJ_NPC, IPP_OF(pNpc)))
@@ -3440,6 +3405,7 @@ bool CUser::Create(PROCESS_ID idProcess, SOCKET_ID idSocket, OBJID idUser)
 	}
 
 	Init();
+	CreateAllPet();
 
 	// 装入USER管理对象
 	IDatabase* pDb = Database();
@@ -4078,53 +4044,6 @@ void CUser::OnTimer(time_t tCurr)
 	}
 	DEBUG_CATCH("CUser CallPet crash.")*/
 
-	// add by zlong 2003-11-28
-	DEBUG_TRY
-	if(m_pSprite)
-	{
-		DEADLOOP_CHECK(PID, "m_pSprite")
-		if (!m_tSprite.IsActive())
-			m_tSprite.Startup(SPRITE_ADD_EXP_SECS);
-		else if (m_tSprite.ToNextTime())
-		{
-			if (m_pSprite->AwardExp(SPRITE_ADD_EXP, this->GetLuck()) > 0)
-			{
-				// synchro
-				CMsgItemInfo	msg;
-				if (msg.Create(m_pSprite, ITEMINFO_UPDATE))
-					SendMsg(&msg);
-			}
-		}
-	}
-	DEBUG_CATCH("CUser Sprite crash.")
-
-	DEBUG_TRY
-	EUDEMON_SET::iterator it=m_setEudemon.begin();
-	for (; it!=m_setEudemon.end(); it++)
-	{
-		ST_EUDEMON* ptEudemon = *it;
-		IF_NOT (ptEudemon)
-		{
-			m_setEudemon.erase(it);
-			break;
-		}
-		if (ptEudemon->pEudemonItem && ptEudemon->pEudemon)
-		{
-			DEADLOOP_CHECK(PID, "ptEudemon")
-			if (!ptEudemon->tEudemon.IsActive())
-				ptEudemon->tEudemon.Startup(EUDEMON_ADD_FIDELITY_SECS);
-			else if (ptEudemon->tEudemon.ToNextTime() && ptEudemon->pEudemonItem->GetInt(ITEMDATA_FIDELITY) < MAX_EUDEMON_FIDELITY)
-			{
-				int nFidelity = __min(MAX_EUDEMON_FIDELITY, ptEudemon->pEudemonItem->GetInt(ITEMDATA_FIDELITY)+EUDEMON_ADD_FIDELITY);
-				ptEudemon->pEudemonItem->SetInt(ITEMDATA_FIDELITY, nFidelity, true);
-
-				CMsgItemAttrib msg;
-				if (msg.Create(ptEudemon->pEudemonItem->GetID(), _ITEMATTRIB_FIDELITY, ptEudemon->pEudemonItem->GetInt(ITEMDATA_FIDELITY)))
-					this->SendMsg(&msg);
-			}
-		}
-	}
-	DEBUG_CATCH("CUser Eudemon crash.")
 /*
 	DEBUG_TRY
 	DEADLOOP_CHECK(PID, "LeaveWord()->ShowWords")
@@ -4220,8 +4139,6 @@ void CUser::ProcessAutoAttack		()
 {
 	// 速度型幻兽合体提高攻击速度
 	int nFightPause = m_nFightRate + m_nFightPause;
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_SPEED)
-		nFightPause = __max(0, nFightPause - m_nLinkValue);
 
 	/*if (m_pBattleSystem && m_pBattleSystem->IsActived() 
 		&& m_tFight.ToNextTick(nFightPause)
@@ -5199,7 +5116,7 @@ bool CUser::LeaveMapGroup()
 	SaveInfo();		// SaveAllInfo
 
 	// 必须在DeleteAllItem之前收回幻兽操作
-	CallBackAllEudemon();
+	//CallBackAllEudemon();
 	// 切换地图不需要与幻兽解体
 	
 
@@ -5411,7 +5328,7 @@ bool CUser::SaveMoney(DWORD dwMoney, bool bSynchro /*= true*/)
 {
 	if (this->GetMoney() < dwMoney)
 	{
-		this->SendSysMsg(STR_NOT_SO_MUCH_MONEY);
+		this->SendSysMsg(STR_NOT_ENOUGH_MONEY);
 		return false;
 	}
 
@@ -5444,7 +5361,7 @@ bool CUser::DrawMoney(DWORD dwMoney, bool bSynchro /*= true*/)
 {
 	if (this->GetMoneySaved() < dwMoney)
 	{
-		SendSysMsg(STR_NOT_SO_MUCH_MONEY);
+		SendSysMsg(STR_NOT_ENOUGH_MONEY);
 		return false;
 	}
 
@@ -6275,9 +6192,9 @@ bool CUser::IsInFan(POINT pos, POINT posSource, int nRange, int nWidth, POINT po
 /////////////////////////////////////////////////////////////////////////////
 bool	CUser::EquipMagicItem(CItem* pItem, int nPosition)
 {
-	int idxMagic = pItem->GetInt(ITEMDATA_MAGIC1);
+	/*int idxMagic = pItem->GetInt(ITEMDATA_MAGIC1);
 	if(idxMagic != MAGIC_NONE && QueryMagic())
-		ASSERT(QueryMagic()->EquipWeaponMagic(POSITION2MAGIC_ID(nPosition), MagicType(idxMagic), WEAPONMAGIC_LEVEL));
+		ASSERT(QueryMagic()->EquipWeaponMagic(POSITION2MAGIC_ID(nPosition), MagicType(idxMagic), WEAPONMAGIC_LEVEL));*/
 
 	return true;
 }
@@ -6362,10 +6279,10 @@ DWORD	CUser::GetInterAtkRate()
 
 	int nRate = GetIntervalAtkRate();
 	int nRateR = 0, nRateL = 0;
-	if (m_pWeaponR && m_pWeaponR->IsWeapon())		// not arrow
-		nRateR = m_pWeaponR->GetInt(ITEMDATA_ATKSPEED);
-	if (m_pWeaponL && m_pWeaponL->IsWeapon())		// not shield
-		nRateL = m_pWeaponL->GetInt(ITEMDATA_ATKSPEED);
+	//if (m_pWeaponR && m_pWeaponR->IsWeapon())		// not arrow
+	//	nRateR = m_pWeaponR->GetInt(ITEMDATA_ATKSPEED);
+	//if (m_pWeaponL && m_pWeaponL->IsWeapon())		// not shield
+	//	nRateL = m_pWeaponL->GetInt(ITEMDATA_ATKSPEED);
 
 	if(nRateR && nRateL)
 		nRate = (nRateR + nRateL) / 2;
@@ -6418,10 +6335,10 @@ int	CUser::GetAttackRange(int nTargetSizeAdd)
 
 	int nRange = 1;
 	int nRangeR = 0, nRangeL = 0;
-	if (m_pWeaponR && m_pWeaponR->IsWeapon())		// not arrow
-		nRangeR = m_pWeaponR->GetInt(ITEMDATA_ATKRANGE);
-	if (m_pWeaponL && m_pWeaponL->IsWeapon())		// not shield
-		nRangeL = m_pWeaponL->GetInt(ITEMDATA_ATKRANGE);
+	//if (m_pWeaponR && m_pWeaponR->IsWeapon())		// not arrow
+	//	nRangeR = m_pWeaponR->GetInt(ITEMDATA_ATKRANGE);
+	//if (m_pWeaponL && m_pWeaponL->IsWeapon())		// not shield
+	//	nRangeL = m_pWeaponL->GetInt(ITEMDATA_ATKRANGE);
 
 	if(nRangeR && nRangeL)
 		nRange = (nRangeR + nRangeL) / 2;
@@ -6437,8 +6354,8 @@ int	CUser::GetAttackRange(int nTargetSizeAdd)
 //		nRange	= ::CutTrail(1, AdjustData(nRange, pStatus->GetPower()));
 
 
-	if (QueryMagic())
-		nRange += QueryMagic()->GetExtendAtkRange(m_pWeaponR, m_pWeaponL);
+	//if (QueryMagic())
+	//	nRange += QueryMagic()->GetExtendAtkRange(m_pWeaponR, m_pWeaponL);
 	return nRange;
 }
 
@@ -6464,10 +6381,6 @@ int CUser::AdjustHitRate(int nHitRate)
 //		this->SendSysMsg(_TXTATR_NORMAL, "hit rate adjust+: %d", pStatus->GetPower());
 //#endif
 //	}
-
-	// 与变异型幻兽合体提高命中率
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_VARIATIONAL)
-		nHitRate += m_nLinkValue;
 
 	return nHitRate;
 }
@@ -6513,9 +6426,6 @@ int CUser::AdjustAttack(int nAtk)
 #endif
 	}
 */
-	// 攻击型幻兽合体增加攻击
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_PATK)
-		nAddAtk += m_nLinkValue;
 
 	return nAtk + nAddAtk;
 }
@@ -6565,10 +6475,6 @@ int CUser::AdjustDefence(int nDef)
 		return (::CutTrail(0, MulDiv(nDef+nAddDef, 100-__max(100, pStatus->GetPower()), 100)));
 	}
 
-	// 与保护型幻兽合体提高物理防御
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_PROTECTIVE)
-		nAddDef += m_nLinkValue;
-
 	return nDef + nAddDef;
 }
 
@@ -6578,10 +6484,6 @@ int CUser::AdjustMagicAtk(int nAtk)
 	IStatus* pStatus = QueryStatus(STATUS_SUPER_MATK);
 	if(pStatus)
 		return ::CutTrail(0, AdjustData(nAtk, pStatus->GetPower()));
-
-	// 与魔攻型幻兽合体提高魔攻
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_MATK)
-		nAtk += m_nLinkValue;
 
 	return nAtk;
 }
@@ -6597,10 +6499,6 @@ int CUser::AdjustMagicDef(int nDef)
 	pStatus = QueryStatus(STATUS_MAGICDEFENCE);
 	if (pStatus)
 		nAddDef += ::CutTrail(0, AdjustData(nDef, pStatus->GetPower()));
-
-	// 与爆破型幻兽合体提高魔防
-	if (m_idLinkEudemonType == ITEMTYPE_EUDEMON_BOMB)
-		nAddDef += m_nLinkValue;
 
 	return nDef + nAddDef;
 }
@@ -7235,7 +7133,7 @@ bool CUser::IsImmunity(IRole* pRole)
 			return ATK_IT;
 			break;
 		case PKMODE_TEAM:
-			if (pMonster->IsCallPet() || pMonster->IsEudemon())
+			if (pMonster->IsCallPet())
 			{
 				CTeam* pTeam = GetTeam();
 				if(pTeam && pTeam->IsTeamMember(pMonster->GetMasterID()))
@@ -7249,7 +7147,7 @@ bool CUser::IsImmunity(IRole* pRole)
 				return ATK_IT;
 			break;
 		case PKMODE_SYNDICATE:          //add huang 2004.1.15  todo.
-			if(pMonster->IsCallPet() || pMonster->IsEudemon())
+			if(pMonster->IsCallPet())
 			{
 				CUser* pOwnerUser = pRole->QueryOwnerUser();
 				if (this->GetSynID() == pOwnerUser->GetSynID() || this->IsMate(pOwnerUser))
@@ -7382,12 +7280,6 @@ void CUser::SetCrimeStatus(int nStatus/*=STATUS_CRIME*/, int nTime/*=CRIME_KEEP_
 	CRole::AttachStatus(QueryRole(), nStatus, nPower, nTime);
 	if(QueryCallPet())
 		CRole::AttachStatus(QueryCallPet()->QueryRole(), nStatus, nPower, nTime);
-	for (int i=0; i<GetEudemonAmount(); i++)
-	{
-		CAiNpc* pEudemon = QueryEudemonByIndex(i);
-		if (pEudemon)
-			CRole::AttachStatus(pEudemon->QueryRole(), nStatus, nPower, nTime);
-	}
 }
 //////////////////////////////////////////////////////////////////////
 void CUser::SetSelfDefStatus(int nTime)      //add huang 2004.1.14
@@ -7657,7 +7549,7 @@ bool CUser::AddBadge()
 		}
 	}*/
 
-	if(pBadge && pBadge->GetInt(ITEMDATA_AMOUNT) == 1)
+	/*if(pBadge && pBadge->GetInt(ITEMDATA_AMOUNT) == 1)
 	{
 		pBadge->SetInt(ITEMDATA_AMOUNT, 2);
 
@@ -7666,7 +7558,7 @@ bool CUser::AddBadge()
 			SendMsg(&msg);
 
 		return true;
-	}
+	}*/
 
 	return false;
 }
@@ -7716,535 +7608,41 @@ bool CUser::CheckBadge(int nItemType/*=0*/)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CUser::CreateEudemon(CItem* pItem, int x, int y)
+bool CUser::CreateAllPet()
 {
-	CHECKF (pItem);
-	if (QueryEudemon(pItem->GetID()))
-		return false;
-	DetachEudemon(pItem);
-	CAiNpc* pMonster = NpcManager()->CreateEudemon(this, pItem, x, y);
-	CHECKF(pMonster);
+	if (m_data.m_Info.petCount == 0) return true;
 
-	ST_EUDEMON* ptEudemon = new ST_EUDEMON;
-	ASSERT(ptEudemon);
-
-	ptEudemon->pEudemonItem	= pItem;
-	ptEudemon->pEudemon		= pMonster->QueryLink();
-	ptEudemon->tEudemon.Clear();
-
-	// 计算关系值对潜力值的影响
-	OBJID	idDivine	= pItem->GetDivineID();
-	if (idDivine != ID_NONE)
-	{
-		EUDEMON_SET::iterator it=m_setEudemon.begin();
-		for (; it!=m_setEudemon.end(); it++)
-		{
-			ST_EUDEMON* ptEudemon = *it;
-			if (ptEudemon && ptEudemon->pEudemonItem && ptEudemon->pEudemon)
-			{
-				OBJID idDivine2 = ptEudemon->pEudemonItem->GetDivineID();
-				int nRelationShip = pItem->GetRelationShip(idDivine2);
-				nRelationShip += ptEudemon->pEudemonItem->GetRelationShip(idDivine);
-
-				int nAddPotential = -1*nRelationShip/ADD_POTENTIAL_RELATIONSHIP;
-				if (nAddPotential != 0)
-				{
-					pMonster->AddAttrib(_USERATTRIB_POTENTIAL, nAddPotential, SYNCHRO_TRUE);
-					ptEudemon->pEudemon->AddAttrib(_USERATTRIB_POTENTIAL, nAddPotential, SYNCHRO_TRUE);
+	for (int i = 0; i < m_data.m_Info.petCount; i++) {
+		if (m_data.m_Info.petId[i] > 0) {
+			CPetPtr pPet = CPet::CreateNew();
+			if (pPet) {
+				if (pPet->Create(m_idProcess, m_data.m_Info.petId[i])) {
+					pPet->SetOwner(this);
+					setPet.push_back(pPet);
+					if (m_data.m_Info.petId[i] == m_data.m_Info.marchingPetId) marchingPet = pPet;
 				}
+				else
+					pPet->ReleaseByOwner();
 			}
-		}		
-
+		}
 	}
-
-	m_setEudemon.push_back(ptEudemon);
-
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////
-void CUser::CallBackEudemon(OBJID idItem, bool bNow)
-{
-	OBJID	idDivine	= ID_NONE;
-	UCHAR	setRelationShip[MAX_DIVINE_ID-MIN_DIVINE_ID+1];
-	EUDEMON_SET::iterator it=m_setEudemon.begin();
-	for (; it!=m_setEudemon.end(); it++)
-	{
-		ST_EUDEMON* ptEudemon = *it;
-		if (ptEudemon && ptEudemon->pEudemonItem && ptEudemon->pEudemonItem->GetID() == idItem)
-		{
-			if (ptEudemon->pEudemon && !ptEudemon->pEudemon->IsDeleted())
-			{
-				m_setEudemon.erase(it);
-				idDivine = ptEudemon->pEudemonItem->GetDivineID();
-				for (int i=0; i<MAX_DIVINE_ID; i++)
-					setRelationShip[i] = ptEudemon->pEudemonItem->GetRelationShip(i+MIN_DIVINE_ID);
-
-				// 通知客户端
-				CMsgItem msg;
-				if (msg.Create(idItem, ITEMACT_KILL_EUDEMON, ptEudemon->pEudemon->GetID()))
-					BroadcastRoomMsg(&msg, INCLUDE_SELF);
-
-				ptEudemon->pEudemon->DelMonster(bNow);
-				SAFE_DELETE (ptEudemon);
-				break;
-			}
-		}
-	}
-	// 根据关系值修正潜力值
-	if (idDivine != ID_NONE)
-	{
-		for (it=m_setEudemon.begin(); it!=m_setEudemon.end(); it++)
-		{
-			ST_EUDEMON* ptEudemon = *it;
-			if (ptEudemon && ptEudemon->pEudemonItem && ptEudemon->pEudemon)
-			{
-				OBJID idDivine2 = ptEudemon->pEudemonItem->GetDivineID();
-				if (idDivine2 >= MIN_DIVINE_ID && idDivine2 <= MAX_DIVINE_ID)
-				{
-					// 计算关系和
-					int nRelationShip = ptEudemon->pEudemonItem->GetRelationShip(idDivine) + setRelationShip[idDivine2-MIN_DIVINE_ID];
-
-					int nAddPotential = -1*nRelationShip/ADD_POTENTIAL_RELATIONSHIP;
-					if (nAddPotential != 0)
-						ptEudemon->pEudemon->AddAttrib(_USERATTRIB_POTENTIAL, nAddPotential, SYNCHRO_TRUE);
-				}
-			}
-		}
+void CUser::SendAllPet() {
+	for (auto pet : setPet) {
+		CMsgPetInfo	msg;
+		if (msg.Create(pet, PETINFO_ACTIONADD))
+			SendMsg(&msg);
 	}
 }
 
-//////////////////////////////////////////////////////////////////////
-void CUser::CallBackAllEudemon(bool bNow/*=true*/)
-{
-	EUDEMON_SET::iterator it=m_setEudemon.begin();
-	for (; it!=m_setEudemon.end(); it++)
-	{
-		ST_EUDEMON* ptEudemon = *it;
-		if (ptEudemon)
-		{
-			if (ptEudemon->pEudemon && ptEudemon->pEudemonItem && !ptEudemon->pEudemon->IsDeleted())
-			{
-				// 通知客户端
-				CMsgItem msg;
-				if (msg.Create(ptEudemon->pEudemonItem->GetID(), ITEMACT_KILL_EUDEMON, ptEudemon->pEudemon->GetID()))
-					BroadcastRoomMsg(&msg, INCLUDE_SELF);
-				
-				ptEudemon->pEudemon->DelMonster(bNow);
-				SAFE_DELETE (ptEudemon);
-			}
-		}
-	}
-	m_setEudemon.clear();
-}
+void CUser::SendActivePet() {
+	if (!marchingPet) return;
 
-//////////////////////////////////////////////////////////////////////
-CAiNpc* CUser::QueryEudemon(OBJID idItem)
-{
-	CHECKF (idItem != ID_NONE);
-	ST_EUDEMON* ptEudemon = this->QueryEudemonSt(idItem);
-	if (ptEudemon && ptEudemon->pEudemonItem)
-		return ptEudemon->pEudemon;
-
-	return NULL;
-}
-
-//////////////////////////////////////////////////////////////////////
-CAiNpc* CUser::QueryEudemonByID(OBJID idEudemon)
-{
-	CHECKF (idEudemon != ID_NONE);
-	EUDEMON_SET::iterator it=m_setEudemon.begin();
-	for (; it!=m_setEudemon.end(); it++)
-	{
-		ST_EUDEMON* ptEudemon = *it;
-		if (ptEudemon && ptEudemon->pEudemonItem 
-				&& ptEudemon->pEudemon && ptEudemon->pEudemon->GetID() == idEudemon)
-			return ptEudemon->pEudemon;
-	}
-	return NULL;
-}
-
-//////////////////////////////////////////////////////////////////////
-CAiNpc* CUser::QueryEudemonByIndex(int nIdx)
-{
-	CHECKF (nIdx >= 0 && nIdx < m_setEudemon.size());
-	ST_EUDEMON* ptEudemon = m_setEudemon[nIdx];
-	if (ptEudemon && ptEudemon->pEudemonItem)
-		return ptEudemon->pEudemon;
-
-	return NULL;
-}
-
-//////////////////////////////////////////////////////////////////////
-CUser::ST_EUDEMON* CUser::QueryEudemonSt(OBJID idItem)
-{
-	CHECKF (idItem != ID_NONE);
-	EUDEMON_SET::iterator it=m_setEudemon.begin();
-	for (; it!=m_setEudemon.end(); it++)
-	{
-		ST_EUDEMON* ptEudemon = *it;
-		if (ptEudemon && ptEudemon->pEudemonItem && ptEudemon->pEudemonItem->GetID() == idItem)
-			return ptEudemon;
-	}
-	return NULL;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool CUser::HatchEudemon(CItem* pItem)
-{
-	CHECKF (pItem);
-	IF_NOT (pItem->IsEudemonEgg())
-		return false;
-
-	// 80000是幻兽蛋，70000是幻兽
-	OBJID idType = ITEMSORT_EXPEND*100000 + ITEMTYPE_EUDEMON + pItem->GetInt(ITEMDATA_TYPE)%10000;
-	CItemTypeData* pTypeData = ItemType()->QueryItemType(idType);
-	if (!pTypeData)
-		return false;
-
-	// 由于对幻兽来说ITEMDATA_NAME转意了，
-	// 因此必须在ChangeType之前读ITEMDATA_NAME的数据，否则将出错
-	IF_NOT (pItem->CreateEudemonData(GameDataDefault()->GetEudemonData(), pItem->GetID(), pTypeData->GetStr(ITEMTYPEDATA_NAME)))
-		return false;
-
-	if (pItem->ChangeType(idType))
-	{
-		pItem->SetInt(ITEMDATA_AVAILABLETIME, 0);
-		pItem->SetInt(ITEMDATA_EUDEMON_LEVEL, 1);
-		pItem->SetInt(ITEMDATA_EUDEMON_LIFE, pItem->GetEudemonMaxLife(), true);
-	}
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool CUser::EvolveEudemon(OBJID idEudemonItem, int nType)
-{
-	CItem* pEudemon = this->GetItem(idEudemonItem);
-	CHECKF (pEudemon && pEudemon->IsEudemon());
-	CHECKF (nType>0 && nType<=EUDEMON_EVOLVE_MAXTYPE);
-
-	if (!pEudemon->IsEvolveEnable())
-	{
-		// can not evolve
-		this->SendSysMsg(STR_EUDEMON_CANNOT_EVOLVE);
-		return false;
-	}
-//	if (pEudemon->GetEudemonLevel() < EUDEMON_EVOLVE_LEVEL)
-//	{
-//		// low level
-//		this->SendSysMsg(STR_EUDEMON_LOW_LEVEL, EUDEMON_EVOLVE_LEVEL);
-//		return false;
-//	}
-	// 召回幻兽
-	CallBackEudemon(pEudemon->GetID());
-	DetachEudemon(pEudemon);
-
-	OBJID idType = pEudemon->GetInt(ITEMDATA_TYPE) + nType;
-
-	IF_NOT (pEudemon->ChangeType(idType))
-		return false;
-
-	CMsgItemInfo	msg;
-	if (msg.Create(pEudemon, ITEMINFO_UPDATE))
-		this->SendMsg(&msg);
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool CUser::Evolve2Eudemon(OBJID idEudemonItem, int nType)
-{
-	CItem* pEudemon = this->GetItem(idEudemonItem);
-	CHECKF (pEudemon && pEudemon->IsEudemon());
-	CHECKF (nType>=MIN_DIVINE_ID && nType<=MAX_DIVINE_ID);
-	
-	if (!pEudemon->IsEvolve2Enable())
-	{
-		// can not evolve
-		this->SendSysMsg(STR_EUDEMON_CANNOT_EVOLVE);
-		return false;
-	}
-	// 召回幻兽
-	CallBackEudemon(pEudemon->GetID());
-	DetachEudemon(pEudemon);
-	
-	OBJID idType = pEudemon->GetInt(ITEMDATA_TYPE) + nType*10;
-	
-	IF_NOT (pEudemon->ChangeType(idType))
-		return false;
-
-	// 成长+0.5
-	pEudemon->SetInt(ITEMDATA_GROWTH, pEudemon->GetInt(ITEMDATA_GROWTH)+50, true);
-	
-	CMsgItemInfo	msg;
-	if (msg.Create(pEudemon, ITEMINFO_UPDATE))
-		this->SendMsg(&msg);
-	
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool CUser::RebornEudemon(OBJID idEudemonItem, OBJID idGem)
-{
-	CItem* pEudemon = this->GetItem(idEudemonItem);
-	CHECKF (pEudemon && pEudemon->IsEudemon());
-	if (pEudemon->IsAliveEudemon())
-	{
-		// 幻兽没有死亡，不能复活
-		return false;
-	}
-
-	CItem* pGem		= this->GetItem(idGem);
-	CHECKF (pGem && pGem->GetInt(ITEMDATA_TYPE) == GEM_EUDEMON_REBORN);
-
-	this->EraseItem(idGem, SYNCHRO_TRUE);		// 先删除宝石
-	pEudemon->SetInt(ITEMDATA_EUDEMON_LIFE, pEudemon->GetEudemonMaxLife(), true);	// 复活幻兽
-	CMsgItemInfo	msg;
-	if (msg.Create(pEudemon, ITEMINFO_UPDATE))
-		this->SendMsg(&msg);
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool CUser::EnhanceEudemon(OBJID idEudemonItem, OBJID idGem)
-{
-	CItem* pEudemon = this->GetItem(idEudemonItem);
-	CHECKF (pEudemon && pEudemon->IsEudemon() && pEudemon->IsAliveEudemon());
-
-	// 召回幻兽
-	CallBackEudemon(pEudemon->GetID());
-	DetachEudemon(pEudemon);
-
-	CItem* pGem		= this->GetItem(idGem);
-	CHECKF (pGem && pGem->GetInt(ITEMDATA_TYPE) == GEM_EUDEMON_ENHANCE);
-
-	int nRate = 2000;	// 追加为0时是20%成功率，为了提高精度，这里都用*100以后的数值计算
-	int nAdditionLevel = pEudemon->GetInt(ITEMDATA_ADDITION);
-	nRate /= pow(2, nAdditionLevel);	// 每+1成功率降低一半
-
-	this->EraseItem(idGem, SYNCHRO_TRUE);
-	if (::RandGet(10000) < nRate)
-	{
-		return pEudemon->ChangeAddition(nAdditionLevel+1);
-	}
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-void CUser::AwardEudemonExp(OBJID idItem, int nExp, bool bGemEffect/*= true*/)
-{
-	// TODO: 给幻兽加经验...coding here
-	if (nExp == 0)
-		return;
-
-	ST_EUDEMON* ptEudemon = this->QueryEudemonSt(idItem);
-	if (!ptEudemon || !ptEudemon->pEudemon || !ptEudemon->pEudemonItem)
-		return;
-
-	CItem* pEudemonItem = ptEudemon->pEudemonItem;
-//	if (pEudemonItem)
-	{
-		if (nExp < 0)
-		{// 扣经验
-			int nNewExp = __max(0, pEudemonItem->GetInt(ITEMDATA_EXP) + nExp);
-			pEudemonItem->SetInt(ITEMDATA_EXP, nNewExp, true);
-			CMsgItemAttrib msg;
-			if (msg.Create(pEudemonItem->GetID(), _ITEMATTRIB_EUDEMON_EXP, pEudemonItem->GetInt(ITEMDATA_EXP)))
-				this->SendMsg(&msg);
-			return;
-		}
-
-#ifdef _DEBUG
-		this->SendSysMsg(_TXTATR_NORMAL, "eudemon got battle exp: %d", nExp);
-#endif
-		// 增加经验 -- 由于人物、幻兽共用升级经验表，因此level字段的千位被用于区分
-		//CLevupexpData* pLevupexp	= LevupexpSet()->GetObj(EXP_TYPE_EUDEMON * _EXP_TYPE + pEudemonItem->GetEudemonLevel());
-		//if (!pLevupexp)
-			return;
-			int nLevupExp = 0; //pLevupexp->GetInt(LEVUPEXPDATA_EXP);
-
-		// 计算原来经验的百分比——为了提高精度，精确到千份位
-		int nOrgProgress = ::MulDiv(pEudemonItem->GetInt(ITEMDATA_EXP), 1000, nLevupExp);
-
-		// 魔兽获得的经验多50%
-		if (pEudemonItem->IsEvilEudemon())
-		{
-			const int	EVIL_EUDEMON_EXTRA_EXP_PERCENT	= 50;
-			nExp = ::MulDiv(nExp, 100+EVIL_EUDEMON_EXTRA_EXP_PERCENT, 100);
-		}
-
-		int nNewExp = nExp + pEudemonItem->GetInt(ITEMDATA_EXP);
-
-		// 魔兽经验达到一半以上的时候有50的概率经验减半
-		if (pEudemonItem->IsEvilEudemon() && nNewExp*2 >= nLevupExp)
-		{
-			const int	HALF_EXP_PERCENT	= 50;
-			if (::RandGet(100) < HALF_EXP_PERCENT)
-				nNewExp /= 2;
-		}
-
-		if (nNewExp >= nLevupExp)
-		{
-			pEudemonItem->SetInt(ITEMDATA_EXP, 0);
-			pEudemonItem->SetInt(ITEMDATA_EUDEMON_LEVEL, pEudemonItem->GetEudemonLevel()+1, true);
-
-			CMsgItemInfo msg;
-			if (msg.Create(pEudemonItem, ITEMINFO_UPDATE))
-				this->SendMsg(&msg);
-
-			CAiNpc* pEudemon = ptEudemon->pEudemon;
-			pEudemon->AddAttrib(_USERATTRIB_POTENTIAL, ADD_POTENTIAL_LEVUP, SYNCHRO_TRUE);
-			
-			if (pEudemon->QueryMagic())
-			{
-				pEudemon->QueryMagic()->OwnerUpLevel(pEudemonItem->GetInt(ITEMDATA_EUDEMON_LEVEL));
-				pEudemon->QueryMagic()->AutoLearnMagic();
-			}
-
-			{
-				CMsgUserAttrib msg;
-				if (msg.Create(pEudemon->GetID(), _USERATTRIB_MAXLIFE, pEudemon->GetMaxLife()))
-				{
-					if (msg.Append(_USERATTRIB_LIFE, pEudemon->GetLife()))
-						this->BroadcastRoomMsg(&msg, INCLUDE_SELF);
-				}
-
-				CMsgAction msgAction;
-				if (msgAction.Create(pEudemon->GetID(), 0, 0, 0, actionUplev, 0, 0))
-					pEudemon->BroadcastRoomMsg(&msgAction, INCLUDE_SELF);
-			}
-		}
-		else
-		{
-			pEudemonItem->SetInt(ITEMDATA_EXP, nNewExp);
-			int nCurProgress = ::MulDiv(pEudemonItem->GetInt(ITEMDATA_EXP), 1000, nLevupExp);
-			if (nOrgProgress/200 != nCurProgress/200)	//每隔1/5升级经验存一次
-				this->SaveInfo();
-
-			CMsgItemAttrib msg;
-			if (msg.Create(pEudemonItem->GetID(), _ITEMATTRIB_EUDEMON_EXP, pEudemonItem->GetInt(ITEMDATA_EXP)))
-				this->SendMsg(&msg);
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////
-bool CUser::AttachEudemon(OBJID idItem)
-{
-	CHECKF (idItem != ID_NONE);
-
-	CItem* pItem = this->GetItem(idItem);
-	CAiNpc* pEudemon = this->QueryEudemon(idItem);
-
-	if (!(pItem && pEudemon))
-		return false;
-
-	// 解除旧有的附身状态
-	DetachEudemon();
-
-	m_idLinkEudemonItem	= pItem->GetID();
-	m_idLinkEudemonType	= ((pItem->GetInt(ITEMDATA_TYPE)%100000)/1000)*1000;
-	// TODO：确定附加属性值
-	switch (m_idLinkEudemonType)
-	{
-	case	ITEMTYPE_EUDEMON_SPEED:			// 速度型
-		m_nLinkValue = pEudemon->GetInterAtkRate()/10;
-		break;
-	case	ITEMTYPE_EUDEMON_PATK:			// 攻击型
-		m_nLinkValue = pEudemon->GetAttack()/10;
-		break;
-	case	ITEMTYPE_EUDEMON_DEF:			// 防御型
-		m_nLinkValue = pEudemon->GetLife()/10;
-		break;
-	case	ITEMTYPE_EUDEMON_MATK:			// 魔法攻击型
-		m_nLinkValue = ((pEudemon->GetMgcMaxAtk()+pEudemon->GetMgcMinAtk())/2)/10;
-		break;
-	case	ITEMTYPE_EUDEMON_BOMB:			// 爆破型
-		m_nLinkValue = pEudemon->GetMagicDef()/10;
-		break;
-	case	ITEMTYPE_EUDEMON_PROTECTIVE:	// 保护型
-		m_nLinkValue = pEudemon->GetDef()/10;
-		break;
-	case	ITEMTYPE_EUDEMON_ATTACH:		// 附身型
-		m_nLinkValue = pEudemon->GetDdg()/10;
-		break;
-	case	ITEMTYPE_EUDEMON_VARIATIONAL:	// 变异型
-		m_nLinkValue = pEudemon->GetAtkHitRate()/10;
-		break;
-	}
-
-	// TODO: 添加魔法
-	CMagic* pMagic = pEudemon->QueryMagic();
-	if (pMagic && this->QueryMagic())
-	{
-		IMagicSet* pMagicSet = pMagic->QuerySet();
-		if (pMagicSet)
-		{
-			for (int i=0; i<pMagicSet->GetAmount(); i++)
-			{
-				IMagicData* pData = pMagicSet->GetObjByIndex(i);
-				if (pData)
-				{
-					const int	EUDEMON2USER_MAGIC_OFFSET	= 1000;
-					int nType	= pData->GetInt(MAGICDATA_TYPE) + EUDEMON2USER_MAGIC_OFFSET;
-					int nLevel	= pData->GetInt(MAGICDATA_LEVEL);
-					if (CMagic::FindMagicType(nType, nLevel) && !this->QueryMagic()->FindMagic(nType))
-					{
-						bool bSaveMagic = false;
-						OBJID idMagic = this->QueryMagic()->LearnMagic(pData->GetInt(MAGICDATA_TYPE), pData->GetInt(MAGICDATA_LEVEL), bSaveMagic);
-						if (idMagic != ID_NONE)
-							m_setLinkMagic.push_back(nType);
-					}
-				}
-			}
-		}
-	}
-
-	// 收回幻兽
-	CallBackEudemon(idItem);
-	
-	// 通知客户端
-	CMsgItem msg;
-	if (msg.Create(idItem, ITEMACT_ATTACH_EUDEMON))
+	CMsgPetAction msg;
+	if (msg.Create(marchingPet->GetID(), 0, PETACTION_ACTIVE))
 		SendMsg(&msg);
-
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////
-void CUser::DetachEudemon(CItem* pItem)
-{
-	if (ID_NONE == m_idLinkEudemonItem)
-		return;
-	if (pItem && pItem->GetID() != m_idLinkEudemonItem)
-		return;
-
-	if (!pItem)
-		pItem = this->GetItem(m_idLinkEudemonItem);
-	CHECK (pItem);
-
-	// 通知客户端
-	CMsgItem msg;
-	if (msg.Create(m_idLinkEudemonItem, ITEMACT_DETACH_EUDEMON))
-		SendMsg(&msg);
-	
-	m_idLinkEudemonItem	= ID_NONE;
-	m_idLinkEudemonType = ID_NONE;
-	m_nLinkValue = 0;
-
-	// TODO: 删除魔法
-	if (this->QueryMagic())
-	{
-		LINKMAGIC_SET::iterator it=m_setLinkMagic.begin();
-		for (; it!=m_setLinkMagic.end(); it++)
-		{
-			int nType = *it;
-			this->QueryMagic()->UnlearnMagic(nType, true);
-		}
-		m_setLinkMagic.clear();
-	}
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -8749,47 +8147,10 @@ void CUser::UpdateEquipmentExp()
 					//pItem->WarGhostLevelUpgrade(this);
 
 #ifdef _DEBUG				
-					char szInfo[255];
-					sprintf(szInfo,"物品 %s 的战魂经验值 %d",pItem->GetStr(ITEMDATA_NAME),pItem->GetInt(ITEMDATA_WARGHOSTEXP));
-					this->SendSysMsg(_TXTATR_NORMAL,szInfo);
+				//	char szInfo[255];
+					//sprintf(szInfo,"物品 %s 的战魂经验值 %d",pItem->GetStr(ITEMDATA_NAME),pItem->GetInt(ITEMDATA_WARGHOSTEXP));
+					//this->SendSysMsg(_TXTATR_NORMAL,szInfo);
 #endif
-
-					if(pItem->GetWarGhostLevel()==MAX_LEVEL_WARLEVEL-1)
-						UpdateEquipmentExp_Startup(i,EQUIPMENT_EXP_ADD_SECS_AFTER9);
-					else if(pItem->GetWarGhostLevel()>=MAX_LEVEL_WARLEVEL)
-						UpdateEquipmentExp_Stop(i);
-						
-
-					if(pItem->GetWarGhostLevel()>=MAX_LEVEL_WARLEVEL-1)
-					{
-						m_arrEquipIncExp[i-ITEMPOSITION_EQUIPBEGIN]++;
-
-						if(pItem->IsWeapon())
-						{
-							if(m_arrEquipIncExp[i-ITEMPOSITION_EQUIPBEGIN]>=WEAPON_UPEXP_MAXVALUE)
-								UpdateEquipmentExp_Stop(i);
-						}
-						else if(pItem->IsArmor())
-						{
-							if(m_arrEquipIncExp[i-ITEMPOSITION_EQUIPBEGIN]>=ARMOR_UPEXP_MAXVALUE)
-								UpdateEquipmentExp_Stop(i);
-						}
-						else if(pItem->IsNecklace())
-						{
-							if(m_arrEquipIncExp[i-ITEMPOSITION_EQUIPBEGIN]>=NECKLACE_UPEXP_MAXVALUE)
-								UpdateEquipmentExp_Stop(i);
-						}
-						else if(pItem->IsShoes())
-						{
-							if(m_arrEquipIncExp[i-ITEMPOSITION_EQUIPBEGIN]>=SHOE_UPEXP_MAXVALUE)
-								UpdateEquipmentExp_Stop(i);						
-						}
-						else if(pItem->IsBangle()||pItem->IsRing())
-						{
-							if(m_arrEquipIncExp[i-ITEMPOSITION_EQUIPBEGIN]>=BANGLE_UPEXP_MAXVALUE)
-								UpdateEquipmentExp_Stop(i);		
-						}				
-					}
 				}	
 			}
 		}
@@ -8857,24 +8218,6 @@ void CUser::UpdateEquipmentExp_Init()
 
 		time_t tResult = tCur - tLast;
 		int nDays = tResult/86400 - 1;
-
-		m_tEquipWarGhostExp.Startup(WARGHOST_CHECK_INTERVAL);
-		for(int i=ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
-		{	
-			CItemPtr pItem = GetEquipItemByPos(i);
-			if(pItem)
-			{
-				//降低战魂等级
-				pItem->WarGhostLevelDec(nDays*2);
-
-				if(pItem->GetWarGhostLevel()==MAX_LEVEL_WARLEVEL)
-					continue;
-				if(pItem->GetWarGhostLevel()==MAX_LEVEL_WARLEVEL-1 )
-					UpdateEquipmentExp_Startup(i,EQUIPMENT_EXP_ADD_SECS_AFTER9);
-				else if(pItem->GetWarGhostLevel()< MAX_LEVEL_WARLEVEL-1 )
-					UpdateEquipmentExp_Startup(i,EQUIPMENT_EXP_ADD_SECS);
-			}	
-		}
 	}
 
 	DEBUG_CATCH("void CUser::UpdateEquipmentExp_Init()S")
@@ -8904,8 +8247,8 @@ bool CUser::IsEmbedGemType(int nGemType)
 		CItemPtr pItem = GetEquipItemByPos(i);
 		if(pItem)
 		{
-			if(pItem->GetInt(ITEMDATA_GEMTYPE)==nGemType)
-				return true;
+			//if(pItem->GetInt(ITEMDATA_GEMTYPE)==nGemType)
+			//	return true;
 		}
 	}
 	return false;

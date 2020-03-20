@@ -13,6 +13,8 @@
 
 using namespace mapgroup_kernel;
 
+#define MSGSIZE sizeof(MSG_Info)
+
 class CNetMsg
 {
 public:

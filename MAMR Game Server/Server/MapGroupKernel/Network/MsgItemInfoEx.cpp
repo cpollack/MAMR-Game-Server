@@ -52,7 +52,7 @@ BOOL CMsgItemInfoEx::Create(CItem* pItem, OBJID idOwner, int nCost, int nAction 
 	m_pInfo->dwPrice			= nCost;
 	m_pInfo->ucPosition			= info.nPosition;
 	m_pInfo->ucIdent			= _ITEM_STATUS_NOT_IDENT;
-	if(!pItem->IsNeedIdent())
+	/*if(!pItem->IsNeedIdent())
 	{
 		m_pInfo->usAmount			= info.nAmount;
 		m_pInfo->usAmountLimit		= info.nAmountLimit;
@@ -67,10 +67,7 @@ BOOL CMsgItemInfoEx::Create(CItem* pItem, OBJID idOwner, int nCost, int nAction 
 		m_pInfo->dwWarGhostExp		= info.dwWarGhostExp;
 		m_pInfo->dwGemAtkType		= info.dwGemAtkType;
 		m_pInfo->dwAvailabeTime		= info.dwAvailabeTime;
-
-		if (pItem->IsEudemon())
-			m_StrPacker.AddString(pItem->GetStr(ITEMDATA_NAME));
-	}
+	}*/
 
 	m_unMsgType	=_MSG_ITEMINFOEX;
 	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();

@@ -116,9 +116,9 @@ CItem* CPackage::AuctionGoodsBackOff(OBJID idOwner,OBJID idItem, bool bUpdate/* 
 	CItemPtr pItem = m_setItem->GetObj(idItem);
 	if(!pItem)
 		return false;
-	pItem->SetInt(ITEMDATA_OWNERID, idOwner, UPDATE_FALSE);
-	pItem->SetInt(ITEMDATA_PLAYERID, idOwner, UPDATE_FALSE);
-	pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_AUCTION_STORAGE, bUpdate);
+	//pItem->SetInt(ITEMDATA_OWNERID, idOwner, UPDATE_FALSE);
+	//pItem->SetInt(ITEMDATA_PLAYERID, idOwner, UPDATE_FALSE);
+	//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_AUCTION_STORAGE, bUpdate);
 	m_setItem->PopObj(idItem);
 	return pItem;
 }
@@ -131,23 +131,23 @@ bool CPackage::CheckIn(CUser* pUser, CItem* pItem, bool bUpdate /*= true*/)
 	CHECKF(pUser);
 	CHECKF(pItem);
 	
-	if(m_nType == ITEMPOSITION_CHEST && !pItem->IsExchangeEnable())
-	{
+	//if(m_nType == ITEMPOSITION_CHEST && !pItem->IsExchangeEnable())
+	//{
 		//		pUser->SendSysMsg("错误：此物品不宜存放!");
-		return false;
-	}
+	//	return false;
+	//}
 	
 	int		nPosition = m_nType;		// 相同
 	OBJID	idPlayer = (IsPlayerPackage() ? pUser->GetID() : ID_NONE);
-	pItem->SetInt(ITEMDATA_OWNERID, m_idOwner, UPDATE_FALSE);
-	pItem->SetInt(ITEMDATA_PLAYERID, idPlayer, UPDATE_FALSE);
-	pItem->SetInt(ITEMDATA_POSITION, nPosition, bUpdate);
+	//pItem->SetInt(ITEMDATA_OWNERID, m_idOwner, UPDATE_FALSE);
+	//pItem->SetInt(ITEMDATA_PLAYERID, idPlayer, UPDATE_FALSE);
+	//pItem->SetInt(ITEMDATA_POSITION, nPosition, bUpdate);
 	m_setItem->AddObj(pItem);
 	
 	// synchro
 	MsgPackageItemInfo	info;
 	info.idItem		= pItem->GetID();
-	info.idItemType	= pItem->GetInt(ITEMDATA_TYPE);
+	/*info.idItemType	= pItem->GetInt(ITEMDATA_TYPE);
 	info.usAmount	= pItem->GetInt(ITEMDATA_AMOUNT);
 	info.usAmountLimit	= pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 	info.ucIdent	= pItem->GetInt(ITEMDATA_IDENT);
@@ -160,7 +160,7 @@ bool CPackage::CheckIn(CUser* pUser, CItem* pItem, bool bUpdate /*= true*/)
 	info.nData		= pItem->GetInt(ITEMDATA_DATA);
 	info.dwWarGhostExp		= pItem->GetInt(ITEMDATA_WARGHOSTEXP);
 	info.dwGemAtkType		= pItem->GetInt(ITEMDATA_GEMTYPE);
-	info.dwAvailableTime	= pItem->GetInt(ITEMDATA_AVAILABLETIME);
+	info.dwAvailableTime	= pItem->GetInt(ITEMDATA_AVAILABLETIME);*/
 	::SafeCopy(info.szName, pItem->GetStr(ITEMDATA_NAME), _MAX_NAMESIZE);
 
 	// modified by zlong 2003-11-24 ---- 指定ucType类别
@@ -193,9 +193,9 @@ CItem* CPackage::CheckOut(CUser* pUser, OBJID idItem, bool bUpdate)
 	if(!pItem)
 		return false;
 	
-	pItem->SetInt(ITEMDATA_OWNERID, pUser->GetID(), UPDATE_FALSE);
-	pItem->SetInt(ITEMDATA_PLAYERID, pUser->GetID(), UPDATE_FALSE);
-	pItem->SetInt(ITEMDATA_POSITION, pUser->QueryPackage()->GetItemPosition(pItem), bUpdate);
+	//pItem->SetInt(ITEMDATA_OWNERID, pUser->GetID(), UPDATE_FALSE);
+	//pItem->SetInt(ITEMDATA_PLAYERID, pUser->GetID(), UPDATE_FALSE);
+	//pItem->SetInt(ITEMDATA_POSITION, pUser->QueryPackage()->GetItemPosition(pItem), bUpdate);
 	m_setItem->PopObj(idItem);
 	// modified by zlong 2003-11-24 ---- 指定ucType类别
 	// synchro
@@ -220,38 +220,22 @@ bool CPackage::SendInfo(CUser* pUser)
 		CItemPtr pItem = m_setItem->GetObjByIndex(i);
 		if(pItem && nCount < PACKAGE_LIMIT)
 		{
-			///////////////////////////////////////////////////
-			// 幻兽系统的幻兽蛋孵化在这里进行
-			if (m_ucType == MSGPACKAGE_TYPE_EUDEMON_BROODER && pItem->IsEudemonEgg())
-			{
-				if (dwCurrTime > pItem->GetInt(ITEMDATA_AVAILABLETIME)
-					&& dwCurrTime - pItem->GetInt(ITEMDATA_AVAILABLETIME) >= EUDEMON_HATCH_SECS)
-				{
-					pUser->HatchEudemon(pItem);
-				}
-			}
-			///////////////////////////////////////////////////
-
-			buf[nCount].usAmount	= pItem->GetInt(ITEMDATA_AMOUNT);
+			/*buf[nCount].usAmount	= pItem->GetInt(ITEMDATA_AMOUNT);
 			buf[nCount].usAmountLimit	= pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 			buf[nCount].ucIdent		= pItem->GetInt(ITEMDATA_IDENT);
 			buf[nCount].ucGem1		= pItem->GetInt(ITEMDATA_GEM1);
 			buf[nCount].ucGem2		= pItem->GetInt(ITEMDATA_GEM2);
 			buf[nCount].ucMagic1	= pItem->GetInt(ITEMDATA_MAGIC1);
 			buf[nCount].ucMagic2	= pItem->GetInt(ITEMDATA_MAGIC2);
-			buf[nCount].ucMagic3	= pItem->GetInt(ITEMDATA_MAGIC3);
+			buf[nCount].ucMagic3	= pItem->GetInt(ITEMDATA_MAGIC3);*/
 
 			buf[nCount].idItem			= pItem->GetID();
-			buf[nCount].idItemType	= pItem->GetInt(ITEMDATA_TYPE);
+			//buf[nCount].idItemType	= pItem->GetInt(ITEMDATA_TYPE);
 
-			buf[nCount].nData		= pItem->GetInt(ITEMDATA_DATA);
+			/*buf[nCount].nData		= pItem->GetInt(ITEMDATA_DATA);
 			buf[nCount].dwWarGhostExp	= pItem->GetInt(ITEMDATA_WARGHOSTEXP);
 			buf[nCount].dwGemAtkType	= pItem->GetInt(ITEMDATA_GEMTYPE);
-			// 如果是幻兽蛋，发送孵化剩余的时间
-			if (pItem->IsEudemonEgg())
-				buf[nCount].dwAvailableTime	= __max(0, EUDEMON_HATCH_SECS - (int)(dwCurrTime - pItem->GetInt(ITEMDATA_AVAILABLETIME)));
-			else
-				buf[nCount].dwAvailableTime	= pItem->GetInt(ITEMDATA_AVAILABLETIME);
+			buf[nCount].dwAvailableTime	= pItem->GetInt(ITEMDATA_AVAILABLETIME);*/
 			::SafeCopy(buf[nCount].szName, pItem->GetStr(ITEMDATA_NAME), _MAX_NAMESIZE);
 
 			++nCount;
@@ -292,7 +276,7 @@ int CPackage::GetItemType(int index)
 	{
 		CItemPtr pItem = m_setItem->GetObjByIndex(index);
 		if(pItem)
-			return  pItem->GetInt(ITEMDATA_TYPE);
+			return  pItem->GetInt(ITEMDATA_SORT);
 	}
 
 	return ID_NONE;
@@ -307,7 +291,7 @@ int CPackage::GetWeight(OBJID idItem)
 	if(!pItem)
 		return ERROR_WEIGHT;
 
-	return pItem->GetWeight();
+	return 0;// pItem->GetWeight();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -319,7 +303,7 @@ OBJID CPackage::GetItemTypeByID(OBJID idItem)
 	if(!pItem)
 		return ID_NONE;
 
-	return pItem->GetInt(ITEMDATA_TYPE);
+	return pItem->GetInt(ITEMDATA_SORT);
 }
 //----------------------------------------------------------------------
 //CItem*  CPackage::CAuctionChip
@@ -337,7 +321,7 @@ bool  CPackage::CAuctionChip(/*OBJID idNpc,*/OBJID idUser,DWORD value,IRecordset
 		if(pRes && pRes->RecordCount())
 		{
 			DEBUG_TRY
-			pRes->SetInt(ITEMDATA_DATA,pRes->GetInt(ITEMDATA_DATA)+value);
+			//pRes->SetInt(ITEMDATA_DATA,pRes->GetInt(ITEMDATA_DATA)+value);
 			pRes->UpdateRecord();
 			pRes->Release();
 			return true;
@@ -348,7 +332,7 @@ bool  CPackage::CAuctionChip(/*OBJID idNpc,*/OBJID idUser,DWORD value,IRecordset
 		pItem = CItem::CreateNew();
 		if(pItem->Create(pRecordset, AUCTION_CHIP, idUser, ITEMPOSITION_AUCTION_STORAGE))
 		{
-			pItem->SetInt(ITEMDATA_DATA,value,UPDATE_TRUE);
+			//pItem->SetInt(ITEMDATA_DATA,value,UPDATE_TRUE);
 			return true;
 		}
 		else
@@ -371,6 +355,6 @@ DWORD CPackage::GetItemAmountLimitByID(OBJID idItem)
 	if(!pItem)
 		return 0;
 
-	return pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
+	return 1;// pItem->GetInt(ITEMDATA_AMOUNTLIMIT);
 }
 

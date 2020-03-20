@@ -573,20 +573,6 @@ void CTeam::AwardMemberExp(OBJID idKiller, IRole* pTarget, int nExp)
 		if (pUser->GetMapID() != pTarget->GetMap()->GetID() || pUser->GetID() == idKiller)
 			continue;
 
-		// chk all eudemons exclude killer's
-		for (int i=0; i<pUser->GetEudemonAmount(); i++)
-		{
-			CAiNpc* pEudemon = pUser->QueryEudemonByIndex(i);
-			if (pEudemon && pEudemon->IsAlive() && 
-				(abs(pEudemon->GetPosX()-pTarget->GetPosX()) <= _RANGE_EXPSHARE
-					|| abs(pEudemon->GetPosY()-pTarget->GetPosY()) <= _RANGE_EXPSHARE))
-			{
-				int nAwardExp = 0; // CBattleSystem::AdjustExp(nExp, pEudemon->GetLev(), pTarget->GetLev());
-				bool bIncludeOwner = false;
-				pEudemon->AwardBattleExp(nExp, true, bIncludeOwner);
-			}
-		}
-
 		// no self
 		if (!(pUser->IsAlive() && pUser->GetID() != idKiller))
 			continue;
@@ -729,18 +715,6 @@ void CTeam::AttachMemberStatus(int nStatus, int nPower, int nSecs, int nTimes, O
 		CUser*	pUser = UserManager()->GetUser(this->GetMemberByIndex(i));
 		if (pUser)				//? may be another mapgroup
 		{
-			// 给幻兽加状态
-			for (int i=0; i<pUser->GetEudemonAmount(); i++)
-			{
-				CAiNpc* pEudemon = pUser->QueryEudemonByIndex(i);
-				if (pEudemon
-					&& pEudemon->GetMap()->GetID() == pLeader->GetMapID()
-					&& (pEudemon->GetDistance(pLeader->QueryMapThing()) <= _RANGE_TEAM_STATUS || STATUS_ADD_EXP == nStatus))
-				{
-					if (!pEudemon->QueryStatus(nStatus))
-						CRole::AttachStatus(pEudemon->QueryRole(), nStatus, nPower, nSecs, nTimes);
-				}
-			}
 			// 给玩家加状态
 			if (pUser->GetID() != idExclude)
 			{
@@ -813,14 +787,7 @@ int CTeam::ShareDamage(int nDamage, OBJID idExclude)
 		CUser* pMember = UserManager()->GetUser(idMember);
 		// 与带有心灵结界的其他队伍成员(包括幻兽)平分伤害 -- 只考虑当前地图组
 		if (pMember)
-		{
-			for (int i=0; i<pMember->GetEudemonAmount(); i++)
-			{
-				CAiNpc* pEudemon = pMember->QueryEudemonByIndex(i);
-				if (pEudemon && pEudemon->GetLife()>1 && pEudemon->QueryStatus(STATUS_TEAMSPIRIT))
-					setMember.push_back(pEudemon->QueryRole());
-			}
-			
+		{			
 			if (pMember->GetID() != idExclude && pMember->GetLife()>1 && pMember->QueryStatus(STATUS_TEAMSPIRIT))
 				setMember.push_back(pMember->QueryRole());
 		}

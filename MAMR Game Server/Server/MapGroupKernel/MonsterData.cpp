@@ -19,7 +19,7 @@ char	szMonsterTable[] = _TBL_MONSTER;
 CMonsterData::CMonsterData()
 {
 	memset(&info, 0, sizeof(MonsterInfoStruct));
-	//m_pRes	= NULL;
+	pRes = NULL;
 }
 
 CMonsterData::~CMonsterData()
@@ -52,9 +52,28 @@ bool CMonsterData::LoadInfo()
 		return true;
 
 	info.MonsterID	= pRes->GetInt(MONSTERDATA_ID);
+	info.Class = pRes->GetInt(MONSTERDATA_CLASS);
 	strcpy(info.szName, pRes->GetStr(MONSTERDATA_NAME));
-	info.Look			= pRes->GetInt(MONSTERDATA_LOOK);
-	info.Level		= 1;
+	info.Look = pRes->GetInt(MONSTERDATA_LOOK);
+	
+	//load the rest of the monster data
+	info.baseAttack = pRes->GetDouble(MONSTERDATA_BASE_ATTACK);
+	info.baseDefence = pRes->GetDouble(MONSTERDATA_BASE_DEFENCE);
+	info.baseDexterity = pRes->GetDouble(MONSTERDATA_BASE_DEXTERITY);
+	info.baseLife = pRes->GetDouble(MONSTERDATA_BASE_LIFE);
+
+	info.rateAttack = pRes->GetInt(MONSTERDATA_RATE_ATTACK);
+	info.rateDefence = pRes->GetInt(MONSTERDATA_RATE_DEFENCE);
+	info.rateDexterity = pRes->GetInt(MONSTERDATA_RATE_DEXTERITY);
+
+	info.Growth = pRes->GetDouble(MONSTERDATA_GROWPOINT);
+	info.LifeRise = pRes->GetDouble(MONSTERDATA_LIFERISE);
+
+	info.Level = 1;
+	info.Attack = info.baseAttack;
+	info.Defence = info.baseDefence;
+	info.Dexterity = info.baseDexterity;
+	info.Life = info.baseLife;
 
 	return true;
 }

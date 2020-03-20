@@ -103,6 +103,12 @@
     <Filter Include="Server\MapGroupKernel\Map\MapData">
       <UniqueIdentifier>{6575d528-ab41-4ccd-af1d-14014ee860d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Server\MapGroupKernel\Battle">
+      <UniqueIdentifier>{df07027b-6e1b-4f2d-b4d0-8760079c74c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MapGroupKernel\Battle\Network">
+      <UniqueIdentifier>{02a50be7-d3a4-4d4e-bf0e-6647df563f38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\BaseFunc.cpp">
@@ -569,6 +575,39 @@
     </ClCompile>
     <ClCompile Include="Server\MapGroupKernel\Pet.cpp">
       <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPetInfo.cpp">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPetAction.cpp">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgBattle.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Battle.cpp">
+      <Filter>Server\MapGroupKernel\Battle</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgEnemy.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgFighter.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgColor.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgBattleAct.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgNormalAct.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgBattleRound.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgBattleResult.cpp">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1180,6 +1219,39 @@
     </ClInclude>
     <ClInclude Include="Server\MapGroupKernel\Pet.h">
       <Filter>Server\MapGroupKernel\Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPetInfo.h">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPetAction.h">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgBattle.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Battle.h">
+      <Filter>Server\MapGroupKernel\Battle</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgEnemy.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgFighter.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgColor.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgBattleAct.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgNormalAct.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgBattleRound.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgBattleResult.h">
+      <Filter>Server\MapGroupKernel\Battle\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

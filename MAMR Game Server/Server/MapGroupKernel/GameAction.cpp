@@ -601,8 +601,8 @@ void CGameAction::ReplaceAttrStr(char* pszTarget, const char* pszSource, CUser* 
 					char	szNum[256] = "(err)";
 					CItem* pItem = pUser->GetItem(pUser->TaskIterator());
 					IF_OK(pItem)
-						sprintf(szNum, "%u", pItem->GetInt(ITEMDATA_DATA));
-					strcpy(ptr2, szNum);
+					//	sprintf(szNum, "%u", pItem->GetInt(ITEMDATA_DATA));
+					//strcpy(ptr2, szNum);
 
 					ptr += sizeof(PARA_ITER_ITEM_DATA)-1;
 					ptr2		+= strlen(szNum);
@@ -759,7 +759,7 @@ void CGameAction::ReplaceAttrStr(char* pszTarget, const char* pszSource, CUser* 
 				if(_strnicmp(ptr, PARA_ITEM_TYPE, sizeof(PARA_ITEM_TYPE)-1) == 0)
 				{
 					char	szNum[256] = "";
-					sprintf(szNum, "%u", pItem->GetInt(ITEMDATA_TYPE));
+					sprintf(szNum, "%u", pItem->GetInt(ITEMDATA_SORT));
 					strcpy(ptr2, szNum);
 
 					ptr += sizeof(PARA_ITEM_TYPE)-1;
@@ -769,8 +769,8 @@ void CGameAction::ReplaceAttrStr(char* pszTarget, const char* pszSource, CUser* 
 				else if(_strnicmp(ptr, PARA_ITEM_DATA, sizeof(PARA_ITEM_DATA)-1) == 0)
 				{
 					char	szNum[256] = "";
-					sprintf(szNum, "%u", pItem->GetInt(ITEMDATA_DATA));
-					strcpy(ptr2, szNum);
+					//sprintf(szNum, "%u", pItem->GetInt(ITEMDATA_DATA));
+					//strcpy(ptr2, szNum);
 
 					ptr += sizeof(PARA_ITEM_DATA)-1;
 					ptr2		+= strlen(szNum);
@@ -2519,7 +2519,7 @@ bool CGameAction::ProcessActionItemOnly(CActionData* pAction, LPCTSTR szParam, C
 			CNpc* pNpc = CNpc::CreateNew();
 			IF_OK(pNpc)
 			{
-				IF_OK(pNpc->Create(m_idProcess, &info, pItem->GetInt(ITEMDATA_TYPE), pName))
+				IF_OK(pNpc->Create(m_idProcess, &info, pItem->GetInt(ITEMDATA_SORT), pName))
 				{
 					RoleManager()->QuerySet()->AddObj(pNpc->QueryRole());
 					//pNpc->EnterMap();
@@ -2608,20 +2608,20 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 					{
 						nTestData = pItem->GetQuality();
 					}
-					else if (0 == _stricmp("durability", szCmd))
+					/*else if (0 == _stricmp("durability", szCmd))
 					{
 						if (-1 == nData)
 							nData = pItem->GetInt(ITEMDATA_AMOUNTLIMIT)/100;
 
 						nTestData = pItem->GetInt(ITEMDATA_AMOUNT)/100;
-					}
-					else if (0 == _stricmp("max_dur", szCmd))
+					}*/
+					/*else if (0 == _stricmp("max_dur", szCmd))
 					{
 						if (-1 == nData)
 							nData = pItem->GetInt(ITEMDATA_AMOUNTLIMIT_ORIGINAL)/100;
 
 						nTestData = (pItem->GetInt(ITEMDATA_AMOUNTLIMIT)*100/(100+pItem->GetGemDurEffect()))/100;
-					}
+					}*/
 					else
 					{
 						LOGERROR("ACTION %u: 错误的参数", pAction->GetID());
@@ -2708,7 +2708,7 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 			CItem* pEquip = pUser->GetEquipItemByPos(pAction->GetInt(ACTIONDATA_DATA));
 			if (pEquip)
 			{
-				pEquip->SetInt(ITEMDATA_AMOUNT, pEquip->GetInt(ITEMDATA_AMOUNTLIMIT), true);
+				//pEquip->SetInt(ITEMDATA_AMOUNT, pEquip->GetInt(ITEMDATA_AMOUNTLIMIT), true);
 				return true;
 			}
 		}
@@ -2725,9 +2725,9 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 					CItem* pItem = pUser->GetWeaponR();
 					if (pItem)
 					{
-						if (1 == nData && GEM_NONE != pItem->GetInt(ITEMDATA_GEM1))
-							return true;
-						else if (2 == nData && GEM_NONE != pItem->GetInt(ITEMDATA_GEM2))
+						//if (1 == nData && GEM_NONE != pItem->GetInt(ITEMDATA_GEM1))
+						//	return true;
+						//else if (2 == nData && GEM_NONE != pItem->GetInt(ITEMDATA_GEM2))
 							return true;
 					}
 				}
@@ -2736,7 +2736,7 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 					CItem* pItem = pUser->GetWeaponR();
 					if (pItem)
 					{
-						if (1 == nData && GEM_NONE == pItem->GetInt(ITEMDATA_GEM1))
+						/*if (1 == nData && GEM_NONE == pItem->GetInt(ITEMDATA_GEM1))
 						{
 							pItem->SetInt(ITEMDATA_GEM1, GEM_HOLE, true);
 
@@ -2760,7 +2760,8 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 								pUser->SendMsg(&msg);
 
 							return true;
-						}
+						}*/
+						return true;
 					}
 				}
 			}
@@ -2777,7 +2778,7 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 				if(sscanf(szParam, "%u %u %u %u %u %u %u %u %d %u %u %u", 
 					&nAmount, &nAmountLimit, &nIdent, &nGem1, &nGem2, &nMagic1, &nMagic2, &nMagic3, &nData, &nWarGhostExp, &nGemType, &nAvailableTime) > 0)
 				{
-					if(nAmount)
+					/*if(nAmount)
 						pItem->SetInt(ITEMDATA_AMOUNT, nAmount);
 					if(nAmountLimit)
 						pItem->SetInt(ITEMDATA_AMOUNTLIMIT, nAmountLimit);
@@ -2800,47 +2801,17 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 					if(nAvailableTime)
 						pItem->SetInt(ITEMDATA_AVAILABLETIME, nAvailableTime);
 
-					pItem->SetStatus(nIdent, UPDATE_TRUE);
-				}
-
-				// 如果是精灵，则调整初始默认成长率 -- add by zlong 2003-12-04
-				if(pItem->IsSprite())
-				{
-					pItem->AdjustOriginalGrowth();
+					pItem->SetStatus(nIdent, UPDATE_TRUE);*/
 				}
 
 				// 坐骑，调整亲密度
-				if(pItem->IsMount())
+				/*if(pItem->IsMount())
 				{
 					int nIntimacy	= pItem->GetInt(ITEMDATA_INTIMACY);
 					int nAdjust		= nIntimacy*25/100;
 					nIntimacy	+= ::RandGet(nAdjust * 2) - nAdjust;
 					pItem->SetInt(ITEMDATA_INTIMACY, nIntimacy);
-				}
-
-				// TODO: 幻兽，调整成长率系数、亲密度、血
-				if (pItem->IsEudemon())
-				{
-					if (!nData)
-					{
-						// 成长率系数 0.5 ~ 1.5 之间浮动
-						int nGrowth = 50 + ::RandGet(11)*10;
-						pItem->SetInt(ITEMDATA_GROWTH, nGrowth);
-					}
-					if (!nAmount)
-					{
-						// 亲密度
-						int nFidelity	= 450 + ::RandGet(100);
-						pItem->SetInt(ITEMDATA_FIDELITY, nFidelity);
-					}
-
-					if (!nWarGhostExp)
-					{
-						// 生命
-						int nLife	= pItem->GetEudemonMaxLife();
-						pItem->SetInt(ITEMDATA_EUDEMON_LIFE, nLife, true);
-					}
-				}
+				}*/
 
 				// synchro
 				CMsgItemInfo msg;
@@ -2900,8 +2871,8 @@ bool CGameAction::ProcessActionItem(CActionData* pAction, LPCTSTR szParam, CUser
 		{
 			CHECKF(pItem);
 			DEBUG_TRY
-			int nMoney = pItem->GetInt(ITEMDATA_DATA);
-			pUser->GainMoney(nMoney, SYNCHRO_TRUE);
+			//int nMoney = pItem->GetInt(ITEMDATA_DATA);
+			//pUser->GainMoney(nMoney, SYNCHRO_TRUE);
 			IF_NOT(pUser->SpendItem(pItem))
 		    	return false;
 			DEBUG_CATCH("Encash Chip Error!")

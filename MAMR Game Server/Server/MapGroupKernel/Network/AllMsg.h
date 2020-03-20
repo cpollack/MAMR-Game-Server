@@ -40,7 +40,9 @@
 #include "MsgDialog.h"
 #include "MsgBetOutside.h"
 
-#include "MsgCallPetInfo.h"
+#include "MsgPetInfo.h"
+#include "MsgPetAction.h"
+#include "MsgCallPetInfo.h" //This will go away?
 
 #include "MsgSyndicate.h"
 #include "MsgSynInfo.h"
@@ -52,6 +54,15 @@
 #include "MsgItemInfo.h"
 #include "MsgItemInfoEx.h"
 #include "MsgPackage.h"
+
+//Battle
+#include "MsgBattle.h"
+#include "MsgBattleAct.h"
+#include "MsgNormalAct.h"
+#include "MsgEnemy.h"
+#include "MsgFighter.h"
+#include "MsgBattleRound.h"
+#include "MsgBattleResult.h"
 
 //Magic?
 #include "MsgMagicInfo.h"

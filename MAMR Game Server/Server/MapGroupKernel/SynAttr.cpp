@@ -518,7 +518,7 @@ bool CSynAttr::DonateMoney(int nMoney)
 
 	if(m_pUser->GetMoney() < nMoney)
 	{
-		m_pUser->SendSysMsg(STR_NOT_SO_MUCH_MONEY);
+		m_pUser->SendSysMsg(STR_NOT_ENOUGH_MONEY);
 		return false;
 	}
 

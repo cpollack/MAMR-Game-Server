@@ -153,7 +153,8 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 				// ITEM
 				OBJID	idItem = m_pInfo->idItem;
 				CItemPtr pItem = pUser->GetItem(idItem);
-				if(!pItem || !pItem->IsStorageEnable() && !pItem->IsChestItem())	// enable store chest
+				//if (!pItem || !pItem->IsStorageEnable() && !pItem->IsChestItem())	// enable store chest
+				if(!pItem)	// enable store chest
 				{
 					pUser->SendSysMsg(STR_CANT_STORAGE);
 					return ;
@@ -228,15 +229,11 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 				// ITEM
 				OBJID	idItem = m_pInfo->idItem;
 				CItemPtr pItem = pUser->GetItem(idItem);
-				if(!pItem || !pItem->IsExchangeEnable() || !pItem->IsStorageEnable())
+				//if (!pItem || !pItem->IsExchangeEnable() || !pItem->IsStorageEnable())
+				if(!pItem)
 				{
 					pUser->SendSysMsg(STR_CANT_STORAGE);
 					return ;
-				}
-				if (pItem->IsEudemon())
-				{
-					pUser->CallBackEudemon(pItem->GetID());
-					pUser->DetachEudemon(pItem);
 				}
 
 				// NPC
@@ -283,7 +280,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 				pUser->AddItem(pItem, SYNCHRO_TRUE);
 
 				// log
-				if (pItem->IsNonsuchItem())
+				/*if (pItem->IsNonsuchItem())
 				{
 					::MyLogSave("gmlog/Trunk", "%s(%u) checkout item:[id=%u, type=%u], dur=%d, max_dur=%d", 
 							pUser->GetName(),
@@ -292,7 +289,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 							pItem->GetInt(ITEMDATA_TYPE),
 							pItem->GetInt(ITEMDATA_AMOUNT),
 							pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-				}
+				}*/
 				DEBUG_CATCH("MSGPACKAGE_CHECKOUT") // AAAAAAAAAAAAAAAAA
 
 				if(pNpc->IsShelfNpc())
@@ -313,8 +310,8 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 				// CHEST
 				OBJID	idChest	= m_pInfo->id;
 				CItemPtr	pChestItem	= pUser->GetItem(idChest);
-				if (!pChestItem || !pChestItem->IsChestItem())
-					return ;
+				//if (!pChestItem || !pChestItem->IsChestItem())
+				//	return ;
 				pUser->QueryStorage()->SendStorageInfo(idChest, ITEMPOSITION_CHEST);
 			}
 			break;
@@ -324,25 +321,20 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 				OBJID	idItem = m_pInfo->idItem;
 				CItemPtr pItem = pUser->GetItem(idItem);
 				//不允许嵌套异次元袋，不允许存放不可交换或不可存储的物品
-				if(!pItem || !pItem->IsExchangeEnable() || !pItem->IsStorageEnable() || pItem->IsChestItem())
-				{
-					pUser->SendSysMsg(STR_CANT_STORAGE);
-					return ;
-				}
-				if (pItem->IsEudemon())
-				{
-					pUser->CallBackEudemon(pItem->GetID());
-					pUser->DetachEudemon(pItem);
-				}
+				//if(!pItem || !pItem->IsExchangeEnable() || !pItem->IsStorageEnable() || pItem->IsChestItem())
+				//{
+				//	pUser->SendSysMsg(STR_CANT_STORAGE);
+				//	return ;
+				//}
 
 				// CHEST
 				OBJID	idChest = m_pInfo->id;
 				CItemPtr	pChestItem	= pUser->GetItem(idChest);
-				if (!pChestItem || !pChestItem->IsChestItem())
-					return ;
+				//if (!pChestItem || !pChestItem->IsChestItem())
+				//	return ;
 
 				//异次元袋的容量和物品type_id绑定，容量 = (idType % 10 + 1) * 3
-				OBJID idType	= pChestItem->GetInt(ITEMDATA_TYPE);
+				OBJID idType	= pChestItem->GetInt(ITEMDATA_SORT);
 				if(pUser->QueryStorage()->GetStorageCount() >= (idType % 10 +1) * 3)
 					return ;
 
@@ -358,8 +350,8 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 				OBJID	idChest = m_pInfo->id;
 				OBJID	idItem = m_pInfo->idItem;
 				CItemPtr	pChestItem	= pUser->GetItem(idChest);
-				if (!pChestItem || !pChestItem->IsChestItem())
-					return ;
+				//if (!pChestItem || !pChestItem->IsChestItem())
+				//	return ;
 				if(pUser->IsItemFull(pUser->QueryStorage()->GetWeight(idItem),
 										pUser->QueryStorage()->GetItemType(idItem),
 										pUser->QueryStorage()->GetAmountLimit(idItem)))
@@ -372,7 +364,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 					return ;
 				pUser->AddItem(pItem, SYNCHRO_TRUE);
 				// log
-				if (pItem->IsNonsuchItem())
+				/*if (pItem->IsNonsuchItem())
 				{
 					::MyLogSave("gmlog/Chest", "%s(%u) checkout item:[id=%u, type=%u], dur=%d, max_dur=%d", 
 							pUser->GetName(),
@@ -381,7 +373,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 							pItem->GetInt(ITEMDATA_TYPE),
 							pItem->GetInt(ITEMDATA_AMOUNT),
 							pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-				}
+				}*/
 				DEBUG_CATCH("MSGPACKAGE_CHECKIN") // AAAAAAAAAAAAAAAAA
 			}
 			break;
@@ -418,13 +410,11 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 					// ITEM
 					OBJID	idItem = m_pInfo->idItem;
 					CItemPtr pItem = pUser->GetItem(idItem);
-					if(!pItem || !pItem->IsStorageEnable() || !pItem->IsEudemonEgg())	// 只有幻兽蛋才可以放进来
+					/*if(!pItem || !pItem->IsStorageEnable())	// 只有幻兽蛋才可以放进来
 					{
 						pUser->SendSysMsg(STR_CANT_STORAGE);
 						return ;
-					}
-					pUser->CallBackEudemon(pItem->GetID());
-					pUser->DetachEudemon(pItem);
+					}*/
 
 					// NPC
 					OBJID	idNpc = m_pInfo->id;
@@ -440,7 +430,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 						return;
 
 					// 借用availabletime字段记录幻兽蛋开始孵化的时间
-					pItem->SetInt(ITEMDATA_AVAILABLETIME, ::TimeGet(TIME_SECOND), true);
+					//pItem->SetInt(ITEMDATA_AVAILABLETIME, ::TimeGet(TIME_SECOND), true);
 					
 					DEBUG_TRY	// VVVVVVVVVVVVVV
 					pUser->PopItem(idItem, SYNCHRO_TRUE, UPDATE_FALSE);				// 先取，防作弊
@@ -473,11 +463,11 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 						return ;
 
 					// 清除幻兽蛋的开始孵化时间记录
-					pItem->SetInt(ITEMDATA_AVAILABLETIME, 0, true);
+					//pItem->SetInt(ITEMDATA_AVAILABLETIME, 0, true);
 					pUser->AddItem(pItem, SYNCHRO_TRUE);
 
 					// log
-					if (pItem->IsNonsuchItem())
+					/*if (pItem->IsNonsuchItem())
 					{
 						::MyLogSave("gmlog/Eudemon", "%s(%u) checkout item:[id=%u, type=%u], dur=%d, max_dur=%d", 
 								pUser->GetName(),
@@ -486,7 +476,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 								pItem->GetInt(ITEMDATA_TYPE),
 								pItem->GetInt(ITEMDATA_AMOUNT),
 								pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-					}
+					}*/
 					DEBUG_CATCH("MSGPACKAGE_CHECKOUT") // AAAAAAAAAAAAAAAAA
 				}
 				break;
@@ -521,14 +511,11 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 					// ITEM
 					OBJID	idItem = m_pInfo->idItem;
 					CItemPtr pItem = pUser->GetItem(idItem);
-					if(!pItem || !pItem->IsStorageEnable() 
-						|| !(pItem->IsEudemon() || pItem->IsEudemonEgg()))	// 只有幻兽和幻兽蛋才允许放进来
+					/*if(!pItem || !pItem->IsStorageEnable() )	// 只有幻兽和幻兽蛋才允许放进来
 					{
 						pUser->SendSysMsg(STR_CANT_STORAGE);
 						return ;
-					}
-					pUser->CallBackEudemon(pItem->GetID());
-					pUser->DetachEudemon(pItem);
+					}*/
 
 					// NPC
 					OBJID	idNpc = m_pInfo->id;
@@ -578,7 +565,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 					pUser->AddItem(pItem, SYNCHRO_TRUE);
 
 					// log
-					if (pItem->IsNonsuchItem())
+					/*if (pItem->IsNonsuchItem())
 					{
 						::MyLogSave("gmlog/Eudemon", "%s(%u) checkout item:[id=%u, type=%u], dur=%d, max_dur=%d", 
 								pUser->GetName(),
@@ -587,7 +574,7 @@ void CMsgPackage::Process(CGameSocket* pSocket)
 								pItem->GetInt(ITEMDATA_TYPE),
 								pItem->GetInt(ITEMDATA_AMOUNT),
 								pItem->GetInt(ITEMDATA_AMOUNTLIMIT));
-					}
+					}*/
 					DEBUG_CATCH("MSGPACKAGE_CHECKOUT") // AAAAAAAAAAAAAAAAA
 
 					if(pNpc->IsShelfNpc())

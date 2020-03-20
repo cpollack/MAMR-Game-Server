@@ -78,8 +78,6 @@ IRole* CRoleManager::QueryRole(CNetMsg* pMsg, OBJID idRole)
 			CAiNpc* pEudemon = NULL;
 			if (idRole && idRole == pUser->GetCallPetID())
 				return pUser->QueryCallPet()->QueryRole();
-			else if (idRole && (pEudemon = pUser->QueryEudemonByID(idRole)))
-				return pEudemon->QueryRole();
 //			else if (idRole && idRole == pUser->GetEudemonID())		// »ÃÊÞ
 //				return pUser->QueryEudemon()->QueryRole();
 			else

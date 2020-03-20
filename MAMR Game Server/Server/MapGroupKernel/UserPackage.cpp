@@ -46,7 +46,8 @@ bool CUserPackage::Create(CUser* pUser, IDatabase* pDb)
 
 	m_pOwner = pUser;
 
-	SQLBUF		szSQL;
+	//Item pack contents are filled by CUser::CreateAllItem
+	/*SQLBUF		szSQL;
 	sprintf(szSQL, "SELECT * FROM %s WHERE owner_id=%u && position>=%u && position<%u", _TBL_ITEM, m_pOwner->GetID(), ITEMPOSITION_PACK_BEGIN, ITEMPOSITION_PACK_END);
 	IRecordset*	pRes = pDb->CreateNewRecordset(szSQL);
 	if(pRes)
@@ -70,7 +71,7 @@ bool CUserPackage::Create(CUser* pUser, IDatabase* pDb)
 			pRes->MoveNext();
 		}
 		pRes->Release();
-	}
+	}*/
 	return true;
 }
 
@@ -81,12 +82,6 @@ bool CUserPackage::AddItem(CItem* pItem, bool bUpdate /* = false */)
 	CHECKF(m_pOwner);
 
 	int nPosition = ITEMPOSITION_BACKPACK;
-	if (pItem->IsGhostGem())
-		nPosition = ITEMPOSITION_GHOSTGEM_PACK;
-	else if (pItem->IsEudemon())
-		nPosition = ITEMPOSITION_EUDEMON_PACK;
-	else if (pItem->IsEudemonEgg())
-		nPosition = ITEMPOSITION_EUDEMONEGG_PACK;
 
 	if (IsPackFull(nPosition))
 		return false;
@@ -95,10 +90,10 @@ bool CUserPackage::AddItem(CItem* pItem, bool bUpdate /* = false */)
 	if (nPackType < 0)
 		return false;
 
-	if (pItem->GetInt(ITEMDATA_POSITION) != nPosition)
+	/*if (pItem->GetInt(ITEMDATA_POSITION) != nPosition)
 	{
 		pItem->SetInt(ITEMDATA_POSITION, nPosition, true);
-	}
+	}*/
 
 	if (m_setItem[nPackType]->AddObj(pItem))
 	{
@@ -142,7 +137,7 @@ CItem* CUserPackage::GetItemByType(OBJID idType)
 		for (int j=nSize-1; j>=0; j--)
 		{
 			CItemPtr pItem = m_setItem[i]->GetObjByIndex(j);
-			if (pItem && pItem->GetInt(ITEMDATA_TYPE) == idType)
+			if (pItem && pItem->GetInt(ITEMDATA_SORT) == idType)
 				return pItem;
 		}
 	}
@@ -232,7 +227,7 @@ CItem* CUserPackage::GetTaskItem(LPCTSTR szItemName)
 //////////////////////////////////////////////////////////////////////
 CItem* CUserPackage::GetTaskItemByType(OBJID idType, int nAmount)
 {
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nSize = m_setItem[i]->GetAmount();
 		for (int j=nSize-1; j>=0; j--)
@@ -241,14 +236,14 @@ CItem* CUserPackage::GetTaskItemByType(OBJID idType, int nAmount)
 			if (pItem && pItem->GetInt(ITEMDATA_TYPE) == idType && (!nAmount || pItem->GetInt(ITEMDATA_AMOUNT) >= nAmount))
 				return pItem;
 		}
-	}
+	}*/
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 CItem* CUserPackage::FindSpaceTransSpell()
 {
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nSize = m_setItem[i]->GetAmount();
 		for (int j=nSize-1; j>=0; j--)
@@ -257,7 +252,7 @@ CItem* CUserPackage::FindSpaceTransSpell()
 			if (pItem && pItem->IsTransSpell() && pItem->GetInt(ITEMDATA_DATA) == 0)
 				return pItem;
 		}
-	}
+	}*/
 	return NULL;
 }
 
@@ -293,15 +288,6 @@ bool CUserPackage::IsPackFull(OBJID idItemType, int nWeight, DWORD dwData)
 		// 如果不指定itemtype，则dwData表示要检查的背包
 		nItemPosition = dwData;
 	}
-	else
-	{
-		if (CItem::IsGhostGem(idItemType))
-			nItemPosition = ITEMPOSITION_GHOSTGEM_PACK;
-		else if (CItem::IsEudemon(idItemType))
-			nItemPosition = ITEMPOSITION_EUDEMON_PACK;
-		else if (CItem::IsEudemonEgg(idItemType))
-			nItemPosition = ITEMPOSITION_EUDEMONEGG_PACK;
-	}
 	
 	return IsPackFull(nItemPosition);
 }
@@ -314,15 +300,6 @@ bool CUserPackage::IsPackSpare(int nNum, OBJID idItemType, DWORD dwData)
 	{
 		// 如果不指定itemtype，则dwData表示要检查的背包
 		nItemPosition = dwData;
-	}
-	else
-	{
-		if (CItem::IsGhostGem(idItemType))
-			nItemPosition = ITEMPOSITION_GHOSTGEM_PACK;
-		else if (CItem::IsEudemon(idItemType))
-			nItemPosition = ITEMPOSITION_EUDEMON_PACK;
-		else if (CItem::IsEudemonEgg(idItemType))
-			nItemPosition = ITEMPOSITION_EUDEMONEGG_PACK;
 	}
 	
 	return IsPackSpare(nNum, nItemPosition);
@@ -348,7 +325,7 @@ inline int CUserPackage::GetItemPosition(CItem* pItem)
 {
 	CHECKF(pItem);
 
-	return GetItemPositionByType(pItem->GetInt(ITEMDATA_TYPE));
+	return GetItemPositionByType(pItem->GetInt(ITEMDATA_SORT));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -356,20 +333,13 @@ inline int CUserPackage::GetItemPositionByType(OBJID idItemType)
 {
 	CHECKF (idItemType != ID_NONE);
 
-	if (CItem::IsGhostGem(idItemType))
-		return ITEMPOSITION_GHOSTGEM_PACK;
-	else if (CItem::IsEudemon(idItemType))
-		return ITEMPOSITION_EUDEMON_PACK;
-	else if (CItem::IsEudemonEgg(idItemType))
-		return ITEMPOSITION_EUDEMONEGG_PACK;
-
 	return ITEMPOSITION_BACKPACK;
 }
 
 //////////////////////////////////////////////////////////////////////
 CItem* CUserPackage::FindCombineItem(OBJID idType)
 {
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nSize = m_setItem[i]->GetAmount();
 		for (int j=nSize-1; j>=0; j--)
@@ -378,7 +348,7 @@ CItem* CUserPackage::FindCombineItem(OBJID idType)
 			if (pItem && (pItem->GetInt(ITEMDATA_TYPE) == idType && pItem->GetInt(ITEMDATA_AMOUNT) < pItem->GetInt(ITEMDATA_AMOUNTLIMIT)))
 				return pItem;
 		}
-	}
+	}*/
 	return NULL;
 }
 
@@ -386,7 +356,7 @@ CItem* CUserPackage::FindCombineItem(OBJID idType)
 int CUserPackage::GetWeight()
 {
 	int nAllWeight = 0;
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nSize = m_setItem[i]->GetAmount();
 		for (int j=nSize-1; j>=0; j--)
@@ -395,7 +365,7 @@ int CUserPackage::GetWeight()
 			if (pItem)
 				nAllWeight += pItem->GetWeight();
 		}
-	}
+	}*/
 	return nAllWeight;
 
 }
@@ -424,7 +394,7 @@ int CUserPackage::MultiGetItem(OBJID idTypeFirst, OBJID idTypeLast, int nNum, OB
 	CHECKF(pId);
 
 	int nCount = 0;
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nAmount = m_setItem[i]->GetAmount();
 		for (int j=nAmount-1; j>=0; j--)
@@ -440,7 +410,7 @@ int CUserPackage::MultiGetItem(OBJID idTypeFirst, OBJID idTypeLast, int nNum, OB
 					return nCount;
 			}
 		}
-	}
+	}*/
 	return nCount;
 }
 
@@ -448,7 +418,7 @@ int CUserPackage::MultiGetItem(OBJID idTypeFirst, OBJID idTypeLast, int nNum, OB
 bool CUserPackage::MultiCheckItem(OBJID idTypeFirst, OBJID idTypeLast, int nNum)
 {
 	int nCount = 0;
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nAmount = m_setItem[i]->GetAmount();
 		for (int j=nAmount-1; j>=0; j--)
@@ -462,7 +432,7 @@ bool CUserPackage::MultiCheckItem(OBJID idTypeFirst, OBJID idTypeLast, int nNum)
 					return true;
 			}
 		}
-	}
+	}*/
 	return false;
 }
 
@@ -471,7 +441,7 @@ int CUserPackage::RandDropItem(int nMapType, int nChance)
 {
 	CHECKF(m_pOwner);
 
-	const int	DROP_ITEM_PACK_TYPES	= ITEMPOSITION_GHOSTGEM_PACK - ITEMPOSITION_PACK_BEGIN + 1;
+	const int	DROP_ITEM_PACK_TYPES	= ITEMPOSITION_PACK_BEGIN + 1;
 
 	int nDropNum = 0;
 	for (int i=0; i<DROP_ITEM_PACK_TYPES; i++)
@@ -515,7 +485,7 @@ int CUserPackage::RandDropItem(int nDropNum)
 {
 	CHECKF(m_pOwner);
 
-	const int	DROP_ITEM_PACK_TYPES	= ITEMPOSITION_GHOSTGEM_PACK - ITEMPOSITION_PACK_BEGIN + 1;
+	const int	DROP_ITEM_PACK_TYPES	= ITEMPOSITION_PACK_BEGIN + 1;
 	int nRealDropNum = 0;
 
 	std::vector<OBJID>	setItems;
@@ -524,8 +494,8 @@ int CUserPackage::RandDropItem(int nDropNum)
 		for (int j=0; j<m_setItem[i]->GetAmount(); j++)
 		{
 			CItem* pItem = m_setItem[i]->GetObjByIndex(j);
-			if (pItem && !pItem->IsNeverDropWhenDead())		// 有些物品是死亡也永不掉落的
-				setItems.push_back(pItem->GetID());
+			//if (pItem && !pItem->IsNeverDropWhenDead())		// 有些物品是死亡也永不掉落的
+			//	setItems.push_back(pItem->GetID());
 		}
 	}
 
@@ -612,7 +582,7 @@ bool CUserPackage::IsPackFull(int nAmount, CItem* setItems[])
 //////////////////////////////////////////////////////////////////////
 CItem* CUserPackage::GetWPGBadge()
 {
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+/*	for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nSize = m_setItem[i]->GetAmount();
 		for (int j=nSize-1; j>=0; j--)
@@ -621,14 +591,14 @@ CItem* CUserPackage::GetWPGBadge()
 			if (pItem && CItem::IsWPGBadge(pItem->GetInt(ITEMDATA_TYPE)))
 				return pItem;
 		}
-	}
+	}*/
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CUserPackage::CheckWPGBadge(OBJID idItemType)
 {
-	for (int i=0; i<_MAX_PACK_TYPE; i++)
+	/*for (int i=0; i<_MAX_PACK_TYPE; i++)
 	{
 		int nSize = m_setItem[i]->GetAmount();
 		for (int j=nSize-1; j>=0; j--)
@@ -644,7 +614,7 @@ bool CUserPackage::CheckWPGBadge(OBJID idItemType)
 				return false;
 			}
 		}
-	}
+	}*/
 	return true;
 }
 

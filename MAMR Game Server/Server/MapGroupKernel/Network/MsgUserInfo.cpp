@@ -93,7 +93,7 @@ BOOL CMsgUserInfo::Create(CUser* pUser)
 	//if (m_pInfo->wSyndicateRank > 0) bSucMake &= m_StrPacker.AddString((char*)pInfo->szSynidcateRank);
 
 	m_unMsgType	=_MSG_USERINFO;
-	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();
+	m_unMsgSize	= MSGSIZE -1+m_StrPacker.GetSize();
 
 	return true;
 }

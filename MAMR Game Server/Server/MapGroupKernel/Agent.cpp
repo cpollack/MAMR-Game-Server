@@ -42,7 +42,7 @@ bool CAgent::FullItem(int nItemType, DWORD dwData)
 
 	for(int i = 0; i < _MAX_USERITEMSIZE; i++)
 	{
-		if(this->IsItemFull(CItem::GetWeight(nItemType), nItemType, dwData))
+		if(this->IsItemFull(0, nItemType, dwData))
 			return true;
 		else
 			this->AwardItem(nItemType, SYNCHRO_TRUE, CUser::IDENT_OK);

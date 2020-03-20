@@ -204,9 +204,6 @@ bool CMsgDataArray::UpEquipLevel(CUserPtr pUser)
 
 	CItemPtr pEquipItem = pUser->GetItem(idEquipment) ;
 	CItemPtr pGem = pUser->GetItem(idGem) ;
-
-	IF_NOT(pGem && pEquipItem && pGem->IsGemForUpLevel())
-		return false;
 	
 	if( pEquipItem->IsEquipment() || pEquipItem->IsWeapon() )//是否为装备或武器
 	{
@@ -219,11 +216,7 @@ bool CMsgDataArray::UpEquipLevel(CUserPtr pUser)
 		int nRateSucc =  RateSuccForEquipLevel(pEquipItem);
 		if( RandGet(100) < nRateSucc ) //succ
 		{
-			IF_NOT(pEquipItem->UpLevel())
-			{
-				pUser->SendSysMsg(STR_UPEQUIPLEVEL_FAIL_NOTYPE);			
-				return false;
-			}
+
 			pUser->EraseItem(idGem,SYNCHRO_TRUE) ; //通知对方将宝石删除 
 			//通知客户端
 			CMsgItemInfo msg;			
@@ -270,7 +263,7 @@ int CMsgDataArray::RateSuccForEquipLevel(CItemPtr pEquipItem)
 		return 0;
 
 	int nLevel = pEquipItem->GetLevel();
-	if (pEquipItem->IsShield() || pEquipItem->IsArmor() || pEquipItem->IsHelmet())
+	if (pEquipItem->IsArmor())
 	{
 		if (nLevel>=0 && nLevel < 2)		 	    return 100;
 		else if(nLevel>=2 && nLevel < 4)			return 35;
@@ -307,8 +300,6 @@ bool CMsgDataArray::UpEquipQuality(CUserPtr pUser)
 	CItemPtr pEquipItem = pUser->GetItem(idEquipment) ;
 	CItemPtr pGem = pUser->GetItem(idGem) ;
 
-	IF_NOT(pGem && pEquipItem && pGem->IsGemForUpQuality())
-		return false;
 	
 	if( pEquipItem->IsEquipment() || pEquipItem->IsWeapon() )//是否为装备或武器
 	{
@@ -327,11 +318,6 @@ bool CMsgDataArray::UpEquipQuality(CUserPtr pUser)
 		}
 		if( RandGet(100) < iRateSucc ) //succ
 		{
-			IF_NOT(pEquipItem->UpQuality())
-			{
-				pUser->SendSysMsg(STR_ITEM_CHANGETYPE_FAILED);
-				return false;
-			}
 			pUser->EraseItem(idGem,SYNCHRO_TRUE) ; //通知对方将宝石删除 
 			//通知客户端
 			CMsgItemInfo msg;			
@@ -371,14 +357,11 @@ bool CMsgDataArray::UpEquipSuperAddition(CUserPtr pUser)
 
 	CItemPtr pEquipItem = pUser->GetItem(idEquipment) ;
 	CItemPtr pGem = pUser->GetItem(idGem) ;
-
-	IF_NOT(pGem && pEquipItem && pGem->IsGemForUpSuperAddition())
-		return false;
 	
 	if( pEquipItem->IsEquipment() || pEquipItem->IsWeapon() )//是否为装备或武器
 	{
 		//检查追加属性
-		int nSuperAddition = pEquipItem->GetSuperAddition();
+		int nSuperAddition = 0;
 		if (nSuperAddition>=9) {
 			return false;
 		}
@@ -386,11 +369,6 @@ bool CMsgDataArray::UpEquipSuperAddition(CUserPtr pUser)
 		int iRateSucc = RateSuccForGhostLevel(pEquipItem);		
 		if( RandGet(100) < iRateSucc ) //succ
 		{
-			IF_NOT(pEquipItem->UpSuperAddition())
-			{
-				pUser->SendSysMsg(STR_GHOSTLEVEL_FAILED_NOTYPE);
-				return false;
-			}
 			pUser->EraseItem(idGem,SYNCHRO_TRUE) ; //通知对方将宝石删除 
 			//通知客户端
 			CMsgItemInfo msg;			
@@ -401,13 +379,6 @@ bool CMsgDataArray::UpEquipSuperAddition(CUserPtr pUser)
 		}
 		else 
 		{  //失败,降低追加属性
-			if(pEquipItem->DecSuperAddition())
-			{
-				//通知客户端
-				CMsgItemInfo msg;			
-				if (msg.Create(pEquipItem,ITEMINFO_UPDATE))
-					pUser->SendMsg(&msg);
-			}
 			pUser->EraseItem(idGem,SYNCHRO_TRUE) ; //通知对方将宝石删除 
 			pUser->SendSysMsg(STR_GHOSTLEVEL_FAILED);
 			return false;
@@ -432,15 +403,12 @@ bool CMsgDataArray::EmbedGemToEquip(CUserPtr pUser)
 
 	CItemPtr pEquipItem = pUser->GetItem(idEquipment) ;
 	CItemPtr pGem = pUser->GetItem(idGem) ;
-
-	IF_NOT(pGem && pEquipItem && pGem->IsGemForEmbedEquip())
-		return false;
 	
 	if( pEquipItem->IsEquipment() || pEquipItem->IsWeapon() )//是否为装备或武器
 	{
 		//得到魔魂等级和战魂等级
-		int nSuperAdditionLevel = pEquipItem->GetSuperAddition();
-		int nWarGhostLevel = pEquipItem->GetWarGhostLevel();
+		int nSuperAdditionLevel = 0;
+		int nWarGhostLevel = 0; 
 
 		if(nSuperAdditionLevel < MAX_LEVEL_SUPERADDITION || nWarGhostLevel < MAX_LEVEL_SUPERADDITION )
 		{
@@ -448,9 +416,9 @@ bool CMsgDataArray::EmbedGemToEquip(CUserPtr pUser)
 			return false;
 		}
 
-		DWORD dwGemType = pGem->GetInt(ITEMDATA_TYPE);		
+		//DWORD dwGemType = pGem->GetInt(ITEMDATA_TYPE);		
 		pUser->EraseItem(idGem,SYNCHRO_TRUE) ; //通知对方将宝石删除 
-		pEquipItem->SetInt(ITEMDATA_GEMTYPE,dwGemType);
+		//pEquipItem->SetInt(ITEMDATA_GEMTYPE,dwGemType);
 		CMsgItemInfo msg;			
 		if (msg.Create(pEquipItem,ITEMINFO_UPDATE))
 			pUser->SendMsg(&msg);		

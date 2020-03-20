@@ -53,7 +53,6 @@ CAiNpc::CAiNpc()
 	m_pMagicType	= NULL;
 	m_pMagic		= NULL;
 
-	m_pEudemonItem	= NULL;
 //	memset(&m_AddInfo, 0, sizeof(m_AddInfo));
 	m_nPotential	= DEFAULT_EUDEMON_POTENTIAL;
 	m_dwMaskData	= 0;
@@ -175,7 +174,7 @@ bool CAiNpc::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC
 
 	IF_OK(Create(idProcess, pType, pInfo, pUser->GetName()))
 	{
-		CHECKF(IsCallPet() || IsEudemon());
+		CHECKF(IsCallPet());
 
 		if(IsMagicAtk())
 		{
@@ -197,13 +196,6 @@ bool CAiNpc::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC
 			pUser->SendMsg(&msg);
 
 		m_pOwner		= pUser->QueryLink();
-
-		if (IsEudemon())
-		{
-			CMsgUserAttrib msg;
-			if (msg.Create(this->GetID(), _USERATTRIB_POTENTIAL, this->GetPotential()))
-				this->SendMsg(&msg);
-		}
 		return true;
 	}
 	return false;
@@ -241,7 +233,7 @@ bool CAiNpc::Create(PROCESS_ID idProcess, CNpcType* pType, const ST_CREATENEWNPC
 	m_setStatus = CStatusSet::CreateNew(true);
 	CHECKF(m_setStatus);
 
-	if(!IsCallPet() && !IsEudemon())	// synchro outside
+	if(!IsCallPet())	// synchro outside
 	{
 		CMsgMonsterInfo	msg;
 		IF_OK(msg.Create(pInfo))
@@ -323,23 +315,6 @@ void CAiNpc::OnTimer(time_t tCurr)
 		}
 	}
 	DEBUG_CATCH("CAiNpc add life");
-	
-	// 幻兽生命自动回复 -----------------------------------------------
-	DEBUG_TRY
-	if (IsAlive() && IsEudemon() && m_pEudemonItem)
-	{
-		if (!m_tIncLife.IsActive())
-			m_tIncLife.Startup(AUTO_INC_LIFE_SECS);
-		else
-		{
-			 if (m_tIncLife.ToNextTime() && GetLife() < GetMaxLife())
-			 {
-				 int nAddLife = GetMaxLife()*AUTO_INC_LIFE_PERCENT/100;
-				 AddAttrib(_USERATTRIB_LIFE, nAddLife, SYNCHRO_TRUE);
-			 }
-		}
-	}
-	DEBUG_CATCH("CAiNpc increase life");
 
 	// 吸收伤害反射 -------------------------------------------------
 	/*DEBUG_TRY
@@ -425,7 +400,7 @@ void CAiNpc::OnTimer(time_t tCurr)
 
 	// 死亡 -----------------------------------------------------
 	DEBUG_TRY
-	if((IsCallPet() || IsEudemon()) && m_pOwner == NULL)
+	if((IsCallPet()) && m_pOwner == NULL)
 	{
 		if(!IsDeleted())
 		{
@@ -470,7 +445,7 @@ int	 CAiNpc::AdjustData(int nData, int nAdjust, int nMaxData/ *=0* /)
 //////////////////////////////////////////////////////////////////////
 bool CAiNpc::SendMsg(CNetMsg* pMsg)
 {
-	if ((this->IsEudemon() || this->IsCallPet()) && m_pOwner)
+	if (this->IsCallPet() && m_pOwner)
 		return m_pOwner->SendMsg(pMsg);
 	else
 		return MapGroup(PID)->QueryIntraMsg()->SendNpcMsg(m_idNpc, pMsg);
@@ -498,7 +473,7 @@ void CAiNpc::BroadcastMapMsg(CNetMsg* pMsg, bool bSendSelf /*= false*/)
 		UserManager()->BroadcastMapMsg(pMap->GetID(), pMsg);
 	if(bSendSelf)
 	{
-		if ((IsCallPet() || IsEudemon()) && m_pOwner)
+		if (IsCallPet() && m_pOwner)
 			m_pOwner->SendMsg(pMsg);
 		else
 			MapGroup(PID)->QueryIntraMsg()->SendNpcMsg(ID_NONE, pMsg);
@@ -534,9 +509,6 @@ bool CAiNpc::SendLeaveFromBlock()
 		CMsgAction	msg;
 		if(msg.Create(GetID(), 0, 0, 0, actionLeaveMap))
 			this->BroadcastRoomMsg(&msg, INCLUDE_SELF);
-
-		if (this->IsEudemon() && m_pOwner)
-			m_pOwner->SendMsg(&msg);
 	}
 
 	return true;
@@ -582,30 +554,14 @@ bool CAiNpc::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 		{
 		case	_USERATTRIB_LIFE:
 			{
-				if (this->IsEudemon())
+				if ((int)this->GetLife() + i64Data <= 0)
 				{
-					IF_OK (m_pEudemonItem)
-					{
-						int nCurrLife = ::CutTrail(0, m_pEudemonItem->GetInt(ITEMDATA_EUDEMON_LIFE)+(int)i64Data);
-						int nMaxLife = GetMaxLife();
-						nCurrLife = ::CutOverflow(nCurrLife, nMaxLife);
-						m_pEudemonItem->SetInt(ITEMDATA_EUDEMON_LIFE, nCurrLife);
-
-						CMsgItemAttrib	msgItemAttrib;
-						if (msgItemAttrib.Create(m_pEudemonItem->GetID(), _ITEMATTRIB_EUDEMON_LIFE, m_pEudemonItem->GetInt(ITEMDATA_EUDEMON_LIFE)))
-							m_pOwner->SendMsg(&msgItemAttrib);
-					}
+//						this->SetStatus(STATUS_DIE);
+					m_nCurrLife	= 0;
 				}
 				else
-				{
-					if ((int)this->GetLife() + i64Data <= 0)
-					{
-//						this->SetStatus(STATUS_DIE);
-						m_nCurrLife	= 0;
-					}
-					else
-						m_nCurrLife	= this->GetLife() + i64Data;
-				}
+					m_nCurrLife	= this->GetLife() + i64Data;
+
 				// 血超过70%的时候解除狂暴状态
 				if (GetLife()*100/GetMaxLife() > MAX_FRENZY_LIFE_PERCENT)
 				{
@@ -617,14 +573,6 @@ bool CAiNpc::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 			}
 			break;
 		case	_USERATTRIB_POTENTIAL:
-			{
-				if (this->IsEudemon())
-				{
-					m_nPotential = __max(0, __min(m_nPotential + (int)i64Data, MAX_EUDEMON_POTENTIAL));
-					IF_NOT (msg.Append(_USERATTRIB_POTENTIAL, m_nPotential))
-						return false;
-				}
-			}
 			break;
 		case	_USERATTRIB_MANA:
 			{
@@ -807,7 +755,7 @@ bool CAiNpc::AutoSkillAttack(IRole* pTarget)
 		{
 			DEBUG_TRY
 			{
-				if(!IsCallPet() && !IsEudemon())
+				if(!IsCallPet())
 					ProcessBomb();
 				else
 					return false;
@@ -1060,49 +1008,6 @@ void CAiNpc::Kill(IRole* pTarget, DWORD dwDieWay)
 	if (QueryStatus(STATUS_FRENZY2))
 		++m_nKillNum;
 
-	if (this->IsEudemon())
-	{
-		++m_nKillNum4Potential;
-		if (m_nKillNum4Potential >= ADD_POTENTIAL_KILLNUM)
-		{
-			m_nKillNum4Potential = 0;
-			AddAttrib(_USERATTRIB_POTENTIAL, ADD_POTENTIAL_PER_KILLNUM, SYNCHRO_TRUE);
-		}
-
-		++m_nKillNum4RelationShip;
-		if (m_nKillNum4RelationShip >= ADD_RELATIONSHIP_KILLNUM)
-		{
-			// TODO: 增加/减少关系值
-			if (QueryOwnerUser())
-			{
-				UCHAR setDivine[10];
-				memset(setDivine, 0, sizeof(setDivine));
-				for (int i=0; i<m_pOwner->GetEudemonAmount(); i++)
-				{
-					//CAiNpc* pEudemon = m_pOwner->QueryEudemonByIndex(i);
-					//if (pEudemon && pEudemon->GetID() != this->GetID())
-					//{
-					//	OBJID idDivine = pEudemon->GetDivineID();
-					//	++setDivine[idDivine];
-					//}
-				}
-				for (int i=1; i<=8; i++)
-				{
-					if (setDivine[i] > 0)
-					{
-						if (::RandGet(1000) < 10)
-							this->AddRelationShip(i, ADD_RELATIONSHIP_PER_TIME);
-					}
-					else
-					{
-						if (::RandGet(1000) < 5)
-							this->AddRelationShip(i, -1*ADD_RELATIONSHIP_PER_TIME);
-					}
-				}
-			}
-		}
-	}
-
 	pTarget->BeKill((IRole*)this);
 }
 
@@ -1117,30 +1022,6 @@ void CAiNpc::BeKill(IRole* pRole /*= NULL*/)
 	{
 		m_pData->SetInt(PETDATA_LIFE, 0);		// set flag to die
 	}*/
-
-	// 幻兽死亡扣亲密度，并且加仇人
-	if (this->IsEudemon() && m_pEudemonItem && m_pOwner)
-	{
-		int nFidelity = __max(0, m_pEudemonItem->GetInt(ITEMDATA_FIDELITY) - EUDEMON_DEC_FIDELITY_WHEN_DIE);
-		m_pEudemonItem->SetInt(ITEMDATA_FIDELITY, nFidelity, true);
-
-		CMsgItemAttrib msg;
-		if (msg.Create(m_pEudemonItem->GetID(), _ITEMATTRIB_FIDELITY, m_pEudemonItem->GetInt(ITEMDATA_FIDELITY)))
-			m_pOwner->SendMsg(&msg);
-
-		// 被别人或者别人的幻兽杀死，加入主人的仇人名单
-		CUser* pAtkUser = NULL;
-		CAiNpc* pMonster = NULL;
-		if (pRole->QueryObj(OBJ_MONSTER, IPP_OF(pMonster)) && pMonster->IsEudemon())
-			pAtkUser = pMonster->QueryOwnerUser();
-		else
-			pRole->QueryObj(OBJ_USER, IPP_OF(pAtkUser));
-
-		if (pAtkUser && pAtkUser->GetID() != m_pOwner->GetID())
-		{
-			m_pOwner->QueryEnemy()->Add(pAtkUser->GetID(), pAtkUser->GetName(), SYNCHRO_TRUE, UPDATE_TRUE);
-		}
-	}
 
 	CUser* pActionUser = NULL;
 	if(pRole)
@@ -1298,10 +1179,7 @@ void CAiNpc::BeKill(IRole* pRole /*= NULL*/)
 	}
 
 	this->SetStatus(STATUS_DIE);
-	if (this->IsEudemon() && m_pEudemonItem)
-		m_pOwner->CallBackEudemon(m_pEudemonItem->GetID(), false);
-	else
-		DelMonster();
+	DelMonster();
 
 	DEBUG_TRY
 	if(IsInsteadMagic() && m_pOwner)
@@ -1315,10 +1193,6 @@ void CAiNpc::BeKill(IRole* pRole /*= NULL*/)
 void CAiNpc::DelMonster(bool bNow/*=false*/)			// call this mast !IsDeleted()
 {
 	CHECK(!IsDeleted());
-
-	// 必须设置为NULL，否则如果是角色离线，将导致后面的取属性异常
-	if (m_pEudemonItem)
-		m_pEudemonItem = NULL;
 
 	// 因为打开了WITH_BLOCK开关，为了在死亡后尸体允许穿透，需要减地图上的角色数
 	//if (GetMap() && !this->IsAlive())
@@ -1520,13 +1394,13 @@ bool CAiNpc::DropEquipment(DWORD dwValue, OBJID idOwner, DWORD dwQuality/*=0*/)
 	{
 #ifdef _DEBUG
 		// temp code
-		FILE* fp = fopen("equipment.ini", "a+");
+		/*FILE* fp = fopen("equipment.ini", "a+");
 		if (fp)
 		{
 			fprintf(fp, "monster:%03u type:%06u amount:%05u amount_limit:%05u Gem1:%03u Gem2:%03u, Value:%06u\n", 
 					this->GetID(), info.idType, info.nAmount, info.nAmountLimit, info.nGem1, info.nGem2, dwValue);
 		}
-		fclose(fp);
+		fclose(fp);*/
 #endif
 
 		// drop item
@@ -1847,9 +1721,6 @@ bool CAiNpc::LeaveMapGroup()
 //////////////////////////////////////////////////////////////////////
 LPCTSTR	CAiNpc::GetName()
 {
-	if (this->IsEudemon() && m_pEudemonItem)
-		return m_pEudemonItem->GetStr(ITEMDATA_NAME);
-
 	return m_pType->GetStr(NPCTYPEDATA_NAME);
 }
 
@@ -1857,16 +1728,7 @@ LPCTSTR	CAiNpc::GetName()
 DWORD CAiNpc::GetLife()
 {
 	int nMaxLife = this->GetMaxLife();
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		m_nCurrLife = m_pEudemonItem->GetInt(ITEMDATA_EUDEMON_LIFE);
-		if (m_nCurrLife > nMaxLife)
-		{
-			m_nCurrLife = nMaxLife;
-			m_pEudemonItem->SetInt(ITEMDATA_EUDEMON_LIFE, nMaxLife, true);
-		}
-		return m_nCurrLife;
-	}
+
 	if (m_nCurrLife > nMaxLife)
 		m_nCurrLife = nMaxLife;
 
@@ -1877,12 +1739,6 @@ DWORD CAiNpc::GetLife()
 DWORD CAiNpc::GetMaxLife()
 {
 	int nLife = m_pType->GetInt(NPCTYPEDATA_LIFE);
-
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nMaxLife = __max(1, m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_LIFE) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_LIFE)*100) / 10000);
-		nLife = nMaxLife;
-	}
 
 	IStatus* pStatus = QueryStatus(STATUS_MAXLIFE);
 	if (pStatus)
@@ -1897,14 +1753,6 @@ DWORD CAiNpc::GetMinAtk()
 {
 	DWORD dwAtk	= m_pType->GetInt(NPCTYPEDATA_ATTACKMIN);
 
-	// 算幻兽的等级加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nMinAtk = m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_ATTACK_MIN_) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_ATTACK_MIN)*100) / 10000;
-		dwAtk	= nMinAtk;
-	}
-	// 算装备的coding here...
-
 	return dwAtk;
 }
 
@@ -1916,13 +1764,6 @@ DWORD CAiNpc::GetMaxAtk()
 	// 算装备的coding here...
 
 	dwAtk	= dwAtk;
-
-	// 算幻兽的等级加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nMaxAtk	= m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_ATTACK_MAX_) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_ATTACK_MAX)*100) / 10000;
-		dwAtk	= nMaxAtk;
-	}
 
 	return dwAtk;
 }
@@ -1936,13 +1777,6 @@ DWORD CAiNpc::GetMgcMinAtk()
 
 	dwAtk	= dwAtk;
 
-	// 算幻兽的等级加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nMinMgcAtk	= m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_MAGICATK_MIN_) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_MGCATK_MIN)*100) / 10000;
-		dwAtk	= nMinMgcAtk;
-	}
-
 	return dwAtk;
 }
 
@@ -1955,13 +1789,6 @@ DWORD CAiNpc::GetMgcMaxAtk()
 
 	dwAtk	= dwAtk;
 
-	// 算幻兽的等级加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nMaxMgcAtk	= m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_MAGICATK_MAX_) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_MGCATK_MAX)*100) / 10000;
-		dwAtk	= nMaxMgcAtk;
-	}
-
 	return dwAtk;
 }
 
@@ -1969,13 +1796,6 @@ DWORD CAiNpc::GetMgcMaxAtk()
 DWORD CAiNpc::GetDdg()
 {
 	DWORD dwDodge	= this->GetDodge();
-
-	// 算幻兽的加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nDodge	= m_pEudemonItem->GetInt(ITEMDATA_DODGE) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) / 10000 + m_pEudemonItem->GetEudemonLevel() * m_pEudemonItem->GetAddition(ITEMADDITIONDATA_DODGE)/100;
-		dwDodge	= nDodge;
-	}
 
 //	IStatus* pStatus = QueryStatus(STATUS_DODGE);
 //	if(pStatus)
@@ -1996,13 +1816,6 @@ DWORD CAiNpc::GetDef()
 	// 算装备的coding here...
 	
 	dwDef	= dwDef + this->GetDefence();
-
-	// 算幻兽的等级加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nDef = m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_DEFENSE_) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_DEFENSE)*100) / 10000;
-		dwDef	= nDef;
-	}
 
 	return dwDef; 
 }
@@ -2026,13 +1839,6 @@ DWORD CAiNpc::GetMagicDef()
 {
 	int nDef	= m_pType->GetInt(NPCTYPEDATA_MAGIC_DEF);
 
-	// 算幻兽的等级加成
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nMgcDef = m_pEudemonItem->GetEudemonLevel() * (m_pEudemonItem->GetInt(ITEMDATA_MAGICDEF_) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) + m_pEudemonItem->GetAddition(ITEMADDITIONDATA_MAGICDEF)*100) / 10000;
-		nDef	= nMgcDef;
-	}
-
 	nDef = __min(90, nDef);
 	nDef = __max(0, nDef);
 
@@ -2043,13 +1849,6 @@ DWORD CAiNpc::GetMagicDef()
 DWORD CAiNpc::GetInterAtkRate()
 {
 	int nRate = GetIntervalAtkRate();
-
-	// 攻击速度也要算幻兽的属性影响
-	if (this->IsEudemon() && m_pEudemonItem)
-	{
-		int nAtkSpeed = m_pEudemonItem->GetInt(ITEMDATA_ATKSPEED) * m_pEudemonItem->GetInt(ITEMDATA_GROWTH) / 10000;
-		nRate	= ::CutTrail(0, AdjustData(nRate, nAtkSpeed));
-	}
 
 	IStatus* pStatus = QueryStatus(STATUS_ATKSPEED);
 	if (pStatus)
@@ -2665,15 +2464,7 @@ int CAiNpc::AdjustExp(IRole* pTarget, int nRawExp, bool bNewbieBonusMsg/*=false*
 /////////////////////////////////////////////////////////////////////////////
 void CAiNpc::AwardBattleExp		(int nExp, bool bGemEffect/*=true*/, bool bIncludeOwner/*=true*/)
 {
-	if (IsEudemon() && m_pEudemonItem && m_pOwner)
-	{
-		if (GetLev() < m_pOwner->GetLev())
-			m_pOwner->AwardEudemonExp(m_pEudemonItem->GetID(), nExp, bGemEffect);
-		// 主人得到相同的经验
-		if (bIncludeOwner)
-			m_pOwner->AwardBattleExp(nExp, bGemEffect);
-	}
-	else if(IsCallPet() && m_pOwner)
+	if(IsCallPet() && m_pOwner)
 	{
 		m_pOwner->AwardBattleExp(nExp, bGemEffect);
 	}
@@ -2688,7 +2479,7 @@ bool CAiNpc::IsInsteadMagic()
 /////////////////////////////////////////////////////////////////////////////
 OBJID CAiNpc::GetMasterID()
 {
-	if((IsCallPet() || IsEudemon()) && m_pOwner)
+	if(IsCallPet() && m_pOwner)
 		return m_pOwner->GetID();
 	return ID_NONE;
 }
@@ -2698,7 +2489,7 @@ bool CAiNpc::IsImmunity(IRole* pRole)
 {
 	CHECKF(pRole);
 
-	if((IsCallPet() || IsEudemon()) && m_pOwner)		// call pet of mine
+	if(IsCallPet() && m_pOwner)		// call pet of mine
 		return m_pOwner->IsImmunity(pRole);
 
 	const bool	ATK_IT = false;
@@ -2784,19 +2575,6 @@ int CAiNpc::AdjustMagicDef(int nDef)
 		nAddDef += ::CutTrail(0, AdjustData(nDef, pStatus->GetPower()));
 
 	return nDef;
-}
-//////////////////////////////////////////////////////////////////////
-void CAiNpc::SetEudemonAddi(CItem*	pEudemon)
-{
-	ASSERT(pEudemon);
-
-	if (IsEudemon())
-	{
-		m_pEudemonItem	= pEudemon;
-
-		// 幻兽不读m_nCurrLife，清0
-		m_nCurrLife				= 0;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2895,23 +2673,3 @@ int	setAtkModePotential[EATK_MODE_LIMIT][MAX_DIVINE_ID] =
 	{-2,		-2,			5,			5,			5,			-2,			5,			5},		// ATK_MODE_ATKDEF
 	{5,			-5,			-5,			-2,			2,			-5,			-3,			-2},	// ATK_MODE_DEF
 };
-
-bool CAiNpc::ChgAtkMode(int nAtkMode)
-{
-	CHECKF (nAtkMode < EATK_MODE_LIMIT);
-	CHECKF (IsEudemon());
-	if (nAtkMode == m_nAtkMode)
-		return true;
-
-	OBJID idDivine = this->GetDivineID();
-	CHECKF (idDivine>=MIN_DIVINE_ID && idDivine <=MAX_DIVINE_ID);
-	--idDivine;		// 神识编号1~8，对应这里数组下标0~7
-
-	int nAddPotential = -1*setAtkModePotential[m_nAtkMode][idDivine];	// 恢复原模式产生的修正值
-	nAddPotential += setAtkModePotential[nAtkMode][idDivine];			// 新模式修正值叠加
-
-	m_nAtkMode = nAtkMode;
-	AddAttrib(_USERATTRIB_POTENTIAL, nAddPotential, SYNCHRO_TRUE);
-
-	return true;	
-}

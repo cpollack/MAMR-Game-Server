@@ -844,13 +844,6 @@ void CMsgTalk::Process(void *pInfo)
 		{
 			pUser->SendSysMsg("AccountID=%u, UserID=%u", pUser->GetAccountID(), pUser->GetID());
 		}
-		else if (_stricmp(szCmd, "attacheudemon") == 0)
-		{
-			if (pUser->GetEudemonAmount() > 0)
-			{
-//				CMonster* pMonster = pUser->QueryEudemonByIndex(0);
-			}
-		}
 #endif
 		DEBUG_CATCH2("CMsgTalk CMD:[%s] error.", szCmd)			// AAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		return;

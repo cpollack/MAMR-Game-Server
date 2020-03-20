@@ -14,7 +14,6 @@ CMsgItemInfo::CMsgItemInfo()
 {
 	Init();
 	m_pInfo	=(MSG_Info *)m_bufMsg;
-	m_StrPacker.SetBuf(m_pInfo->szBuf, _MAX_MSGSIZE-sizeof(MSG_Info)+1);
 }
 
 CMsgItemInfo::~CMsgItemInfo()
@@ -77,44 +76,27 @@ BOOL CMsgItemInfo::Create(CItem* pItem, int nAction /*= ITEMINFO_ADDITEM*/, OBJI
 	this->Init();
 
 	// fill info now
-	m_pInfo->ucAction			= nAction;
+	m_pInfo->dwAction = nAction;
+	m_pInfo->idPlayer = idUser;
+	strcpy(m_pInfo->szName, info.szName);
+	strcpy(m_pInfo->szInventor, info.szInventor);
 
-	m_pInfo->id					= info.id;
+	m_pInfo->id	= info.id;
 	if(idUser != ID_NONE)
-		m_pInfo->id					= idUser;
-	m_pInfo->dwType				= info.idType;
-	m_pInfo->ucPosition			= info.nPosition;
-	m_pInfo->ucIdent			= _ITEM_STATUS_NOT_IDENT;
-	if(!pItem->IsNeedIdent())
-	{
-		m_pInfo->usAmount			= info.nAmount;
-		m_pInfo->usAmountLimit		= info.nAmountLimit;
-		m_pInfo->ucIdent			= info.nIdent;
-		m_pInfo->ucGem1				= info.nGem1;
-		m_pInfo->ucGem2				= info.nGem2;
-		m_pInfo->ucMagic1			= info.nMagic1;
-		m_pInfo->ucMagic2			= info.nMagic2;
-		m_pInfo->ucMagic3			= info.nMagic3;
-		m_pInfo->nData				= info.nData;
-
-		//---jinggy---2004-11-19---begin
-		m_pInfo->dwWarGhostExp = info.dwWarGhostExp;
-		m_pInfo->dwGemAtkType = info.dwGemAtkType;
-		m_pInfo->dwAvailabeTime = info.dwAvailabeTime;		
-		//---jinggy---2004-11-19---end
-	}
-	else
-	{
-		m_pInfo->dwType					= CItem::HideTypeUnident(m_pInfo->dwType);
-	}
-
-	// eudemon
-	if (pItem->IsEudemon())
-		m_StrPacker.AddString(pItem->GetStr(ITEMDATA_NAME));
-
+		m_pInfo->id	= idUser;
+	m_pInfo->dwCost = info.cost;
+	m_pInfo->wLook = info.look;
+	m_pInfo->wSort = info.sort;
+	
+	m_pInfo->dwLevelReq = info.levelReq;
+	m_pInfo->wLife = info.life;
+	m_pInfo->wPower = info.power;
+	m_pInfo->wAttack = info.attack;
+	m_pInfo->wDefence = info.defence;
+	m_pInfo->wDexterity = info.dexterity;
 
 	m_unMsgType	=_MSG_ITEMINFO;
-	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();
+	m_unMsgSize	=sizeof(MSG_Info);
 
 	return true;
 }

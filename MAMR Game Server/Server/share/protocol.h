@@ -219,7 +219,7 @@ struct ST_CREATENEWNPC
 	unsigned char	ucOwnerType;
 };
 
-struct ST_CREATENEWMONSTER { //Is this really needed?
+struct ST_CREATENEWMONSTER { 
 	OBJID id;
 	int iLevel;
 };

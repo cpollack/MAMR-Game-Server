@@ -179,19 +179,14 @@ void CMsgTrade::Process(CGameSocket* pSocket)
 				return;
 
 			CItemPtr pItem	= pUser->GetItem(m_pInfo->id);
-			if (!pItem || !pItem->IsExchangeEnable())
+			/*if (!pItem || !pItem->IsExchangeEnable())
 			{
 				pUser->SendSysMsg(STR_NOT_FOR_TRADE);
 
 				IF_OK(this->Create(_TRADE_ADDITEMFAIL, m_pInfo->id))
 					pUser->SendMsg(this);
 				return;
-			}
-			if (pItem->IsEudemon())
-			{
-				pUser->CallBackEudemon(pItem->GetID());
-				pUser->DetachEudemon(pItem);
-			}
+			}*/
 
 			if(!pSquareDeal->AddItem(pItem))
 			{

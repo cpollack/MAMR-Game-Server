@@ -114,7 +114,7 @@
 #define	STR_FEETYPE_FREE			"计费类型：免费测试。"
 #define	STR_SHUTDOWN_NOTIFY			"服务器维护，停机三十分钟；请大家立即下线，避免数据丢失。"
 #define	STR_NONSUCH_TRADE_sssu		"[交易] 极品交易，玩家[%s]给玩家[%s]物品[%s][%u]"
-#define	STR_NOT_SO_MUCH_MONEY	    "阁下没有这么多钱。"
+#define	STR_NOT_ENOUGH_MONEY	    "阁下没有这么多钱。"
 #define	STR_NOT_ENOUGH_MONEY	    "你的钱不足%d两!"
 #define	STR_DIE_FORGIVE	            "人死如灯灭，何苦纠缠不休？"
 #define	STR_DIE_STOP_ATTACK	        "死者为大，禁止鞭尸。"

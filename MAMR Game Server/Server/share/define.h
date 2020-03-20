@@ -202,6 +202,8 @@ typedef	CMonster*	CMonsterPtr;
 class CItem;
 typedef	CItem*	CItemPtr;
 //typedef	TSafePtr<class CItem, OBJ_ITEM>			CItemPtr;
+class CPet;
+typedef CPet* CPetPtr;
 class CGameMap;
 typedef	CGameMap*	CMapPtr;
 //typedef	TSafePtr<class CGameMap, OBJ_MAP>		CMapPtr;

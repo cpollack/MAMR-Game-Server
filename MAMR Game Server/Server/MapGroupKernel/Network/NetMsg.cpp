@@ -156,6 +156,28 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 		pMsg = new CMsgDirection;
 		break;
 
+	case _MSG_BATTLEACT:
+		pMsg = new CMsgBattleAct;
+		break;
+	case _MSG_NORMALACT:
+		pMsg = new CMsgNormalAct;
+		break;
+	case _MSG_BATTLE:
+		pMsg = new CMsgBattle;
+		break;
+	case _MSG_ENEMY:
+		pMsg = new CMsgEnemy;
+		break;
+	case _MSG_FIGHTER:
+		pMsg = new CMsgFighter;
+		break;
+	case _MSG_BATTLERESULT:
+		pMsg = new CMsgBattleResult;
+		break;
+	case _MSG_BATTLEROUND:
+		pMsg = new CMsgBattleRound;
+		break;
+
 		//Old Messages, not yet implemented
 	/*case _MSG_TALK:
 		pMsg	=new CMsgTalk;
@@ -268,7 +290,7 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 	case _MSG_DICE:
 		pMsg	= new CMsgBODice;
 		break;
-	case _MSG_PETINFO:
+	case _MSG_CALLPETINFO:
 		pMsg	= new CMsgCallPetInfo;
 		break;
 	case _MSG_DATAARRAY:

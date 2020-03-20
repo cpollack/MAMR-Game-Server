@@ -106,7 +106,7 @@ public:
 	virtual		bool		FindAroundObj	(OBJID idObjType, OBJID idObj, void** pp)		{ return GetMap()->QueryObj(GetPosX(), GetPosY(), idObjType, idObj, pp); }
 	virtual		IRole*		FindAroundRole	(OBJID id)		{ return GetMap()->QueryRole(GetPosX(), GetPosY(), id); }
 
-	virtual CUser*		QueryOwnerUser		()				{ if(IsCallPet() || IsEudemon()) return m_pOwner; return NULL; }	//@@@ 暂略 if(m_pData && m_pData->GetInt(PETDATA_OWNERTYPE) == OWNER_USER) return m_pData->GetInt(PETDATA_OWNERID); 
+	virtual CUser*		QueryOwnerUser		()				{ if(IsCallPet()) return m_pOwner; return NULL; }	//@@@ 暂略 if(m_pData && m_pData->GetInt(PETDATA_OWNERTYPE) == OWNER_USER) return m_pData->GetInt(PETDATA_OWNERID); 
 protected:
 	virtual bool		QueryRole(void** ppv)	{ return *ppv=(IRole*)this,true; }
 	virtual bool		QueryObj(OBJID idObjType, void** ppv)			{ if(idObjType == OBJ_NPCTYPE) return *ppv=this,true; return *ppv=NULL,false; }
@@ -128,7 +128,7 @@ public: // IRole
 	virtual I64		GetEffect			()				{ return m_i64Effect; }
 	virtual int 	GetPose				()				{ return m_nPose; }
 	// 幻兽不使用monstertype表中的等级属性字段 -- zlong 2004-02-24
-	virtual DWORD	GetLev				()				{ if (IsEudemon() && m_pEudemonItem) return m_pEudemonItem->GetEudemonLevel(); return m_pType->GetInt(NPCTYPEDATA_LEVEL); }
+	virtual DWORD	GetLev				()				{ return m_pType->GetInt(NPCTYPEDATA_LEVEL); }
 
 	virtual	DWORD	GetLife				();	//			{ return m_nCurrLife; }
 	virtual DWORD	GetMaxLife			();	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
@@ -230,10 +230,10 @@ public: // get attrib  ------------------------------------
 	virtual bool	IsDelThis		()		{ return IsDeleted() && m_tDie.IsTimeOut(); }		// ASSERT(!IsAlive()); 
 	virtual bool	IsVirtuous()			{ return IsGuard() || IsPkKiller(); }
 	virtual bool	IsEvil()				{ return ((m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_RIGHTEOUS) == 0 || QueryStatus(STATUS_CRIME)); }
-	virtual bool	IsBowman()				{ return CItem::IsBowSort(GetWeaponRTypeID()); }
-	virtual bool	IsShieldEquip()			{ return CItem::IsShield(GetWeaponLTypeID()); }
+	//virtual bool	IsBowman()				{ return CItem::IsBowSort(GetWeaponRTypeID()); }
+	//virtual bool	IsShieldEquip()			{ return CItem::IsShield(GetWeaponLTypeID()); }
 	virtual bool	IsWing()				{ return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_WING) != 0; }
-	virtual bool	IsSendBlockInfo()		{ return (!IsCallPet() && !IsEudemon()); }
+	virtual bool	IsSendBlockInfo()		{ return !IsCallPet(); }
 
 	static	bool	IsMonsterID(OBJID id)	{ return id>=MONSTERID_FIRST && id<=MONSTERID_LAST; }
 	bool		IsGuard()			{ return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_GUARD) != 0; }
@@ -251,7 +251,6 @@ public: // get attrib  ------------------------------------
 	OBJID		GetMagicType()			{ return m_pType->GetInt(NPCTYPEDATA_MAGIC_TYPE); }
 	bool		IsMapRoar()				{ return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_ROAR) != 0; }
 	bool		IsEquality()			{ return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_EQUALITY) != 0; }
-	bool		IsEudemon()				{ return (m_idNpc >= EUDEMON_ID_FIRST && m_idNpc <= EUDEMON_ID_LAST); }
 	static int	GetNameType(int nAtkerLev, int nMonsterLev);
 
 public:	// modify attrib ------------------------------
@@ -359,44 +358,6 @@ public:
 	void	SetMaskData(DWORD dwMask)		{ m_dwMaskData = dwMask; }
 	void	AddMaskData(DWORD dwMask)		{ m_dwMaskData |= dwMask; }
 	void	ClsMaskData(DWORD dwMask)		{ m_dwMaskData &= ~dwMask; }
-
-public:	// eudemon -------------------------------
-	//bool DropTrap(TRAP_INFO &trapInfo, UINT ulLifePeriod);
-	// 此函数只需要在创建幻兽的时候调用一次即可，由于功能已经改变，以后最好换个函数名
-	void	SetEudemonAddi(CItem*	pEudemon);
-	DWORD	GetFidelity()		{ IF_NOT (IsEudemon() && m_pEudemonItem) return 0; return m_pEudemonItem->GetInt(ITEMDATA_FIDELITY); }
-
-	OBJID	GetDivineID()		{ IF_NOT (IsEudemon() && m_pEudemonItem) return 0; return m_pEudemonItem->GetDivineID(); }
-	UCHAR	GetRelationShip(OBJID idDivine)					{ IF_NOT (IsEudemon() && m_pEudemonItem) return 0; return m_pEudemonItem->GetRelationShip(idDivine); }
-	bool	AddRelationShip(OBJID idDivine, int nValue)		{ IF_NOT (IsEudemon() && m_pEudemonItem) return 0; return m_pEudemonItem->AddRelationShip(idDivine, nValue); }
-
-	int		GetAtkMode()		{ ASSERT(IsEudemon()); return m_nAtkMode; }
-	bool	ChgAtkMode(int nAtkMode);
-
-protected:
-	DWORD	GetEudemonLev()		{ IF_NOT (IsEudemon() && m_pEudemonItem) return 0; return m_pEudemonItem->GetEudemonLevel(); }
-
-protected:
-	// 幻兽各属性根据等级、成长计算出来的差值，需要加成到属性中的
-/*
-	struct {
-		int			nMaxAtkAdd;			// 物理攻击
-		int			nMinAtkAdd;
-		int			nMaxMAtkAdd;		// 魔法攻击
-		int			nMinMAtkAdd;
-		int			nDefAdd;			// 物理防御
-		int			nMDefAdd;			// 魔法防御
-		int			nMaxLifeAdd;		// 最大生命
-
-		int			nAtkSpeedAdd;		// 攻击速度
-		int			nHitRateAdd;		// 命中率
-		int			nDodgeAdd;			// 躲避率
-
-//		int			nEudemonLev;		// 等级
-	} m_AddInfo;
-*/
-
-	CItem*		m_pEudemonItem;		// refrence
 
 protected: // fight
 	//CBattleSystem*		m_pBattleSystem;

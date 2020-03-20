@@ -98,6 +98,15 @@ bool CMonster::Create(PROCESS_ID idProcess, const ST_CREATENEWMONSTER* pInfo, LP
 	//m_idGen = pInfo->idData;
 
 	LifeCurrent = pData->GetLife();
+
+	int monsterClass = pData->GetClass();
+	if (IsSuper() || IsUnevo()) {
+		element = (ELEMENT)(monsterClass % 10000 / 1000);
+	}
+	else {
+		element = (ELEMENT)(monsterClass / 10000);
+	}
+
 	//m_nCurrMana = m_pType->GetInt(NPCTYPEDATA_MANA);
 	//m_tFight.SetInterval(m_pType->GetInt(NPCTYPEDATA_ATKSPEED));
 	//m_tFight.Update();
@@ -225,9 +234,9 @@ void CMonster::Create_LevelAny() {
 	Growth: grow_point * +-0.3 - 0.1
 	aka (0.7 to 1.3) - 0.1 = 0.6>1.2*/
 
-	pData->SetAttack(pData->GetAttack() * ((float)(RandGet(10, 0) + 75) / 100.0));
-	pData->SetDefence(pData->GetDefence() * ((float)(RandGet(10, 0) + 75) / 100.0));
-	pData->SetDexterity(pData->GetDexterity() * ((float)(RandGet(10, 0) + 75) / 100.0));
+	pData->SetAttack(GetCalcAttack() * ((float)(RandGet(10, 0) + 75) / 100.0));
+	pData->SetDefence(GetCalcDefence() * ((float)(RandGet(10, 0) + 75) / 100.0));
+	pData->SetDexterity(GetCalcDexterity() * ((float)(RandGet(10, 0) + 75) / 100.0));
 	pData->SetGrowth(pData->GetGrowth() * (RandomRateGet(0.3) - 0.1));
 	//Add liferise?
 }

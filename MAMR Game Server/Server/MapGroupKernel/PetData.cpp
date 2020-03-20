@@ -58,25 +58,25 @@ bool CPetData::LoadInfo(void)
 	info.Look = pRes->LoadInt("look");
 	info.Class = pRes->LoadInt("class");
 
-	info.Life = pRes->LoadDWord("life");
-	info.LifeMax = pRes->LoadDWord("max_life");
-	info.baseLife = pRes->LoadDWord("base_life");
+	info.Life = pRes->LoadInt("life");
+	info.LifeMax = pRes->LoadDouble("max_life");
+	info.baseLife = pRes->LoadDouble("base_life");
 
-	info.Attack = pRes->LoadDWord("attack");
-	info.baseAttack = pRes->LoadDWord("base_attack");
+	info.Attack = pRes->LoadDouble("attack");
+	info.baseAttack = pRes->LoadDouble("base_attack");
 	info.rateAttack = pRes->LoadInt("attack_rate");
 
-	info.Defence = pRes->LoadDWord("defence");
-	info.baseDefence = pRes->LoadDWord("base_defence");
+	info.Defence = pRes->LoadDouble("defence");
+	info.baseDefence = pRes->LoadDouble("base_defence");
 	info.rateDefence = pRes->LoadInt("defence_rate");
 
-	info.Dexterity = pRes->LoadDWord("dexterity");
-	info.baseDexterity = pRes->LoadDWord("base_dexterity");
+	info.Dexterity = pRes->LoadDouble("dexterity");
+	info.baseDexterity = pRes->LoadDouble("base_dexterity");
 	info.rateDexterity = pRes->LoadInt("dexterity_rate");
 	
-	info.Growth = pRes->LoadDWord("grow_rate");
-	info.baseGrowth = pRes->LoadDWord("org_growrate");
-	info.LifeRise = pRes->LoadDWord("life_rise");
+	info.Growth = pRes->LoadDouble("grow_rate");
+	info.baseGrowth = pRes->LoadDouble("org_growrate");
+	info.LifeRise = pRes->LoadDouble("life_rise");
 
 	info.MedalAttack = pRes->LoadInt("medal_attack");
 	info.MedalDefence = pRes->LoadInt("medal_defence");
@@ -119,4 +119,12 @@ bool CPetData::SaveInfo(void)
 	pRes->UpdateRecord(); //Only updates data set via pRes->Set...
 
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+void CPetData::SetName(const char* pszName) {
+	if (!pszName || strlen(pszName) >= _MAX_NAMESIZE)
+		return;
+
+	strcpy(info.szName, pszName);
 }

@@ -21,7 +21,7 @@
 const DWORD _IDMSK_PET = 0x80000000;
 
 extern DWORD NEXT_PETID;
-extern DWORD GetNext_PetID();
+extern DWORD GetNext_PetID(IDatabase *pDb);
 
 
 //////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
 
 public: // IRole
 		//	virtual OBJID	GetID();
-	virtual LPCTSTR	GetName() { return pData->GetName(); }							
+	virtual LPCTSTR	GetName() { return data.GetName(); }							
 								//	virtual LPCTSTR	GetMate()							{ return NOMATE_NAME; }
 	virtual LPCTSTR	GetTitle() { return TITILE_NONE; }
 
@@ -57,22 +57,22 @@ public: // IRole
 	//	virtual	BOOL	CheckStatus			(int nStatus);
 	virtual I64		GetEffect() { return m_i64Effect; }
 	// 幻兽不使用monstertype表中的等级属性字段 -- zlong 2004-02-24
-	virtual DWORD	GetLev() { return pData->GetLevel(); }
+	virtual DWORD	GetLev() { return data.GetLevel(); }
 
-	virtual	DWORD	GetLife() { return pData->GetLife(); } 	//			{ return m_nCurrLife; }
-	virtual DWORD	GetMaxLife() { return pData->GetMaxLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
+	virtual	DWORD	GetLife() { return data.GetLife(); } 	//			{ return m_nCurrLife; }
+	virtual DWORD	GetMaxLife() { return data.GetMaxLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
 									//	virtual DWORD	GetMana				()				{ return m_nCurrMana; }
 									//	virtual DWORD	GetMaxMana			()				{ return m_pType->GetInt(NPCTYPEDATA_MANA); }
 	//virtual DWORD	GetMinAtk();
 	//virtual DWORD	GetMaxAtk();
 	//virtual DWORD	GetMgcMinAtk();
 	//virtual DWORD	GetMgcMaxAtk();
-	virtual DWORD	GetAttack() { return pData->GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
+	virtual DWORD	GetAttack() { return data.GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
 	//virtual DWORD	GetDef();
-	virtual DWORD	GetDefence() { return pData->GetDefence(); }
+	virtual DWORD	GetDefence() { return data.GetDefence(); }
 	//virtual DWORD	GetDefence2() { return m_pType->GetInt(NPCTYPEDATA_DEFENCE2); }
 	//virtual DWORD	GetDex();
-	virtual DWORD	GetDexterity() { return pData->GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
+	virtual DWORD	GetDexterity() { return data.GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
 	//virtual DWORD	GetDdg();
 	//virtual DWORD	GetDodge(); //{ return m_pType->GetInt(NPCTYPEDATA_DODGE); }
 	//	virtual DWORD	GetMagicAtk			()				{ return 0; }
@@ -92,7 +92,10 @@ public: // IRole
 	//virtual int 	AdjustMagicDamage(int nDamage);
 	//virtual void	SetFightPause(int nInterval) { m_nFightPause = nInterval; }
 
-	virtual DWORD	GetLook() { return pData->GetLook(); }
+	virtual CUser*	QueryOwnerUser() { return m_pOwner; }
+
+	virtual DWORD	GetLook() { return data.GetLook(); }
+	virtual ELEMENT GetElement() { return element; }
 
 	//virtual void	BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf = false);
 	//virtual void	BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf = false);
@@ -128,6 +131,12 @@ public: // get
 	//virtual void	SendShow(IRole* pRole);
 
 public: // get attrib  ------------------------------------
+	void	SetOwner(CUser* pOwner) { m_pOwner = pOwner; SetOwnerID(((CRole*)pOwner)->GetID()); }
+	void	SetOwnerID(OBJID id) { data.SetOwnerID(id);  }
+	OBJID	GetOwnerID() { return data.GetOwnerID(); }
+
+	int		GetLoyalty() { return data.GetLoyalty(); }
+
 	//virtual int		GetType() { return pData->; }
 	//	virtual int		GetSex			()		{ return 0; }
 	//virtual bool	IsAlive();
@@ -150,7 +159,7 @@ public: // get attrib  ------------------------------------
 	//bool		IsSynMonster() { return (m_idNpc >= PETID_FIRST && m_idNpc <= PETID_LAST) && !m_pData; }
 	//bool		IsCallPet() { return m_idNpc >= CALLPETID_FIRST && m_idNpc <= CALLPETID_LAST; }
 	//OBJID		GetMasterID();
-	//int			GetData() { CHECKF(m_pData); return m_pData->GetInt(PETDATA_DATA); }
+	CPetData*			GetData() { return &data; }
 	//OBJID		GetGenID() { return m_idGen; }
 	//bool		IsTaskMonster() { return this->GetType() >= TYPE_TASK_MONSTER; }
 	//bool		IsMagicAtk() { return m_pType->GetInt(NPCTYPEDATA_MAGIC_TYPE) != ID_NONE && m_pType->GetInt(NPCTYPEDATA_MAGIC_HITRATE) == 0; }
@@ -159,6 +168,9 @@ public: // get attrib  ------------------------------------
 	//bool		IsEquality() { return (m_pType->GetInt(NPCTYPEDATA_ATKUSER)&ATKUSER_EQUALITY) != 0; }
 	//bool		IsEudemon() { return (m_idNpc >= EUDEMON_ID_FIRST && m_idNpc <= EUDEMON_ID_LAST); }
 	//static int	GetNameType(int nAtkerLev, int nMonsterLev);
+
+	virtual bool IsSuper() { return (data.GetClass() / 10000) == 1; }
+	virtual bool IsUnevo() { return (data.GetClass() / 10000) == 7; }
 
 public:	// modify attrib ------------------------------
 	//virtual void	SetDir(int nDir) { m_nDir = nDir % 8; }
@@ -218,10 +230,10 @@ public: // pet ----------------------------------------------------
 	//void	SaveInfo();			//??? save all when close server!!!
 
 public: // call pet ---------------------------------
-	CAutoLink<CMonster>&	QueryLink() { return m_link; }
+	//CAutoLink<CPet>&	QueryLink() { return m_link; }
 protected:
-	//CAutoLink<CUser>	m_pOwner;
-	CAutoLink<CMonster>	m_link;
+	CUser* m_pOwner;
+	//CAutoLink<CPet>	m_link;
 	//CMagicTypeData*		m_pMagicType;			// may be null
 	//CTimeOut			m_tMagic;
 
@@ -235,7 +247,7 @@ public:
 	//bool	DropItem(OBJID idItemType, OBJID idOwner, int nMagic2 = 0, int nMagic3 = 0, int nUserLuck = 0, bool bIsAllowDropUnident = false);
 
 protected:
-	CPetData*	pData;	
+	CPetData	data;	
 
 protected:
 	//bool	DropMedicine(OBJID idOwner);
@@ -243,6 +255,7 @@ protected:
 
 protected: // attrib
 	OBJID		ID;
+	//OBJID		ownerID;
 	//	int			m_nPosX;
 	//	int			m_nPosY;
 	//	int			m_nDir;
@@ -251,6 +264,7 @@ protected: // attrib
 	//int			m_nPose;
 	//	CGameMap*	m_pMap;
 
+	ELEMENT element;
 	//int		LifeCurrent;
 	//int			m_nCurrMana;
 

@@ -29,7 +29,6 @@ public:
 	virtual bool	CreateSynPet(const ST_CREATENEWNPC* pInfo, LPCTSTR pszName=NULL)					PURE_VIRTUAL_FUNCTION_0
 	virtual CAiNpc*	CreateCallPet(CUser* pUser, OBJID idType, int x, int y)								PURE_VIRTUAL_FUNCTION_0
 	// 创建幻兽 -- zlong 2004-02-05
-	virtual CAiNpc*	CreateEudemon(CUser* pUser, CItem* pItem, int x, int y)							PURE_VIRTUAL_FUNCTION_0
 };
 
 class CNpcManager : INpcManager
@@ -47,7 +46,6 @@ public:
 	virtual bool	CreateSynPet(const ST_CREATENEWNPC* pInfo, LPCTSTR pszName=NULL);
 	virtual CAiNpc*	CreateCallPet(CUser* pUser, OBJID idType, int x, int y);
 	// 创建幻兽 -- zlong 2004-02-05
-	virtual CAiNpc*	CreateEudemon(CUser* pUser, CItem* pItem, int x, int y);
 
 protected: // ctrl
 	PROCESS_ID			m_idProcess;

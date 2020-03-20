@@ -231,7 +231,7 @@ void CMsgName::Process(void *pInfo)
 
 			// 只有幻兽才可以改名
 			CItem* pItem = pUser->GetItem(m_pInfo->idTarget);
-			if (!pItem || !pItem->IsEudemon())
+			if (!pItem)
 				return ;
 
 			// 召回幻兽
@@ -252,15 +252,6 @@ void CMsgName::Process(void *pInfo)
 			CMsgItemInfo	msg;
 			if (msg.Create(pItem, ITEMINFO_UPDATE))
 				pUser->SendMsg(&msg);
-
-			// 如果幻兽召唤出来了，则更新幻兽资料
-			CAiNpc* pEudemon = pUser->QueryEudemon(pItem->GetID());
-			if (pEudemon)
-			{
-				CMsgPlayer	msg;
-				if (msg.Create(pEudemon->QueryRole()))
-					pEudemon->BroadcastRoomMsg(&msg, true);
-			}
 		}
 		break;
 	}

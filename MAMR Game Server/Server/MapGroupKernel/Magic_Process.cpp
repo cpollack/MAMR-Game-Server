@@ -834,8 +834,8 @@ bool CMagic::ProcessLine()
 
 	if(HitByWeapon() && !m_pOwner->GetMap()->IsTrainMap())
 	{
-		m_pOwner->AddEquipmentDurability(ITEMPOSITION_WEAPONR, -1*LINE_WEAPON_DURABILITY);
-		m_pOwner->AddEquipmentDurability(ITEMPOSITION_WEAPONL, -1*LINE_WEAPON_DURABILITY);
+		//m_pOwner->AddEquipmentDurability(ITEMPOSITION_WEAPONR, -1*LINE_WEAPON_DURABILITY);
+		//m_pOwner->AddEquipmentDurability(ITEMPOSITION_WEAPONL, -1*LINE_WEAPON_DURABILITY);
 	}
 
 	IStatus* pStatus = m_pOwner->QueryStatus(STATUS_DMG2LIFE);
@@ -1973,8 +1973,8 @@ bool CMagic::ProcessCollide()
 					nPower	= m_pOwner->AdjustData(nPower, GetPower());
 			}
 
-			if(!m_pOwner->GetMap()->IsTrainMap())
-				m_pOwner->AddEquipmentDurability(ITEMPOSITION_WEAPONL, -1*COLLIDE_SHIELD_DURABILITY);
+			//if(!m_pOwner->GetMap()->IsTrainMap())
+			//	m_pOwner->AddEquipmentDurability(ITEMPOSITION_WEAPONL, -1*COLLIDE_SHIELD_DURABILITY);
 		}
 
 		idTarget = pTarget->GetID();
@@ -2248,9 +2248,9 @@ bool CMagic::ProcessRecordTransSpell()
 		OBJID idMap = ID_NONE;
 		if (m_pOwner->GetMap())
 			idMap = m_pOwner->GetMap()->GetID();
-		pItem->SetInt(ITEMDATA_DATA, idMap, UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_AMOUNT, m_pOwner->GetPosX(), UPDATE_FALSE);
-		pItem->SetInt(ITEMDATA_AMOUNTLIMIT, m_pOwner->GetPosY(), UPDATE_TRUE);
+		//pItem->SetInt(ITEMDATA_DATA, idMap, UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_AMOUNT, m_pOwner->GetPosX(), UPDATE_FALSE);
+		//pItem->SetInt(ITEMDATA_AMOUNTLIMIT, m_pOwner->GetPosY(), UPDATE_TRUE);
 
 		CMsgItemInfo	msg;
 		msg.Create(pItem, ITEMINFO_UPDATE);
@@ -3019,28 +3019,6 @@ bool CMagic::CollectTargetSet_Team(ROLE_SET& setRole)
 				&& pMember->QueryObj(OBJ_USER, IPP_OF(pMemberUser)))
 			{
 				setUser.push_back(pMemberUser);
-			}
-		}
-	}
-
-	// 然后搜索目标集合——包括满足条件的玩家和幻兽
-	POINT	posThis;
-	for (int i=0; i<setUser.size(); i++)
-	{
-		CUser* pTarget = setUser[i];
-		posThis.x = pTarget->GetPosX();
-		posThis.y = pTarget->GetPosY();
-		if (pTarget->IsAlive() && CUser::IsInCircle(posThis, pos, nRange))
-			setRole.push_back(pTarget->QueryRole());
-		for (int k=0; k<pTarget->GetEudemonAmount(); k++)
-		{
-			CAiNpc* pEudemon = pTarget->QueryEudemonByIndex(i);
-			if (pEudemon)
-			{
-				posThis.x = pEudemon->GetPosX();
-				posThis.y = pEudemon->GetPosY();
-				if (pEudemon->IsAlive() && CUser::IsInCircle(posThis, pos, nRange))
-					setRole.push_back(pEudemon->QueryRole());
 			}
 		}
 	}

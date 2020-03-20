@@ -780,6 +780,42 @@ void CMyRecord::SetInt		(LPCTSTR szField, int nData)
 }
 
 ///////////////////////////////////////////////////////////////////////
+// new interface
+///////////////////////////////////////////////////////////////////////
+float CMyRecord::LoadFloat(LPCTSTR szField)
+{
+	IF_NOT(szField)
+		return INT_NONE;
+
+	for (UINT i = 0; i < m_uiFieldsCount; i++)
+	{
+		if (_stricmp(szField, m_Fields[i].name) == 0)
+		{
+			return GetFloat(i);
+		}
+	}
+
+	return INT_NONE;
+}
+
+///////////////////////////////////////////////////////////////////////
+double CMyRecord::LoadDouble(LPCTSTR szField)
+{
+	IF_NOT(szField)
+		return INT_NONE;
+
+	for (UINT i = 0; i < m_uiFieldsCount; i++)
+	{
+		if (_stricmp(szField, m_Fields[i].name) == 0)
+		{
+			return GetDouble(i);
+		}
+	}
+
+	return INT_NONE;
+}
+
+///////////////////////////////////////////////////////////////////////
 void CMyRecord::LoadString	(char* szData, LPCTSTR szField, int nSize)	
 {
 	IF_NOT(szField && szData)
@@ -824,6 +860,36 @@ int CMyRecord::GetInt		(int idx)
 		return m_objFields[idx].m_iVal;
 	else 
 		return INT_NONE; 
+}
+
+///////////////////////////////////////////////////////////////////////
+float CMyRecord::GetFloat(int idx)
+{
+	IF_NOT(idx >= 0 && idx<(int)m_uiFieldsCount)
+	{
+		LOGERROR("invalid index[%d] in table [%s].", idx, m_szTableName);
+		return INT_NONE;
+	}
+
+	if (!m_objFields[idx].m_szVal)			// 非串类型
+		return m_objFields[idx].m_fVal;
+	else
+		return INT_NONE;
+}
+
+///////////////////////////////////////////////////////////////////////
+double CMyRecord::GetDouble(int idx)
+{
+	IF_NOT(idx >= 0 && idx<(int)m_uiFieldsCount)
+	{
+		LOGERROR("invalid index[%d] in table [%s].", idx, m_szTableName);
+		return INT_NONE;
+	}
+
+	if (!m_objFields[idx].m_szVal)			// 非串类型
+		return m_objFields[idx].m_dVal;
+	else
+		return INT_NONE;
 }
 
 ///////////////////////////////////////////////////////////////////////
