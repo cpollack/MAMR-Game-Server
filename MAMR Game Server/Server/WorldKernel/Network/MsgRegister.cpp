@@ -60,7 +60,7 @@ void CMsgRegister::Process(void *pInfo)
 		return;
 	}
 
-	if(g_UserList.CreateNewPlayer(m_pInfo->szAccount, m_pInfo->szName, m_pInfo->szPassword, 
+	/*if(g_UserList.CreateNewPlayer(m_pInfo->szAccount, m_pInfo->szName, m_pInfo->szPassword, 
 					m_pInfo->dwLook, m_pInfo->unData, m_pInfo->idAccount, m_pInfo->cLength, m_pInfo->cFat))
 	{
 		CMsgTalkW	msg;
@@ -72,5 +72,5 @@ void CMsgRegister::Process(void *pInfo)
 		CMsgTalkW	msg;
 		if(msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_DUPLICATE_NAME, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
 			SendMsg(&msg);
-	}
+	}*/
 }

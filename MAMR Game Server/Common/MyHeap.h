@@ -31,6 +31,7 @@ protected:
 	char			m_szClassName[CLASSNAME_SIZE];		// ”√”⁄DEBUG
 };
 
+//Why does this break delete operator ?
 #ifdef	_DEBUG ////////////////////////////////////////////////////////
 
 #define	MYHEAP_DECLARATION(VAR)
@@ -39,9 +40,9 @@ protected:
 #else // _DEBUG ////////////////////////////////////////////////////////
 
 #define	MYHEAP_DECLARATION(VAR)					\
+public:											\
 	void   operator delete	(void* p);			\
 	void*  operator new	(size_t size);			\
-public:											\
 	static BOOL		IsValidPt(void* p);			\
 protected:										\
 	static CMyHeap	VAR;

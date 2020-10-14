@@ -33,7 +33,7 @@ protected:
 public:
 	static CPet* CreateNew() { return new CPet; }
 
-	static	CPet*	CreateNewPet(PROCESS_ID idProcess, PetInfoStruct* pInfo);
+	//static	CPet*	CreateNewPet(PROCESS_ID idProcess, PetInfoStruct* pInfo);
 	bool	Create(PROCESS_ID idProcess, OBJID idPet);
 	void	ReleaseByOwner() { delete this; }
 

@@ -30,7 +30,6 @@ public:
 	virtual ~CLayer();
 	static CLayer*	CreateNew() { return new CLayer; }
 
-protected:
 	MYHEAP_DECLARATION(s_heap)
 };
 

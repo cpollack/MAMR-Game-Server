@@ -383,7 +383,7 @@ bool CMyRecordset::Open(const char * szSQL)
 			return false;
 
 		int nLen = strlen(szSQL);
-		char * p,* sz= strstr((char*)szSQL, "FROM");
+		char * p = nullptr,* sz= strstr((char*)szSQL, "FROM");
 		int nSize = 0;
 		if(sz == NULL)
 			sz= strstr((char*)szSQL, "from");
@@ -492,8 +492,10 @@ bool CMyRecordset::Open(const char * szSQL)
 						else nSize = sz - p;
 					}
 				}
-				strncpy(m_szTableName,p,nSize);
-				m_szTableName[nSize]='\0';
+				if (nSize) {
+					strncpy(m_szTableName,p,nSize);
+					m_szTableName[nSize] = '\0';
+				}
 			}
 		}
 		LOCKADD_TIMESUM;
@@ -516,7 +518,7 @@ void CMyRecordset::Close()
 #ifdef	USE_NEW
 			s_heapString.Free(m_pbDirty);
 #else
-			//g_heapSystem.Delete(m_pbDirty);
+			g_heapSystem.Delete(m_pbDirty);
 #endif
 			for (unsigned int i=0;i<m_uiFieldsCount;i++)
 			if (m_objFields[i] && (m_objFields[i].m_ulType == FIELD_TYPE_STRING //added m_objFields[i] && 
@@ -524,7 +526,7 @@ void CMyRecordset::Close()
 #ifdef	USE_NEW
 				s_heapString.Free(m_objFields[i].m_szVal);
 #else
-				//g_heapSystem.Delete(m_objFields[i].m_szVal);
+				g_heapSystem.Delete(m_objFields[i].m_szVal);
 #endif
 
 			delete [] m_objFields;

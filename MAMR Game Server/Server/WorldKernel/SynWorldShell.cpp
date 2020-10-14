@@ -69,7 +69,7 @@ bool CSyndicateWorld::Create(IRecordset* pRes)
 	//		_TBL_SYNATTR, _TBL_USER, m_pData->GetID(), MEMBERLIST_LIMIT);
 	sprintf(szSQL, "SELECT u.name, s.title FROM %s as s LEFT JOIN %s AS u ON u.id=s.id WHERE s.owner_id=%u && u.id IS NOT NULL ORDER BY s.rank DESC, u.name LIMIT %d",
 		_TBL_SYNMEMBER, _TBL_USER, m_pData->GetID(), MEMBERLIST_LIMIT);
-	 pStatRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
+	pStatRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
 	if(pStatRes)
 	{
 		for(int i = 0; i < pStatRes->RecordCount(); i++,pStatRes->MoveNext())

@@ -134,13 +134,15 @@ void CBattle::AddBattleAction(BATTLEACT act, OBJID source, OBJID target, OBJID u
 	for (auto ally : attackerSet) {
 		if (ally->IsActionSet()) count++;
 	}
+
+	//Handling for disconnections?
 	if (count == GetAllyCount()) ProcessRound();
 }
 
 void CBattle::ProcessRound() {
 	CreateMonsterActs();
 	ReloadJoinAttackSet();
-	ProcessActionGroups();
+	//ProcessActionGroups();
 
 	EndRound();
 	if (noTargets) EndBattle();
@@ -153,11 +155,15 @@ void CBattle::EndRound() {
 
 	for (auto fighter : attackerSet) fighter->ClearAction();
 	for (auto fighter : defenderSet) fighter->ClearAction();
+
+	if (!GetNextTarget(attackerSet.front())) noTargets = true;
+	if (!GetNextTarget(defenderSet.front())) noTargets = true;
 }
 
 void CBattle::EndBattle() {
 	BATTLERESULT result;
 	
+	//for npc battle only
 	if (GetNextTarget(attackerSet[0])) result = BATTLERESULT_WIN;
 	else result = BATTLERESULT_LOSE;
 
@@ -171,15 +177,22 @@ void CBattle::EndBattle() {
 
 			//Total result data
 			int money = 0;
-			CUser *pUser = (CUser*)fighter->GetRole();
-			money = fighter->GetAwardMoney();
-			
 			int petLife = 0;
 			int petLoy = 0;
 			int petExp = 0;
+
+			CUser *pUser = (CUser*)fighter->GetRole();
+			
+			
+			
 			CPet *pPet = pUser->GetMarchingPet();
-			if (pPet) {
-				CFighter *petFighter = GetFighter(pPet->GetID() | 0x80000000);
+			CFighter *petFighter = nullptr;
+			if (pPet) petFighter = GetFighter(pPet->GetID() | 0x80000000);
+
+			if (fighter->GetRanAway()) result = BATTLERESULT_RUN;
+			else {
+				money = fighter->GetAwardMoney();
+
 				if (petFighter) {
 					petLife = pPet->GetLife();
 					petLoy = pPet->GetLoyalty();
@@ -229,15 +242,16 @@ void CBattle::ReloadJoinAttackSet(bool useExisting) {
 	FIGHTER_SET actionSet;
 	joinActSet.clear();
 
+	group = 0;
+
 	//Defenders go first
 	FIGHTER_SET::iterator itr;
 	itr = fightersByDex.begin();
 	while (itr != fightersByDex.end()) {
 		CFighter *pFighter = *itr;
 		if (pFighter->GetAction() == BATTLEACT_DEFEND) {
-			actionSet.push_back(pFighter);
-			joinActSet.push_back(actionSet);
-			actionSet.clear();
+			SendBattleAct_Defend(pFighter);
+			group++;
 			itr = fightersByDex.erase(itr);
 		}
 		else itr++;
@@ -245,17 +259,43 @@ void CBattle::ReloadJoinAttackSet(bool useExisting) {
 
 	while (fightersByDex.size() > 0) {
 		CFighter *pFighter = fightersByDex.front();
+		CFighter *pTarget = GetFighter(pFighter->GetTarget());
 		fightersByDex.erase(fightersByDex.begin());
 
-		if (pFighter->GetState() == STATE_DEAD) continue;
-		actionSet.push_back(pFighter);
+		if (!pFighter->IsValidTarget()) continue;
 		
 		//Only attacks join, all other actions happen 'solo'
-		if (pFighter->GetAction() != BATTLEACT_ATTACK || fightersByDex.size() == 0) {
-			joinActSet.push_back(actionSet);
-			actionSet.clear();
+		switch (pFighter->GetAction()) {
+		case BATTLEACT_NONE:
+			SendBattleAct_Defend(pFighter);
+			group++;
+			break;
+
+		case BATTLEACT_RUN:
+			pFighter->SetRanAway(true);
+			if (pFighter->GetObjType() == OBJ_USER) {
+				CPet* pPet = ((CUser*)pFighter->GetRole())->GetMarchingPet();
+				if (pPet) {
+					CFighter* petFighter = GetFighter(pPet->GetID() | 0x80000000);
+					if (petFighter) petFighter->SetRanAway(true);
+				}
+			}
+			SendBattleAct_Run(pFighter);
+			group++;
+			break;
+
+		case BATTLEACT_ITEM:
+			break;
+		case BATTLEACT_SPECIAL:
+			break;
+		case BATTLEACT_CAPTURE:
+			break;
+		}
+		if (pFighter->GetAction() != BATTLEACT_ATTACK) {
 			continue;
 		}
+
+		actionSet.push_back(pFighter);
 
 		FIGHTER_SET::iterator itr = fightersByDex.begin();
 		while (fightersByDex.size() > 0 && itr != fightersByDex.end()) {
@@ -268,7 +308,6 @@ void CBattle::ReloadJoinAttackSet(bool useExisting) {
 			//Next fighter is an ally and has the same target
 			if (IsAlly(pFighter, nextFighter) && pFighter->GetTarget() == nextFighter->GetTarget()) {
 				//If ally is within 20% of enemy dex, they can join the attack group
-				CFighter *pTarget = GetFighter(pFighter->GetTarget());
 				if (pTarget) {
 					if (nextFighter->GetDexterity() > pTarget->GetDexterity() * 0.8) {
 						actionSet.push_back(nextFighter);
@@ -281,8 +320,18 @@ void CBattle::ReloadJoinAttackSet(bool useExisting) {
 			itr++;
 		}
 
-		joinActSet.push_back(actionSet);
+		bool slain;
+		for (auto pFighter : actionSet) {
+			slain = ProcessActionAttack(pFighter, group, actionSet.size());
+		}
+
+		if (slain) {
+			pTarget->SetState(STATE_DEAD);
+			for (auto pFighter : actionSet) DefeatEnemy(pFighter, pTarget);
+		}
+
 		actionSet.clear();
+		group++;
 	}
 }
 
@@ -309,13 +358,23 @@ void CBattle::ProcessActionGroups() {
 				break;
 
 			case BATTLEACT_DEFEND:
-				if (msg.Create(BATTLEACT_DEFEND, group, fighter->GetState(), 0, fighter->GetID(), 0, 0, 0, 0, 0))
+				SendBattleAct_Defend(fighter);
+				break;
+
+			case BATTLEACT_RUN:
+				fighter->SetRanAway(true);
+				if (fighter->GetObjType() == OBJ_USER) {
+					CPet* pPet = ((CUser*)fighter->GetRole())->GetMarchingPet();
+					if (pPet) {
+						CFighter* petFighter = GetFighter(pPet->GetID() | 0x80000000);
+						if (petFighter) petFighter->SetRanAway(true);
+					}
+				}
+				if (msg.Create(BATTLEACT_RUN, group, fighter->GetState(), 0, fighter->GetID(), 0, 0, 0, 0, 0))
 					SendAllUsers(&msg);
 				break;
 
 			case BATTLEACT_ITEM:
-				break;
-			case BATTLEACT_RUN:
 				break;
 			case BATTLEACT_SPECIAL:
 				break;
@@ -359,7 +418,7 @@ bool CBattle::ProcessActionAttack(CFighter *pFighter, int group, int groupSize) 
 	CFighter *pTarget = GetFighter(pFighter->GetTarget());
 	if (!pTarget) return false;
 
-	if (pTarget->IsDead()) {
+	if (!pTarget->IsValidTarget()) {
 		pTarget = GetNextTarget(pTarget);
 		if (!pTarget) {
 			noTargets = true;
@@ -367,16 +426,16 @@ bool CBattle::ProcessActionAttack(CFighter *pFighter, int group, int groupSize) 
 		}
 
 		//Retarget all fighters who lost their original target
-		for (auto actSet : joinActSet) {
+		/*for (auto actSet : joinActSet) {
 			for (auto fighter : actSet) {
 				if (fighter->GetTarget() == pTarget->GetID()) {
 					pFighter->SetTarget(pTarget->GetID());
 				}
 			}
-		}
+		}*/
 		// Reloads the remaining fighters into their new ordering
-		ReloadJoinAttackSet(true);
-		actionsReloaded = true;
+		//ReloadJoinAttackSet(true);
+		//actionsReloaded = true;
 		return false;
 	}
 
@@ -410,7 +469,7 @@ CFighter* CBattle::GetNextTarget(CFighter *pTarget) {
 	if (IsAlly(pTarget, attackerSet[0])) targetSet = &attackerSet;
 	else targetSet = &defenderSet;
 
-	for (auto fighter : *targetSet) if (fighter->IsAlive()) return fighter;
+	for (auto fighter : *targetSet) if (fighter->IsValidTarget()) return fighter;
 
 	return nullptr;
 }
@@ -563,7 +622,26 @@ void CBattle::SendAllColors() {
 	}
 }
 
+void CBattle::SendBattleAct_None(CFighter *pFighter) {
+	CMsgNormalAct msg;
+	if (msg.Create(BATTLEACT_NONE, group, pFighter->GetState(), 0, pFighter->GetID(), 0, 0, 0, 0, 0))
+		SendAllUsers(&msg);
+}
+
+void CBattle::SendBattleAct_Defend(CFighter *pFighter) {
+	CMsgNormalAct msg;
+	if (msg.Create(BATTLEACT_DEFEND, group, pFighter->GetState(), 0, pFighter->GetID(), 0, 0, 0, 0, 0))
+		SendAllUsers(&msg);
+}
+
+void CBattle::SendBattleAct_Run(CFighter *pFighter) {
+	CMsgNormalAct msg;
+	if (msg.Create(BATTLEACT_RUNSUCCEED, group, pFighter->GetState(), 0, pFighter->GetID(), 0, 0, 0, 0, 0))
+		SendAllUsers(&msg);
+}
+
 // Vector sorting - Order Descending
 bool OrderFightersByDex(CFighter* pFighter1, CFighter* pFighter2) {
+	if (pFighter1->GetDexterity() == pFighter2->GetDexterity()) return (pFighter1->GetID() < pFighter2->GetID());
 	return !(pFighter1->GetDexterity() < pFighter2->GetDexterity());
 }

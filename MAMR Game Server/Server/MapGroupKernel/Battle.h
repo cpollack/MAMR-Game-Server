@@ -19,7 +19,7 @@ enum BATTLEACT {
 	BATTLEACT_CAPTUREFAIL = 7,
 	BATTLEACT_CAPTURESUCCEED = 8,
 	BATTLEACT_ITEM = 9,
-	//unknown 11?
+	BATTLEACT_RUNSUCCEED = 11,
 };
 
 enum FIGHTERSTATE {
@@ -75,13 +75,18 @@ public: //State
 
 	void AddDamage(int dmg) { takeDamage += dmg; }
 	bool WillDie() { return pRole->GetLife() <= takeDamage; }
+	
+	bool GetRanAway() { return bRanAway; }
+	void SetRanAway(bool bRan) { bRanAway = bRan; }
 
+	bool IsValidTarget() { return IsAlive() && !bRanAway; }
 	bool IsAlive() { return !IsDead(); }
 	bool IsDead() { return state == STATE_DEAD; }
 protected:
 	FIGHTERSTATE state = STATE_ALIVE;
 	int doDamage = 0;
 	int takeDamage = 0;
+	bool bRanAway = false;
 
 public: //Network
 	bool SendMsg(CNetMsg* pMsg) { return pRole->SendMsg(pMsg); }
@@ -143,9 +148,14 @@ public: //Network
 	void SendFighters();
 	void SendAllColors();
 
+	void SendBattleAct_None(CFighter *pFighter);
+	void SendBattleAct_Defend(CFighter *pFighter);
+	void SendBattleAct_Run(CFighter *pFighter);
+
 private:
 	BATTLETYPE type;
 	int round = 0;
+	int group = 0;
 	bool noTargets = false;
 	bool actionsReloaded = false;
 	CGameMap* pMap;

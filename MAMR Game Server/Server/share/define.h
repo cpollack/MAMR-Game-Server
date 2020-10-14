@@ -56,7 +56,7 @@ const int	DBSTR_SIZE				= 16;			// 数据库INI串长度
 const int	MAX_PACKETSIZE			= 1024;			// 网络消息包尺寸
 const int	MAX_MESSAGESIZE			= MAX_PACKETSIZE + 24;			// 内部消息包尺寸
 //const int	SERVER_LISTEN_PORT = 5816;			// 服务器监听端口
-const int	SERVER_LISTEN_PORT		= 9527;			// 服务器监听端口
+const int	SERVER_LISTEN_PORT		= 9525;			// 服务器监听端口
 const int	POINTFEE_SECS			= 3*60;			// 计点频率
 const int	POINTFEE_DELAY_SECS		= 10;			// 首次计点延时
 const int	SOCKET_SENDBUFSIZE		= 64*1024;			// SOCKET_BUF
@@ -150,9 +150,9 @@ const OBJID CLIENT_ID_FIRST		= 4000000000;		// 为客户端保留的ID空间
 //////////////////////////////////////////////////////////////////////
 // 征服常量
 const int	DEFAULT_LOGIN_MAPGROUP		= 0;		// 登录点
-const int	DEFAULT_LOGIN_MAPID			= 1000;		// 登录点
-const int	DEFAULT_LOGIN_POSX			= 362;		// 登录点
-const int	DEFAULT_LOGIN_POSY			= 594;		// 登录点
+const int	DEFAULT_LOGIN_MAPID			= 1000001;		// 登录点
+const int	DEFAULT_LOGIN_POSX			= 61;		// 登录点
+const int	DEFAULT_LOGIN_POSY			= 49;		// 登录点
 
 const int	CELLS_PER_BLOCK				= 18;		// 每ROOM的格子数
 const int	CELLS_PER_VIEW				= 18;		// 可视区域的格子数

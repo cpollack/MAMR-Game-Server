@@ -223,7 +223,7 @@ bool CItemData::GetInfo	(ItemInfoStruct* pInfo)
 bool CItemData::SaveInfo(void)
 {
 	CHECKF(m_pData);
-	CHECKF(m_pType);
+	//CHECKF(m_pType); //item type isnt always known
 
 	m_pData->Update();
 

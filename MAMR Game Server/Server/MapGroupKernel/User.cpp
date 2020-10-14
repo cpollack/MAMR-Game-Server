@@ -3806,9 +3806,9 @@ void CUser::OnTimer(time_t tCurr)
 
 			m_dwLastRcvClientTick = dwTimeNow;	// pre set this
 
-			CMsgTick msg;
-			if(msg.Create(GetID()))
-				this->SendMsg(&msg);
+			//CMsgTick msg;
+			//if(msg.Create(GetID()))
+			//	this->SendMsg(&msg);
 
 			m_dequeServerTick.push_back(dwTimeNow);
 		}
@@ -3819,16 +3819,16 @@ void CUser::OnTimer(time_t tCurr)
 				m_dwLastServerTick	= dwTimeNow;
 				m_dequeServerTick.push_back(dwTimeNow);
 
-				CMsgTick msg;
-				if(msg.Create(GetID()))
-					this->SendMsg(&msg);
+				//CMsgTick msg;
+				//if(msg.Create(GetID()))
+				//	this->SendMsg(&msg);
 			}
 		}
 
 		if (m_dwLastRcvClientTick != 0)
 		{
-			if (dwTimeNow-m_dwLastRcvClientTick >= TICK_SECS*1000*2.5)
-				UserManager()->KickOutSocket(m_idSocket);		// 	, "tick not feedback"			
+			//if (dwTimeNow-m_dwLastRcvClientTick >= TICK_SECS*1000*2.5)
+			//	UserManager()->KickOutSocket(m_idSocket);		// 	, "tick not feedback"			
 		}
 	}
 	DEBUG_CATCH("@m_dwServerTickCount@")

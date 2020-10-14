@@ -49,7 +49,7 @@ IRecordset* CMyDatabase::CreateNewRecordset(LPCTSTR szSQL, bool bNoEmpty /*= tru
 		delete pRes;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////

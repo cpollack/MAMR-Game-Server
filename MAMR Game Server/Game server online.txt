@@ -1,19 +1,19 @@
-start server: 2020-03-19 22:11:16
-current: 2020-03-19 22:33:47
+start server: 2020-10-13 13:36:52
+current: 2020-10-13 13:37:57
 
-socket thread:   0(max:0)
+socket thread:   0(max:1)
 world thread:    0(max:0)
-map group 0 thread:   5(max:7)[858993460]
+map group 0 thread:   3(max:8)[2005]
 map group 1 thread:   5(max:10)
-map group 2 thread:   5(max:8)
-map group 3 thread:   5(max:7)
-map group 4 thread:   5(max:7)
-debug [0][0][0][0][0]
-OnTimer [ 60] Database [  0]
+map group 2 thread:   5(max:9)
+map group 3 thread:   5(max:9)
+map group 4 thread:   5(max:9)
+debug [2][0][2][0][4]
+OnTimer [ 58] Database [  0]
 
 
 players:   1(max:1)
 login: 0/5min, logout: 0/5min
 
-socket bytes:   0/s (pps: 0)
+socket bytes: 156/s (pps: 1)
 npc socket bytes:   0/s (pps: 0)

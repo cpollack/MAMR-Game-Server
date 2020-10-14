@@ -10,13 +10,15 @@
 using namespace world_kernel;
 #include "../UserList.h"
 
+#include "../MapGroupKernel/Network/MsgTalk.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 CMsgRole::CMsgRole()
 {
 	Init();
-	m_pInfo	=(MSG_Info *)m_bufMsg;
+	m_pInfo	= (MSG_Info*)m_bufMsg;
 }
 
 CMsgRole::~CMsgRole() {
@@ -66,7 +68,7 @@ BOOL CMsgRole::Create(char* pbufMsg, DWORD dwMsgSize)
 	if (!CNetMsgW::Create(pbufMsg, dwMsgSize))
 		return false;
 
-	if(_MSG_LOGIN != this->GetType())
+	if(_MSG_ROLE != this->GetType())
 		return false;
 
 	return true;
@@ -74,7 +76,64 @@ BOOL CMsgRole::Create(char* pbufMsg, DWORD dwMsgSize)
 
 //////////////////////////////////////////////////////////////////////
 void CMsgRole::Process(void *pInfo) {
-	//receving a role means the user is attempting to create a character
+	if (!pInfo) return;
+
+
+	if (!NameStrCheck(m_pInfo->szName))
+	{
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_ILLEGAL_NAME, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			SendMsg(&msg);
+		return;
+	}
+
+	if (!NameStrCheck(m_pInfo->szNickname))
+	{
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_ILLEGAL_NICKNAME, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			SendMsg(&msg);
+		return;
+	}
+
+	bool bRoleOk = false;
+	if (m_pInfo->ucRole < 36) bRoleOk = true;
+	if (m_pInfo->ucRole >= 190 && m_pInfo->ucRole <= 193) bRoleOk = true;
+	if (!bRoleOk) {
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_ILLEGAL_TYPE, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			SendMsg(&msg);
+		return;
+	}
+
+	int statTotal = 0;
+	statTotal = m_pInfo->usPointLife;
+	statTotal += m_pInfo->usPointDefence;
+	statTotal += m_pInfo->usPointAttack;
+	statTotal += m_pInfo->usPointDexterity;
+	statTotal += m_pInfo->usPointMana;
+	if (statTotal != 20) {
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_ILLEGAL_STAT, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			SendMsg(&msg);
+		return;
+	}
+
+	CPlayer* pPlayer = UserList()->GetPlayerBySocket(GetSocketID());
+	if (!pPlayer) return;
+
+	if (g_UserList.CreateNewPlayer(pPlayer->m_idAccount, m_pInfo->szName, m_pInfo->szNickname, m_pInfo->ucRole, m_pInfo->ucFace,
+		m_pInfo->usPointLife, m_pInfo->usPointDefence, m_pInfo->usPointAttack, m_pInfo->usPointDexterity, m_pInfo->usPointMana))
+	{
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_CHARACTER_CREATED, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			SendMsg(&msg);
+	}
+	/*else
+	{
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_DUPLICATE_NAME, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			SendMsg(&msg);
+	}*/
 }
 
 

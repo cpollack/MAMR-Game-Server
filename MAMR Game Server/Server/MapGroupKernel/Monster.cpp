@@ -7,6 +7,7 @@ DWORD GetNext_MonsterID() {
 	return NEXT_MONSTERID++;
 }
 
+MYHEAP_IMPLEMENTATION(CMonster, s_heap)
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -69,6 +70,7 @@ bool CMonster::Create(PROCESS_ID idProcess, const ST_CREATENEWMONSTER* pInfo, LP
 		{
 			pData->SetId(GetNext_MonsterID());
 			pType = MonsterType()->GetObj(ID);
+			ID = pData->GetID();
 			
 			//Data loaded in Create() modify it here
 

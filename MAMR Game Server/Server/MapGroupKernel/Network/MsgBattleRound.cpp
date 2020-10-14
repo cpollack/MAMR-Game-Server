@@ -37,8 +37,8 @@ BOOL CMsgBattleRound::Create(FIGHTER_SET* teamA, FIGHTER_SET* teamB)
 	m_unMsgType	= _MSG_BATTLEROUND;
 
 	int i = 0;
-	for (auto fighter : *teamA) m_pInfo->bState[i++] = fighter->GetState();
-	for (auto fighter : *teamB) m_pInfo->bState[i++] = fighter->GetState();
+	for (int idx = 0; idx < teamA->size(); idx++) if (!(*teamA)[idx]->GetRanAway()) m_pInfo->bState[i++] = (*teamA)[idx]->GetState();
+	for (int idx = 0; idx < teamB->size(); idx++) if (!(*teamB)[idx]->GetRanAway())  m_pInfo->bState[i++] = (*teamB)[idx]->GetState();
 	if (i < 20) {
 		for (; i < 20; i++) m_pInfo->bState[i] = 0;
 	}

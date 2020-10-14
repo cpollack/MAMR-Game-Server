@@ -447,63 +447,53 @@ CPlayer* CUserList::GetPlayerByAccountID(OBJID idAccount)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CUserList::CreateNewPlayer(LPCTSTR szAccount, LPCTSTR szName, LPCTSTR szPassword, 
-						int unLook, int nData, OBJID idAccount, char cLength, char cFat)
+bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickName,
+						int unLook, UCHAR ucFace, int nPhysique, int nStamina, int nForce, int nSpeed, int nDegree)
 {
-	int idMap	= DEFAULT_LOGIN_MAPID;								// 缺省的登录点地图
+	CPlayer* pPlayer = GetPlayerByAccountID(idAccount);
+	if (!pPlayer) return false;
+
+	SQLBUF	szSQL;
+	sprintf(szSQL, "SELECT * FROM %s WHERE name=%s", _TBL_USER, szName);
+	IRecordset* pUserRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
+	if (pUserRes) 	{
+		pUserRes->Release();
+		CMsgTalkW	msg;
+		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_DUPLICATE_NAME, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
+			pPlayer->SendMsg(&msg);
+		return false;
+	}
+
+	int idMap	= DEFAULT_LOGIN_MAPID;					// Default logon point map
 	CMapSt* pMap = MapList()->GetMap(idMap);
 	if(!pMap)
 		return false;
 
-	// default attribute
-	int nProfession = nData;
-	CHECKF(nProfession==10 || nProfession==20 || nProfession==30);
+	//Attributes
+	nPhysique++;
+	nStamina++;
+	nForce++;
+	nSpeed++;
+	nDegree++;
 
-	int nForce	= 0;
-	int nHealth	= 0;
-	int nDex	= 0;
-	int nSoul	= 0;
-	if (nProfession == 20)	// 战
-	{
-		nForce	= 15;
-		nHealth	= 10;
-		nDex	= 1;
-		nSoul	= 0;
-	}
-	else if (nProfession == 30)	// 异能者
-	{
-		nForce	= 15;
-		nHealth	= 8;
-		nDex	= 1;
-		nSoul	= 3;
-	}
-	else //if (nProfession == 10)	// 魔
-	{
-		nForce	= 15;
-		nHealth	= 5;
-		nDex	= 2;
-		nSoul	= 4;
-	}
-//	CHECKF(nForce + nHealth + nDex + nSoul == NEWBIE_ATTR_POINT);
-
-	int nMaxLife = nHealth * 10;		// nHealth*10;
-	int nMaxMana = nSoul * 20;			// nSoul*20;
-	int nDefaultMoney = 0;
-
-	// default icon
-	int nSex = (unLook/1000)%10;
-//	unLook = (unLook%10000)+10000;
-	int nDefaultHair = 101;
+	int nMaxLife = (nPhysique * 3) + 30;		
+	int nMaxMana = (nDegree * 3) + 20;			
+	int nDefaultMoney = 100;
+	int nDefaultLevel = 1;
 	const int DEFAULT_ALLOT_POINT = 0;
+	char szMate[_MAX_NAMESIZE] = "无";
 
-	SQLBUF	szSQL;
-	sprintf(szSQL, "INSERT %s SET account_id=%u,name='%s',lookface=%d,hair=%d,length=%d,fat=%d,life=%d,mana=%d,money=%u,recordmap_id=%u, recordx=%u, recordy=%u,force=%d,dexterity=%d,health=%d,soul=%d,profession=%d,additional_point=%d",
+	//check for duplicate name
+
+	sprintf(szSQL, "INSERT %s SET account_id=%u,name='%s',mate='%s',monicker='%s',look=%d,face=%d, life=%d,power=%d,money=%u,level=%d recordmap_id=%u,recordx=%u,recordy=%u, physique=%d,stamina=%d,force=%d,speed=%d,degree=%d,additional_point=%d",
 					_TBL_USER,
-					idAccount, szName, unLook, nDefaultHair, cLength, cFat,
-					nMaxLife, nMaxMana, nDefaultMoney,
+					idAccount, szName, szMate, szNickName, unLook, ucFace,
+					nMaxLife, nMaxMana, nDefaultMoney, nDefaultLevel,
 					idMap, DEFAULT_LOGIN_POSX, DEFAULT_LOGIN_POSY,
-					nForce, nDex, nHealth, nSoul, nProfession, DEFAULT_ALLOT_POINT);
-	return GameWorld()->GetDatabase()->ExecuteSQL(szSQL);		// 不检查重名和重帐号，由UNI_KEY保证
+					nPhysique, nStamina, nForce, nSpeed, nDegree, DEFAULT_ALLOT_POINT);
+	GameWorld()->GetDatabase()->ExecuteSQL(szSQL);
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
