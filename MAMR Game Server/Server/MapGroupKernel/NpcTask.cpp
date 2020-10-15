@@ -73,7 +73,7 @@ bool CNpcTask::ActivateTask(CUser* pUser)
 		{
 			if (pUser->TestTask(pTask))
 			{
-				GameAction()->ProcessAction(pTask->GetInt(TASKDATA_IDNEXT), pUser, m_pOwner->QueryRole());
+				GameAction()->ProcessAction(pTask->GetInt(TASKDATA_IDNEXT0), pUser, m_pOwner->QueryRole());
 				return true;
 			}
 		}

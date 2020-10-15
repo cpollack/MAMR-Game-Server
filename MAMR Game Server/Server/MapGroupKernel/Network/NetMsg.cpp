@@ -178,6 +178,10 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 		pMsg = new CMsgBattleRound;
 		break;
 
+	case _MSG_NPC:
+		pMsg = new CMsgNpc;
+		break;
+
 		//Old Messages, not yet implemented
 	/*case _MSG_TALK:
 		pMsg	=new CMsgTalk;
@@ -227,9 +231,6 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 //	case _MSG_BATTLESYSTEM:
 //		pMsg	= new CMsgBattleSystem;
 //		break;
-	case _MSG_NPC:
-		pMsg	= new CMsgNpc;
-		break;
 	case _MSG_NPCINFO:
 		pMsg	= new CMsgNpcInfo;
 		break;

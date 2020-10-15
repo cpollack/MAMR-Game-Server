@@ -178,6 +178,8 @@ world_kernel::CNetMsgW* world_kernel::CNetMsgW::CreateMsg(OBJID idMsg, const cha
 //	case _MSG_CHATROOM:
 //		pMsg	=new CMsgChatRoom;
 //		break;
+	case _MSG_ROLE:
+		pMsg = new CMsgRole;
 	default:
 		break;
 	}

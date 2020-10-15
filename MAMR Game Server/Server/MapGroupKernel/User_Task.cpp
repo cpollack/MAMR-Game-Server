@@ -30,11 +30,11 @@ bool CUser::TestTask(CTaskData* pTask)
 		if(!CheckItem(pTask))
 			return false;	// 没有任务物品
 
-		if (this->GetMoney() < pTask->GetInt(TASKDATA_MONEY))
+		if (this->GetMoney() < pTask->GetInt(TASKDATA_MINMONEY))
 			return false;
 
-		if (pTask->GetInt(TASKDATA_PROFESSION) && this->GetProfession() != pTask->GetInt(TASKDATA_PROFESSION))
-			return false;
+		//if (pTask->GetInt(TASKDATA_PROFESSION) && this->GetProfession() != pTask->GetInt(TASKDATA_PROFESSION))
+		//	return false;
 
 //		if (pTask->GetInt(TASKDATA_SEX) && ((1 << this->GetSex()) & pTask->GetInt(TASKDATA_SEX)) != 0)
 //			return false;
@@ -143,14 +143,14 @@ bool CUser::CheckItem(CTaskData* pTask)
 bool CUser::ProcessClientTask(OBJID idTask, LPCTSTR pszAccept)
 {
 	CTaskData* pTask = TaskSet()->GetObj(idTask);
-	CHECKF(pTask && pTask->GetInt(TASKDATA_CLIENTACT));
+	CHECKF(pTask && pTask->GetInt(TASKDATA_IDNEXT1));
 
 	CNpc* pNpc = NULL;
 	GetMap()->QueryObj(GetPosX(), GetPosY(), OBJ_NPC, m_idTaskNpc, IPP_OF(pNpc));	// pNpc may be null
 
 	if (!this->TestTask(pTask))
 	{
-		OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXTFAIL);
+		OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXT2);
 		if (idNext != ID_NONE)
 		{
 			GameAction()->ProcessAction(idNext, this, pNpc->QueryRole(), NULL, pszAccept);
@@ -161,7 +161,7 @@ bool CUser::ProcessClientTask(OBJID idTask, LPCTSTR pszAccept)
 		return false;
 	}
 
-	OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXT);
+	OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXT0);
 	if (idNext != ID_NONE)
 		GameAction()->ProcessAction(idNext, this, pNpc->QueryRole(), NULL, pszAccept);
 
@@ -209,7 +209,7 @@ bool CUser::ProcessTask(int idx, LPCTSTR pszAccept)
 
 	if (!this->TestTask(pTask))
 	{
-		OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXTFAIL);
+		OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXT2);
 		if (idNext != ID_NONE)
 		{
 			GameAction()->ProcessAction(idNext, this, pNpc->QueryRole(), NULL, pszAccept);
@@ -220,7 +220,7 @@ bool CUser::ProcessTask(int idx, LPCTSTR pszAccept)
 		return false;
 	}
 
-	OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXT);
+	OBJID idNext	= pTask->GetInt(TASKDATA_IDNEXT0);
 	if (idNext != ID_NONE)
 		GameAction()->ProcessAction(idNext, this, pNpc->QueryRole(), NULL, pszAccept);
 

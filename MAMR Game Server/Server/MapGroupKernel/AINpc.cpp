@@ -1736,7 +1736,7 @@ DWORD CAiNpc::GetLife()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CAiNpc::GetMaxLife()
+double CAiNpc::GetMaxLife()
 {
 	int nLife = m_pType->GetInt(NPCTYPEDATA_LIFE);
 
@@ -1809,7 +1809,7 @@ DWORD CAiNpc::GetDdg()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CAiNpc::GetDef()
+double CAiNpc::GetDef()
 {
 	DWORD dwDef	= 0;
 
@@ -2410,8 +2410,10 @@ void CAiNpc::SaveInfo()
 /////////////////////////////////////////////////////////////////////////////
 bool CAiNpc::IsAlive()
 {
-	if ((m_i64Effect & KEEPEFFECT_DIE) == KEEPEFFECT_DIE || this->GetLife() <= 0 || m_bLeaveMap)
-		return false;
+	//if ((m_i64Effect & KEEPEFFECT_DIE) == KEEPEFFECT_DIE || this->GetLife() <= 0 || m_bLeaveMap)
+	//	return false;
+
+	if (m_bLeaveMap) return false;
 
 	return true;
 }

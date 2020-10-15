@@ -31,6 +31,7 @@ private:
 		USHORT	unTxtAttribute;
 		USHORT	unTxtStyle;
 		DWORD	dwTime;
+		char emotion[16];
 		char	szBuf[1];
 	}MSG_Info;
 

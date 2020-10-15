@@ -11,6 +11,8 @@ using namespace world_kernel;
 #include "../UserList.h"
 
 #include "../MapGroupKernel/Network/MsgTalk.h"
+#include "../MapGroupKernel/Monster.h"
+#include "../MapGroupKernel/Pet.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -118,12 +120,49 @@ void CMsgRole::Process(void *pInfo) {
 		return;
 	}
 
+	HSB hsb[5];
+	for (int i = 0; i < 5; i++) {
+		hsb[i].hue = m_pInfo->bColorSet[(i * 3)];
+		hsb[i].sat = m_pInfo->bColorSet[(i * 3) + 1];
+		hsb[i].bright = m_pInfo->bColorSet[(i * 3) + 2];
+	}
+
 	CPlayer* pPlayer = UserList()->GetPlayerBySocket(GetSocketID());
 	if (!pPlayer) return;
 
+	SQLBUF	szSQL;
 	if (g_UserList.CreateNewPlayer(pPlayer->m_idAccount, m_pInfo->szName, m_pInfo->szNickname, m_pInfo->ucRole, m_pInfo->ucFace,
-		m_pInfo->usPointLife, m_pInfo->usPointDefence, m_pInfo->usPointAttack, m_pInfo->usPointDexterity, m_pInfo->usPointMana))
+		m_pInfo->usPointLife, m_pInfo->usPointDefence, m_pInfo->usPointAttack, m_pInfo->usPointDexterity, m_pInfo->usPointMana, hsb))
 	{
+		PROCESS_ID pId = MapList()->GetMapProcessID(100001);
+		ST_CREATENEWMONSTER stMonster = { 72013, 1 };
+		CMonster* pMonster = CMonster::CreateNew();
+		if (pMonster->Create(pId, &stMonster)) {
+			int userId = 0;
+			sprintf(szSQL, "SELECT id FROM %s WHERE account_id=%d", _TBL_USER, pPlayer->m_idAccount);
+			IRecordset* pUserRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
+			if (pUserRes) {
+				userId = pUserRes->GetInt(0);
+				pUserRes->Release();
+			}
+			else return;
+
+			CPet* pPet = CPet::CreateNewPet(pId, userId, pMonster);
+			if (pPet) {
+				DWORD petId = 0;
+				sprintf(szSQL, "SELECT id FROM %s WHERE owner_id=%d ORDER BY id DESC LIMIT 1", _TBL_PET, pPlayer->m_idAccount);
+				IRecordset* pPetRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
+				if (pPetRes) {
+					petId = pPetRes->GetInt(0);
+					pPetRes->Release();
+
+					sprintf(szSQL, "UPDATE %s SET pet_count=%d, petused_id=%u, pet0_id=%u WHERE id=%d LIMIT 1",
+						_TBL_USER, 1, petId, petId, userId);
+					GameWorld()->GetDatabase()->ExecuteSQL(szSQL);
+				}
+			}
+		}
+
 		CMsgTalkW	msg;
 		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_CHARACTER_CREATED, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
 			SendMsg(&msg);

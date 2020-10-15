@@ -259,16 +259,16 @@ bool CNpc::Create(PROCESS_ID idProcess, IRecordset* pRecordset, bool bDynaNpc)
 	m_nPosX = m_pData->GetInt(NPCDATA_POSX_);
 	m_nPosY = m_pData->GetInt(NPCDATA_POSY_);
 
-	if (this->IsTrunkNpc()
-			|| this->IsShopNpc()
-				//|| this->IsSceneNpc()
-					//|| this->IsTaskNpc()
-						|| this->IsBetNpc()
-							|| this->IsAuctionNpc() )
-	{
+	//if (this->IsTrunkNpc()
+	//		|| this->IsShopNpc()
+	//			//|| this->IsSceneNpc()
+	//				//|| this->IsTaskNpc()
+	//					|| this->IsBetNpc()
+	//						|| this->IsAuctionNpc() )
+	//{
 		IF_NOT(CreateFuncObj(idProcess))
 			return false;
-	}
+	//}
 
 	IF_NOT(CheckSortMutex())
 		return false;
@@ -402,13 +402,13 @@ bool CNpc::CreateFuncObj(PROCESS_ID idProcess)
 			return false;
 		//	delete temp;
 	}*/
-	/*if(IsTaskNpc())
-	{
+	//if(IsTaskNpc()) //all npcs are task npcs?
+	//{
 		ASSERT(!m_pTask);
 		m_pTask = CNpcTask::CreateNew();
 		IF_NOT(m_pTask && m_pTask->Create(idProcess, this, m_pData))
 			return false;
-	}*/
+	//}
 	/*if(IsSceneNpc())
 	{
 		CGameMap* pMap = MapManager()->QueryMap(m_pData->GetInt(NPCDATA_MAPID), false);
@@ -520,8 +520,8 @@ bool CNpc::SendLeaveFromBlock()
 bool CNpc::ActivateNpc(IRole* pRole, int nAction)
 {
 	CUser* pUser = NULL;
-	if(//IsTaskNpc() && 
-		IsAlive() && pRole->QueryObj(OBJ_USER, IPP_OF(pUser)))
+	if(//IsTaskNpc() && IsAlive() && 
+		pRole->QueryObj(OBJ_USER, IPP_OF(pUser)))
 		return QueryTask()->ActivateTask(pUser);
 
 	return false;

@@ -34,6 +34,7 @@ public:
 	static CPet* CreateNew() { return new CPet; }
 
 	//static	CPet*	CreateNewPet(PROCESS_ID idProcess, PetInfoStruct* pInfo);
+	static	CPet*	CreateNewPet(PROCESS_ID idProcess, OBJID ownerId, CMonster* pMonster);
 	bool	Create(PROCESS_ID idProcess, OBJID idPet);
 	void	ReleaseByOwner() { delete this; }
 
@@ -60,19 +61,19 @@ public: // IRole
 	virtual DWORD	GetLev() { return data.GetLevel(); }
 
 	virtual	DWORD	GetLife() { return data.GetLife(); } 	//			{ return m_nCurrLife; }
-	virtual DWORD	GetMaxLife() { return data.GetMaxLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
+	virtual double	GetMaxLife() { return data.GetMaxLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
 									//	virtual DWORD	GetMana				()				{ return m_nCurrMana; }
 									//	virtual DWORD	GetMaxMana			()				{ return m_pType->GetInt(NPCTYPEDATA_MANA); }
 	//virtual DWORD	GetMinAtk();
 	//virtual DWORD	GetMaxAtk();
 	//virtual DWORD	GetMgcMinAtk();
 	//virtual DWORD	GetMgcMaxAtk();
-	virtual DWORD	GetAttack() { return data.GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
+	virtual double	GetAttack() { return data.GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
 	//virtual DWORD	GetDef();
-	virtual DWORD	GetDefence() { return data.GetDefence(); }
+	virtual double	GetDefence() { return data.GetDefence(); }
 	//virtual DWORD	GetDefence2() { return m_pType->GetInt(NPCTYPEDATA_DEFENCE2); }
 	//virtual DWORD	GetDex();
-	virtual DWORD	GetDexterity() { return data.GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
+	virtual double	GetDexterity() { return data.GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
 	//virtual DWORD	GetDdg();
 	//virtual DWORD	GetDodge(); //{ return m_pType->GetInt(NPCTYPEDATA_DODGE); }
 	//	virtual DWORD	GetMagicAtk			()				{ return 0; }

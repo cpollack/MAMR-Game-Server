@@ -46,7 +46,7 @@ BOOL CMsgTalkW::Create(char* pszSpeaker, char* pszHearer, char* pszWords,
 		return false;
 
 	// can be null
-	if(pszEmotion && strlen(pszEmotion) >= _MAX_NAMESIZE)	
+	if(pszEmotion && strlen(pszEmotion) >= _MAX_NAMESIZE)
 		return false;
 
 	// fill
@@ -57,12 +57,12 @@ BOOL CMsgTalkW::Create(char* pszSpeaker, char* pszHearer, char* pszWords,
 	m_pInfo->unTxtAttribute	=unAttribute;
 	m_pInfo->unTxtStyle		=unStyle;
 	m_pInfo->dwTime			=::SysTimeGet();
-
+	if(pszEmotion) strcpy(m_pInfo->emotion, pszEmotion);
 
 	BOOL bSucMake	=true;
 	bSucMake	&=m_StrPacker.AddString(pszSpeaker);
 	bSucMake	&=m_StrPacker.AddString(pszHearer);
-	bSucMake	&=m_StrPacker.AddString(pszEmotion);
+	//bSucMake	&=m_StrPacker.AddString(pszEmotion);
 	bSucMake	&=m_StrPacker.AddString(pszWords);
 
 	m_unMsgType	=_MSG_TALK;
@@ -94,13 +94,13 @@ void CMsgTalkW::Process(void *pInfo)
 
 	char szSender[_MAX_NAMESIZE];
 	char szReceiver[_MAX_NAMESIZE];
-	char szEmotion[_MAX_NAMESIZE];
+	//char szEmotion[_MAX_NAMESIZE];
 	char szWords[_MAX_WORDSSIZE];
 
 	m_StrPacker.GetString(0, szSender, sizeof(szSender));
 	m_StrPacker.GetString(1, szReceiver, sizeof(szReceiver));
-	m_StrPacker.GetString(2, szEmotion, sizeof(szEmotion));
-	m_StrPacker.GetString(3, szWords, sizeof(szWords));
+	//m_StrPacker.GetString(2, szEmotion, sizeof(szEmotion));
+	m_StrPacker.GetString(2, szWords, sizeof(szWords));
 
 	CPlayer* pUser = UserList()->GetPlayerBySocket(GetSocketID());
 	CHECK(pUser || m_pInfo->unTxtAttribute==_TXTATR_MSG_SYSTEM);

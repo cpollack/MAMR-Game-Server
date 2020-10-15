@@ -136,14 +136,6 @@ bool CMapGroup::Create(PROCESS_ID idProcess, ISocket* pSocket, IDatabase* pDb, I
 		return false;
 	}
 
-	CNpcManager* pNpcManager = new CNpcManager(m_idProcess);
-	if (!pNpcManager || !pNpcManager->Create())
-	{
-		ASSERT(!"pNpcManager->Create");
-		return false;
-	}
-	m_pNpcManager = pNpcManager->GetInterface();
-
 	m_pLeaveWord = new CLeaveWord();
 	if (!m_pLeaveWord || !m_pLeaveWord->Create(m_idProcess))
 	{
@@ -194,11 +186,6 @@ void CMapGroup::Init() {
 
 		char	szSQL[1024];
 
-		sprintf(szSQL, "SELECT * FROM %s", _TBL_MAP);
-		g_setStaticMap = CStaticMapSet::CreateNew(true);
-		IF_NOT_(g_setStaticMap && g_setStaticMap->Create(szSQL, m_pDb))
-			return;
-
 		sprintf(szSQL, "SELECT * FROM %s", _TBL_TASK);
 		g_setTask = CTaskSet::CreateNew(true);
 		IF_NOT_(g_setTask && g_setTask->Create(szSQL, Database()))
@@ -207,6 +194,19 @@ void CMapGroup::Init() {
 		sprintf(szSQL, "SELECT * FROM %s", _TBL_ACTION);
 		g_setAction = CActionSet::CreateNew(true);
 		IF_NOT_(g_setAction && g_setAction->Create(szSQL, Database()))
+			return;
+
+		CNpcManager* pNpcManager = new CNpcManager(m_idProcess);
+		if (!pNpcManager || !pNpcManager->Create())
+		{
+			ASSERT(!"pNpcManager->Create");
+			return;
+		}
+		m_pNpcManager = pNpcManager->GetInterface();
+
+		sprintf(szSQL, "SELECT * FROM %s", _TBL_MAP);
+		g_setStaticMap = CStaticMapSet::CreateNew(true);
+		IF_NOT_(g_setStaticMap && g_setStaticMap->Create(szSQL, m_pDb))
 			return;
 
 		//sprintf(szSQL, "SELECT * FROM %s", _TBL_LEVEXP);

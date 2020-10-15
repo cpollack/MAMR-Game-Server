@@ -99,8 +99,8 @@ bool CUserData::LoadInfo(void)
 
 	m_Info.ucMetempsychosis		= m_pRes->LoadDWord("metempsychosis");
 
-	m_Info.petCount = m_pRes->LoadInt("pet_count");
-	m_Info.marchingPetId = m_pRes->LoadInt("petused_id");
+	m_Info.petCount = m_pRes->LoadDWord("pet_count");
+	m_Info.marchingPetId = m_pRes->LoadDWord("petused_id");
 	for (int i = 0; i < MAX_PETS; i++) {
 		if (i < m_Info.petCount) {
 			char str[8];

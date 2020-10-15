@@ -19,7 +19,7 @@ using namespace mapgroup_kernel;
 CMsgTalk::CMsgTalk()
 {
 	Init();
-	m_pInfo	=(MSG_Info* )m_bufMsg;
+	m_pInfo	= (MSG_Info* )m_bufMsg;
 
 	m_StrPacker.SetBuf(m_pInfo->szBuf, _MAX_MSGSIZE-sizeof(MSG_Info)+1);
 }
@@ -55,12 +55,12 @@ BOOL CMsgTalk::Create(LPCTSTR pszSpeaker, LPCTSTR pszHearer, LPCTSTR pszWords,
 	m_pInfo->unTxtAttribute	=unAttribute;
 	m_pInfo->unTxtStyle		=unStyle;
 	m_pInfo->dwTime			=::SysTimeGet();
+	if (pszEmotion) strcpy(m_pInfo->szEmotion, pszEmotion);
 
 
 	BOOL bSucMake	=true;
 	bSucMake	&=m_StrPacker.AddString(pszSpeaker);
 	bSucMake	&=m_StrPacker.AddString(pszHearer);
-	bSucMake	&=m_StrPacker.AddString(pszEmotion);
 	bSucMake	&=m_StrPacker.AddString(pszWords);
 
 	m_unMsgType	=_MSG_TALK;
@@ -92,13 +92,11 @@ void CMsgTalk::Process(void *pInfo)
 
 	char szSender[_MAX_NAMESIZE];
 	char szReceiver[_MAX_NAMESIZE];
-	char szEmotion[_MAX_NAMESIZE];
 	char szWords[_MAX_WORDSSIZE];
 
 	m_StrPacker.GetString(0, szSender, sizeof(szSender));
 	m_StrPacker.GetString(1, szReceiver, sizeof(szReceiver));
-	m_StrPacker.GetString(2, szEmotion, sizeof(szEmotion));
-	m_StrPacker.GetString(3, szWords, sizeof(szWords));
+	m_StrPacker.GetString(2, szWords, sizeof(szWords));
 
 	CHECK(strlen(szWords) <= 255);
 

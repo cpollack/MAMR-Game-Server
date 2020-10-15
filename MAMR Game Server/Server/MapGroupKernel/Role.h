@@ -74,20 +74,20 @@ public: // get attrib
 	virtual DWORD	GetLev				()						PURE_VIRTUAL_FUNCTION_0
 
 	virtual DWORD	GetLife				()						{ return 0; }
-	virtual DWORD	GetMaxLife			()						{ return 0; }
+	virtual double	GetMaxLife			()						{ return 0; }
 
 	virtual DWORD	GetMinAtk			()						{ return 0; }
 	virtual DWORD	GetMaxAtk			()						{ return 0; }
 	virtual DWORD	GetMgcMinAtk		()						{ return 0; }
 	virtual DWORD	GetMgcMaxAtk		()						{ return 0; }
-	virtual DWORD	GetAttack			()						{ return 0; }
+	virtual double	GetAttack			()						{ return 0; }
 	virtual DWORD	GetAtkHitRate		()						PURE_VIRTUAL_FUNCTION_0
 
-	virtual DWORD	GetDef				()						{ return 0; }
-	virtual DWORD	GetDefence			()						{ return 0; }
+	virtual double	GetDef				()						{ return 0; }
+	virtual double	GetDefence			()						{ return 0; }
 
 	virtual DWORD	GetDegree			()						{ return 0; }
-	virtual DWORD	GetDexterity		()						{ return 0; }
+	virtual double	GetDexterity		()						{ return 0; }
 
 	virtual DWORD	GetDdg				()						{ return 0; }
 	virtual DWORD	GetDodge			()						{ return 0; }
@@ -252,6 +252,7 @@ public:	// 为了修改魔法系统而增加的部分，等魔法系统修改完再做整理 -- zlong 2005-
 
 	virtual	CMagic*	QueryMagic()											{ return NULL; }
 
+	virtual int GetClass() { return 0; }
 	virtual bool IsSuper() { return false; }
 	virtual bool IsUnevo() { return false; }
 	virtual ELEMENT GetElement() { return ELEMENT_NONE; }

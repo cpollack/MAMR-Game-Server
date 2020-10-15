@@ -14,6 +14,7 @@ using namespace world_kernel;
 #include "UserList.h"
 #include "MessageBoard.h"
 #include "WorldKernel.h"
+#include "../MapGroupKernel/Role.h"
 
 const int	SECS_PER_GAMEHOUR		= 300;			// send CMsgTime to all user
 const int	NEWBIE_ATTR_POINT		= 10;			// 新建角色属性点总和
@@ -152,6 +153,10 @@ int CUserList::LoginUser(OBJID idAccount, SOCKET_ID idSocket, LPCTSTR szInfo)
 		}
 		pRes->Release();		//AAAAAAAAAAAAAAAAAAAAAAAAAA
 
+	}
+	else {
+		//character creation, still do a 'fake' login
+		CreateUser(-1, 0, "", idAccount, idSocket, 0, szInfo);
 	}
 
 	return nRet;
@@ -448,7 +453,7 @@ CPlayer* CUserList::GetPlayerByAccountID(OBJID idAccount)
 
 //////////////////////////////////////////////////////////////////////
 bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickName,
-						int unLook, UCHAR ucFace, int nPhysique, int nStamina, int nForce, int nSpeed, int nDegree)
+						int unLook, UCHAR ucFace, int nPhysique, int nStamina, int nForce, int nSpeed, int nDegree, HSB* hsb)
 {
 	CPlayer* pPlayer = GetPlayerByAccountID(idAccount);
 	if (!pPlayer) return false;
@@ -477,6 +482,10 @@ bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickNa
 	nDegree++;
 
 	int nMaxLife = (nPhysique * 3) + 30;		
+	nMaxLife += (nStamina + nForce + nSpeed) / 4;
+	nMaxLife += 5 * nStamina / 100;
+	nMaxLife += 5 * nForce / 100;
+	nMaxLife += 5 * nSpeed / 100;
 	int nMaxMana = (nDegree * 3) + 20;			
 	int nDefaultMoney = 100;
 	int nDefaultLevel = 1;
@@ -485,13 +494,30 @@ bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickNa
 
 	//check for duplicate name
 
-	sprintf(szSQL, "INSERT %s SET account_id=%u,name='%s',mate='%s',monicker='%s',look=%d,face=%d, life=%d,power=%d,money=%u,level=%d recordmap_id=%u,recordx=%u,recordy=%u, physique=%d,stamina=%d,force=%d,speed=%d,degree=%d,additional_point=%d",
+	sprintf(szSQL, "INSERT %s SET account_id=%u,name='%s',mate='%s',monicker='%s',look=%d,face=%d, life=%d,power=%d,money=%u,level=%d, recordmap_id=%u,recordx=%u,recordy=%u, physique=%d,stamina=%d,force=%d,speed=%d,degree=%d,additional_point=%d, \
+					money_saved=0,repute=0,exp=0,exp_smith=0,exp_creative=0,exp_medicine=0,exp_steal=0,metempsychosis=0,deed=0,task_mask=0,pk_enable=0,home_id=0,syndicate_id=0,degree_lev=0,lockkey=0,intellect=0,quiz_point=0,coin_money=0,last_login=0, \
+					pet_count=0,pet0_id=0,pet1_id=0,pet2_id=0,pet3_id=0,pet4_id=0, skill_count=0,skill0_id=0,skill1_id=0,skill2_id=0,skill3_id=0,skill4_id=0,skill5_id=0,skill6_id=0,skill7_id=0,skill8_id=0,skill9_id=0, \
+					weapon_id=0,armor_id=0,shoes_id=0,treasure0_id=0,treasure1_id=0",
 					_TBL_USER,
 					idAccount, szName, szMate, szNickName, unLook, ucFace,
 					nMaxLife, nMaxMana, nDefaultMoney, nDefaultLevel,
 					idMap, DEFAULT_LOGIN_POSX, DEFAULT_LOGIN_POSY,
 					nPhysique, nStamina, nForce, nSpeed, nDegree, DEFAULT_ALLOT_POINT);
 	GameWorld()->GetDatabase()->ExecuteSQL(szSQL);
+
+	int userId = 0;
+	sprintf(szSQL, "SELECT id FROM %s WHERE account_id=%d", _TBL_USER, idAccount);
+	pUserRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
+	if (pUserRes) {
+		userId = pUserRes->GetInt(0);
+		pUserRes->Release();
+	}
+	if (!userId) return false;
+
+	sprintf(szSQL, "INSERT %s SET id_user=%d, hue0=%d,saturation0=%d,bright0=%d,hue1=%d,saturation1=%d,bright1=%d,hue2=%d,saturation2=%d,bright2=%d,hue3=%d,saturation3=%d,bright3=%d,hue4=%d,saturation4=%d,bright4=%d ",
+		_TBL_USERCOLOR, userId,		
+		hsb[0].hue, hsb[0].sat, hsb[0].bright, hsb[1].hue, hsb[1].sat, hsb[1].bright, hsb[2].hue, hsb[2].sat, hsb[2].bright, hsb[3].hue, hsb[3].sat, hsb[3].bright, hsb[4].hue, hsb[4].sat, hsb[4].bright);
+	GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
 
 	return true;
 }

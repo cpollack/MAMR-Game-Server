@@ -42,6 +42,7 @@ namespace mapgroup_kernel {
 				DWORD	dwTime;
 				OBJID	idTransmit;
 			};
+			char	szEmotion[_MAX_NAMESIZE];
 			char	szBuf[1];
 		}MSG_Info;
 

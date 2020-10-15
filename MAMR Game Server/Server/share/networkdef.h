@@ -36,7 +36,9 @@ const unsigned short _MSG_ENEMY			= _MSG_GENERAL + 1007;
 const unsigned short _MSG_FIGHTER		= _MSG_GENERAL + 1008;
 const unsigned short _MSG_BATTLERESULT	= _MSG_GENERAL + 1009;
 const unsigned short _MSG_BATTLEROUND	= _MSG_GENERAL + 1012;
+
 const unsigned short _MSG_NPCINFO		= _MSG_GENERAL + 1030;
+const unsigned short _MSG_NPC			= _MSG_GENERAL + 1031;
 
 //Uncleaned
 
@@ -81,7 +83,6 @@ const unsigned short _MSG_SYNMEMBERINFO	=_MSG_GENERAL+112;
 const unsigned short _MSG_DICE			=_MSG_GENERAL+113;
 const unsigned short _MSG_SYNINFO		=_MSG_GENERAL+114;
 
-const unsigned short _MSG_NPC			=_MSG_GENERAL+1031;
 const unsigned short _MSG_DIALOG		=_MSG_GENERAL+1032;
 const unsigned short _MSG_FRIENDINFO	=_MSG_GENERAL+1033;
 const unsigned short _MSG_TIME			=_MSG_GENERAL+1034; 

@@ -394,21 +394,21 @@ public: // get attrib
 
 	virtual DWORD	GetLife				()						PURE_VIRTUAL_FUNCTION_0
 //	virtual DWORD	GetMana				()						PURE_VIRTUAL_FUNCTION_0
-	virtual DWORD	GetMaxLife			()						PURE_VIRTUAL_FUNCTION_0
+	virtual double	GetMaxLife			()						PURE_VIRTUAL_FUNCTION_0
 //	virtual DWORD	GetMaxMana			()						PURE_VIRTUAL_FUNCTION_0
 
 	virtual DWORD	GetMinAtk			()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetMaxAtk			()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetMgcMinAtk			()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetMgcMaxAtk			()						PURE_VIRTUAL_FUNCTION_0
-	virtual DWORD	GetAttack			()						PURE_VIRTUAL_FUNCTION_0
+	virtual double	GetAttack			()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetAtkHitRate		()						PURE_VIRTUAL_FUNCTION_0
 
-	virtual DWORD	GetDef				()						PURE_VIRTUAL_FUNCTION_0
-	virtual DWORD	GetDefence			()						PURE_VIRTUAL_FUNCTION_0
+	virtual double	GetDef				()						PURE_VIRTUAL_FUNCTION_0
+	virtual double	GetDefence			()						PURE_VIRTUAL_FUNCTION_0
 
 	virtual DWORD	GetDegree			()						PURE_VIRTUAL_FUNCTION_0
-	//virtual DWORD	GetDexterity		()						PURE_VIRTUAL_FUNCTION_0
+	virtual double	GetDexterity		()						PURE_VIRTUAL_FUNCTION_0
 
 	virtual DWORD	GetDdg				()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetDodge			()						PURE_VIRTUAL_FUNCTION_0

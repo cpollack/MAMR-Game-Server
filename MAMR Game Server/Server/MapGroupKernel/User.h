@@ -325,7 +325,7 @@ public: // IRole
 
 	void	SetLife(int nLife, BOOL bUpdate=false);
 	virtual DWORD	GetLife				();
-	virtual DWORD	GetMaxLife			();
+	virtual double	GetMaxLife			();
 	virtual DWORD	GetPower			()			{ return m_data.GetPower(); }	// not over
 	virtual DWORD	GetMaxPower			();
 
@@ -333,16 +333,16 @@ public: // IRole
 	virtual DWORD	GetMaxAtk			();
 	virtual DWORD	GetMgcMinAtk		();
 	virtual DWORD	GetMgcMaxAtk		();
-	virtual DWORD	GetAttack			();
+	virtual double	GetAttack			();
 	virtual DWORD	GetMagicAttack		();
 	virtual DWORD	GetAtkHitRate		();
 
-	virtual DWORD	GetDef				();
-	virtual DWORD	GetDefence			();
+	virtual double	GetDef				();
+	virtual double	GetDefence			();
 	virtual DWORD	GetDefence2			();
 
 	//virtual DWORD	GetDegree			();
-	virtual DWORD	GetDexterity		();
+	virtual double	GetDexterity		();
 
 	virtual DWORD	GetDdg				();
 	virtual DWORD	GetDodge			();
@@ -977,7 +977,7 @@ public: // Pet
 protected:
 	typedef std::vector<CPet*>	PET_SET;
 	PET_SET	setPet;	
-	CPet* marchingPet;
+	CPet* marchingPet = nullptr;
 
 	int			m_nLinkValue;
 	typedef std::vector<int>	LINKMAGIC_SET;

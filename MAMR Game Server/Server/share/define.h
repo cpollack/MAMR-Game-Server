@@ -150,7 +150,7 @@ const OBJID CLIENT_ID_FIRST		= 4000000000;		// 为客户端保留的ID空间
 //////////////////////////////////////////////////////////////////////
 // 征服常量
 const int	DEFAULT_LOGIN_MAPGROUP		= 0;		// 登录点
-const int	DEFAULT_LOGIN_MAPID			= 1000001;		// 登录点
+const int	DEFAULT_LOGIN_MAPID			= 100001;		// 登录点
 const int	DEFAULT_LOGIN_POSX			= 61;		// 登录点
 const int	DEFAULT_LOGIN_POSY			= 49;		// 登录点
 

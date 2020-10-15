@@ -102,19 +102,31 @@ public: // IRole
 	virtual DWORD	GetLev() { return pData->GetLevel(); }
 
 	virtual	DWORD	GetLife() { return LifeCurrent; } 	//			{ return m_nCurrLife; }
-	virtual DWORD	GetMaxLife() { return pData->GetLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
+	virtual double	GetMaxLife() { return pData->GetLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
 									//	virtual DWORD	GetMana				()				{ return m_nCurrMana; }
 									//	virtual DWORD	GetMaxMana			()				{ return m_pType->GetInt(NPCTYPEDATA_MANA); }
 	//virtual DWORD	GetMinAtk();
 	//virtual DWORD	GetMaxAtk();
 	//virtual DWORD	GetMgcMinAtk();
 	//virtual DWORD	GetMgcMaxAtk();
-	virtual DWORD	GetAttack() { return pData->GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
+	virtual double	GetAttack() { return pData->GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
 	//virtual DWORD	GetDef();
-	virtual DWORD	GetDefence() { return pData->GetDefence(); }
+	virtual double	GetDefence() { return pData->GetDefence(); }
 	//virtual DWORD	GetDefence2() { return m_pType->GetInt(NPCTYPEDATA_DEFENCE2); }
 	//virtual DWORD	GetDex();
-	virtual DWORD	GetDexterity() { return pData->GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
+	virtual double	GetDexterity() { return pData->GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
+
+	virtual double GetBaseAttack() { return pData->GetBaseAttack(); }
+	virtual double GetBaseDefence() { return pData->GetBaseDefence(); }
+	virtual double GetBaseDexterity() { return pData->GetBaseDexterity(); }
+
+	virtual DWORD GetAttackRate() { return pData->GetRateAttack(); }
+	virtual DWORD GetDexterityRate() { return pData->GetRateDefence(); }
+	virtual DWORD GetDefenceRate() { return pData->GetRateDexterity(); }
+
+	virtual double GetGrowRate() { return pData->GetGrowth(); }
+	virtual double GetLifeRate() { return pData->GetLifeRise(); }
+
 	//virtual DWORD	GetDdg();
 	//virtual DWORD	GetDodge(); //{ return m_pType->GetInt(NPCTYPEDATA_DODGE); }
 	//	virtual DWORD	GetMagicAtk			()				{ return 0; }
@@ -134,7 +146,10 @@ public: // IRole
 	//virtual int 	AdjustMagicDamage(int nDamage);
 	//virtual void	SetFightPause(int nInterval) { m_nFightPause = nInterval; }
 
+	virtual int GetClass() { return pData->GetClass(); }
 	virtual ELEMENT GetElement() { return element; }
+
+	virtual HSB	GetHSB(int idx) { return pData->GetHSB(idx); }
 
 	//virtual void	BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf = false);
 	//virtual void	BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf = false);

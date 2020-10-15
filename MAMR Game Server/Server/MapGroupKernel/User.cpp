@@ -1188,7 +1188,7 @@ DWORD CUser::GetLife()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CUser::GetMaxLife()
+double CUser::GetMaxLife()
 {
 	if(QueryTransformation())
 		return QueryTransformation()->GetMaxLife();
@@ -1266,7 +1266,7 @@ DWORD CUser::GetMaxPower()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CUser::GetAttack()
+double CUser::GetAttack()
 {
 	if(QueryTransformation())
 		return QueryTransformation()->GetAttack();
@@ -1452,7 +1452,7 @@ DWORD CUser::GetMgcMaxAtk()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CUser::GetDefence()
+double CUser::GetDefence()
 {
 	if(QueryTransformation())
 		return QueryTransformation()->GetDefence();
@@ -1482,7 +1482,7 @@ DWORD CUser::GetDefence()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CUser::GetDef()
+double CUser::GetDef()
 {
 	if(QueryTransformation())
 		return QueryTransformation()->GetDef();
@@ -1535,7 +1535,7 @@ DWORD CUser::GetDefence2()
 }
 
 //////////////////////////////////////////////////////////////////////
-DWORD CUser::GetDexterity()
+double CUser::GetDexterity()
 {
 	if(QueryTransformation())
 		return QueryTransformation()->GetDexterity();
