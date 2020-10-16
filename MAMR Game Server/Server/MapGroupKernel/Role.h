@@ -72,6 +72,7 @@ public: // get attrib
 	virtual I64		GetEffect			()						PURE_VIRTUAL_FUNCTION_0
 	virtual int 	GetPose				()						PURE_VIRTUAL_FUNCTION_0
 	virtual DWORD	GetLev				()						PURE_VIRTUAL_FUNCTION_0
+	virtual std::vector<HSB> GetHSBSets() { std::vector<HSB> hsb; return hsb; }
 
 	virtual DWORD	GetLife				()						{ return 0; }
 	virtual double	GetMaxLife			()						{ return 0; }

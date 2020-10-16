@@ -181,6 +181,9 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 	case _MSG_NPC:
 		pMsg = new CMsgNpc;
 		break;
+	case _MSG_NPCACTION:
+		pMsg = new CMsgNpcAction;
+		break;
 
 		//Old Messages, not yet implemented
 	/*case _MSG_TALK:

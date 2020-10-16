@@ -25,9 +25,11 @@ public:
 	CMsgDialog();
 	virtual ~CMsgDialog();
 	
-	BOOL	Create	(int nAction, LPCTSTR szText, int idxTask, int nData);
-	BOOL	Create	(int nAction, int x, int y, int nPic, int idxTask);
-	BOOL	Create	(int nAction, int idxTask);
+	//BOOL	Create	(int nAction, LPCTSTR szText, int idxTask, int nData);
+	//BOOL	Create	(int nAction, int x, int y, int nPic, int idxTask);
+	//BOOL	Create	(int nAction, int idxTask);
+
+	BOOL	Create	(int nAction, int nFace, std::vector<std::string> vMessages, std::vector<std::string> vResponses);
 
 public:
 	BOOL			Create		(char* pbufMsg, DWORD dwMsgSize);
@@ -37,16 +39,22 @@ private:
 	typedef struct {
 		MSGHEAD_DEFINE
 
-		union{
-			struct{
-				USHORT	usPosX;
-				USHORT	usPosY;
-			};
-			DWORD	idTask;			// panel task id, to server only
-		};
-		USHORT	usData;
-		UCHAR	idxTask;
-		UCHAR	ucAction;
+			/*union{
+				struct{
+					USHORT	usPosX;
+					USHORT	usPosY;
+				};
+				DWORD	idTask;			// panel task id, to server only
+			};*/
+		UCHAR	uc1;
+		UCHAR	uc2;
+		UCHAR	uc3;
+		UCHAR	uc4;
+		//USHORT	usData;
+		USHORT	usFace;
+		//UCHAR	idxTask;
+		//UCHAR	ucAction;
+		USHORT	usAction;
 		char	szBuf[1];
 		// szText
 	}MSG_Info;

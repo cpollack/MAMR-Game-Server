@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <ctype.h>
+#include <sstream>
 #include "define.h"
 #include "windows.h"
 #include "I_Role.h"
@@ -815,7 +816,7 @@ bool CGameAction::ProcessAction(OBJID idAction, CUser* pUser, IRole* pRole, CIte
 		{
 			DEADLOOP_CHECK(PID, "idAction: ")
 
-			CActionData* pAction	= ActionSet()->GetObj(idAction);
+			CActionData* pAction = ActionSet()->GetObj(idAction);
 			if (!pAction)
 			{
 				::LogSave("Error: game action %u not found.", idAction);
@@ -847,7 +848,9 @@ bool CGameAction::ProcessAction(OBJID idAction, CUser* pUser, IRole* pRole, CIte
 			// process action now!
 			bool	bRet = false;
 			int nActionType = pAction->GetInt(ACTIONDATA_TYPE);
-			if(nActionType > ACTION_SYS_FIRST && nActionType < ACTION_SYS_LIMIT)
+			if (nActionType > ACTION_MAM_FIRST && nActionType < ACTION_MAM_LIMIT)
+				bRet	= ProcessActionMAM(pAction, szParam, m_pUser, m_pRole, m_pItem, pszAccept);
+			else if(nActionType > ACTION_SYS_FIRST && nActionType < ACTION_SYS_LIMIT)
 				bRet	= ProcessActionSys	(pAction, szParam, m_pUser, m_pRole, m_pItem, pszAccept);
 			else if(nActionType > ACTION_NPC_FIRST && nActionType < ACTION_NPC_LIMIT)
 				bRet	= ProcessActionNpc	(pAction, szParam, m_pUser, m_pRole, m_pItem, pszAccept);
@@ -893,10 +896,136 @@ bool CGameAction::ProcessAction(OBJID idAction, CUser* pUser, IRole* pRole, CIte
 	catch(...)
 	{
 		ASSERT(!"catch");
-		::LogSave("Error: exception catched in CGameAction::ProcessAction(%u)", idAction);
+		::LogSave("Error: exception caught in CGameAction::ProcessAction(%u)", idAction);
 	}
 
 	return true;
+}
+
+bool CGameAction::ProcessActionMAM(CActionData* pAction, LPCTSTR szParam, CUser* pUser, IRole* pRole, CItem* pItem, LPCTSTR pszAccept)
+{
+	CHECKF(pAction);
+
+	switch (pAction->GetInt(ACTIONDATA_TYPE))
+	{
+	case	ACTION_ITEM_ADD:
+	{
+		CItem* pItem = pUser->AwardItem(pAction->GetInt(ACTIONDATA_DATA), SYNCHRO_FALSE, false, CUser::NO_COMBINE);
+		if (pItem)
+		{
+			std::string strParam(szParam);
+			std::istringstream iss(strParam);
+			std::string token;
+			//Modify item values by Param
+			while (std::getline(iss, token, ' '))
+			{
+				std::string strUpdate;
+				char* cTest;
+				int nUpdate;
+				if (token.find("name:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					pItem->SetStr(ITEMDATA_NAME, strUpdate.c_str(), strUpdate.length());
+				}
+				if (token.find("inventor:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					pItem->SetStr(ITEMDATA_INVENTOR, strUpdate.c_str(), strUpdate.length());
+				}
+
+				if (token.find("cost:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_COST, nUpdate);
+				}
+
+				if (token.find("action:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_ACTION, nUpdate);
+				}
+
+				if (token.find("exp:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_EXP, nUpdate);
+				}
+
+				if (token.find("life:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_LIFE, nUpdate);
+				}
+
+				if (token.find("mana:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_POWER, nUpdate);
+				}
+
+				if (token.find("attack:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_ATTACK, nUpdate);
+				}
+
+				if (token.find("defence:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_DEFENCE, nUpdate);
+				}
+
+				if (token.find("dexterity:") != std::string::npos) {
+					strUpdate = token.substr(token.find(':') + 1, std::string::npos);
+					nUpdate = std::strtoul(strUpdate.c_str(), &cTest, 10);
+					if (cTest) pItem->SetInt(ITEMDATA_DEXTERITY, nUpdate);
+				}
+
+				pItem->SaveInfo();
+			}
+
+			// synchro
+			CMsgItemInfo msg;
+			if (msg.Create(pItem, ITEMINFO_ADDITEM))
+				pUser->SendMsg(&msg);
+			return true;
+		}
+	} break;
+	case ACTION_NPC_DIALOGUE:
+	{
+		char szMessage[MAX_PARAMSIZE];
+		int nTriggerTask = 0;
+		int nRes = sscanf(szParam, "%s %d", szMessage, &nTriggerTask);
+		if (nRes == 1) {
+			pUser->PushDialogueMessage(szMessage);
+		}
+		else if (nRes == 2)
+		{
+			pUser->PushDialogueResponse(szMessage, nTriggerTask);
+		}
+		else {
+			LOGERROR("ACTION %u: TYPE %u - No param", pAction->GetID(), pAction->GetInt(ACTIONDATA_TYPE));
+			break;
+		}
+
+		return true;
+	} break;
+	case ACTION_NPC_DIALOGUE_SEND: 
+	{
+		int nFace = 0;
+		int nCancelTask = 0;
+		int nRes = sscanf(szParam, "%u %u", &nFace, &nCancelTask);
+		if (nRes > 0) pUser->SendDialogue(nFace, nCancelTask);
+		else {
+			LOGERROR("ACTION %u: TYPE %u - No param", pAction->GetID(), pAction->GetInt(ACTIONDATA_TYPE));
+			break;
+		}
+
+		return true;
+	} break;
+	default:
+		LOGERROR("Unsupported ACTION[%u] TYPE[%u]", pAction->GetKey(), pAction->GetInt(ACTIONDATA_TYPE));
+	} // switch
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1086,9 +1215,9 @@ bool CGameAction::ProcessActionSys(CActionData* pAction, LPCTSTR szParam, CUser*
 				return false;
 			}
 
-			CMsgDialog	msg;
-			CHECKF(msg.Create(MSGDIALOG_TEXT, szParam, INDEX_NONE, pAction->GetInt(ACTIONDATA_DATA)));
-			pUser->SendMsg(&msg);
+			//CMsgDialog	msg;
+			//CHECKF(msg.Create(MSGDIALOG_TEXT, szParam, INDEX_NONE, pAction->GetInt(ACTIONDATA_DATA)));
+			//pUser->SendMsg(&msg);
 			return true;
 		}
 		break;
@@ -1105,9 +1234,9 @@ bool CGameAction::ProcessActionSys(CActionData* pAction, LPCTSTR szParam, CUser*
 				break;
 			}
 
-			CMsgDialog	msg;
-			CHECKF(msg.Create(MSGDIALOG_LINK, szText, pUser->PushTaskID(idTask), nAlign));
-			pUser->SendMsg(&msg);
+			//CMsgDialog	msg;
+			//CHECKF(msg.Create(MSGDIALOG_LINK, szText, pUser->PushTaskID(idTask), nAlign));
+			//pUser->SendMsg(&msg);
 			return true;
 		}
 		break;
@@ -1124,9 +1253,9 @@ bool CGameAction::ProcessActionSys(CActionData* pAction, LPCTSTR szParam, CUser*
 				break;
 			}
 
-			CMsgDialog	msg;
-			CHECKF(msg.Create(MSGDIALOG_EDIT, szText, pUser->PushTaskID(idTask), nAcceptLen));
-			pUser->SendMsg(&msg);
+			//CMsgDialog	msg;
+			//CHECKF(msg.Create(MSGDIALOG_EDIT, szText, pUser->PushTaskID(idTask), nAcceptLen));
+			//pUser->SendMsg(&msg);
 			return true;
 		}
 		break;
@@ -1144,9 +1273,9 @@ bool CGameAction::ProcessActionSys(CActionData* pAction, LPCTSTR szParam, CUser*
 				break;
 			}
 
-			CMsgDialog	msg;
-			CHECKF(msg.Create(MSGDIALOG_PIC, x, y, idPic, pUser->PushTaskID(idTask)));
-			pUser->SendMsg(&msg);
+			//CMsgDialog	msg;
+			//CHECKF(msg.Create(MSGDIALOG_PIC, x, y, idPic, pUser->PushTaskID(idTask)));
+			//pUser->SendMsg(&msg);
 			return true;
 		}
 		break;
@@ -1172,9 +1301,9 @@ bool CGameAction::ProcessActionSys(CActionData* pAction, LPCTSTR szParam, CUser*
 			pszText++;
 			CHECKF(*pszText);
 
-			CMsgDialog	msg;
-			CHECKF(msg.Create(MSGDIALOG_LISTLINE, pszText, pUser->PushTaskID(idTask, idIter), idIter));
-			pUser->SendMsg(&msg);
+			//CMsgDialog	msg;
+			//CHECKF(msg.Create(MSGDIALOG_LISTLINE, pszText, pUser->PushTaskID(idTask, idIter), idIter));
+			//pUser->SendMsg(&msg);
 			return true;
 		}
 		break;
@@ -1185,9 +1314,9 @@ bool CGameAction::ProcessActionSys(CActionData* pAction, LPCTSTR szParam, CUser*
 			OBJID		idTask = ID_NONE;
 			sscanf(szParam, "%u", &idTask);
 
-			CMsgDialog	msg;
-			CHECKF(msg.Create(MSGDIALOG_CREATE, pUser->PushTaskID(idTask)));
-			pUser->SendMsg(&msg);
+			//CMsgDialog	msg;
+			//CHECKF(msg.Create(MSGDIALOG_CREATE, pUser->PushTaskID(idTask)));
+			//pUser->SendMsg(&msg);
 			return true;
 		}
 		break;

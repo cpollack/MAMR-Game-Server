@@ -22,6 +22,9 @@ public:
 	bool	ProcessAction	(OBJID idAction, CUser* pUser=NULL, IRole* pRole=NULL, CItem* pItem=NULL, LPCTSTR pszAccept=NULL);
 protected:
 	void	ReplaceAttrStr		(char* pszTarget, const char* pszSource, CUser* pUser, IRole* pRole, CItem* pItem, LPCTSTR pszAccept=NULL);
+	bool	ProcessActionMAM	(CActionData* pAction, LPCTSTR szParam, CUser* pUser, IRole* pRole, CItem* pItem, LPCTSTR pszAccept);
+
+	//Old Action Processors
 	bool	ProcessActionSys	(CActionData* pAction, LPCTSTR szParam, CUser* pUser, IRole* pRole, CItem* pItem, LPCTSTR pszAccept);
 	bool	ProcessActionNpc	(CActionData* pAction, LPCTSTR szParam, CUser* pUser, IRole* pRole, CItem* pItem, LPCTSTR pszAccept);
 	bool	ProcessActionMap	(CActionData* pAction, LPCTSTR szParam, CUser* pUser, IRole* pRole, CItem* pItem, LPCTSTR pszAccept);

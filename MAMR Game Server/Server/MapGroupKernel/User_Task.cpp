@@ -15,6 +15,8 @@
 //#include "WantedList.h"
 //#include "MercenaryTask.h"
 
+#include "Network/MsgDialog.h"
+
 const int	VAL_SKIPTEST	=999;
 const int	PRESENTMONEY_LIMIT		= 10000;			// 基金划拨不少于10000
 
@@ -194,11 +196,16 @@ bool CUser::ProcessTask(int idx, LPCTSTR pszAccept)
 	}
 	CHECKF(pNpc);
 
-	OBJID	idTask = GetTaskID(idx);
+	//What does this do? User specific tasks? It does not currently work
+	//OBJID	idTask = GetTaskID(idx);
+	//if (idTask == ID_NONE)
+	//	return false;
+	//SetIterID(idx);
+	//ClearTaskID();
+
+	OBJID idTask = idx;
 	if (idTask == ID_NONE)
 		return false;
-	SetIterID(idx);
-	ClearTaskID();
 
 	CTaskData* pTask = TaskSet()->GetObj(idTask);
 	IF_NOT(pTask)
@@ -225,6 +232,44 @@ bool CUser::ProcessTask(int idx, LPCTSTR pszAccept)
 		GameAction()->ProcessAction(idNext, this, pNpc->QueryRole(), NULL, pszAccept);
 
 	return true;
+}
+
+bool CUser::ProcessDialogueTask(int idx) {
+	if (idx < 0 || idx > 4) {
+		LOGERROR("CUser::ProcessDialogueTask(): Invalid dialogue response index %d", idx);
+		return false;
+	}
+	int nTask = m_dialogueTasks[idx];
+	ProcessTask(nTask, "");
+}
+
+bool CUser::PushDialogueMessage(string strMessage) {
+	if (m_dialogueMessages.size() >= 16) return false;
+	m_dialogueMessages.push_back(strMessage);
+}
+
+bool CUser::PushDialogueResponse(string strResponse, int runTask) {
+	if (m_dialogueResponses.size() >= 4) return false;
+	m_dialogueResponses.push_back(strResponse);
+	m_dialogueTasks[m_dialogueResponses.size()] = runTask;
+}
+
+void CUser::ClearDialogue() {
+	m_dialogueMessages.clear();
+	m_dialogueResponses.clear();
+}
+
+bool CUser::SendDialogue(int nFace, int nCloseTask) {
+	m_dialogueTasks[0] = nCloseTask;
+	CMsgDialog msg;
+	if (msg.Create(MSGDIALOG_CREATE, nFace, m_dialogueMessages, m_dialogueResponses)) {
+		SendMsg(&msg);
+		ClearDialogue();
+		return true;
+	}
+
+	ClearDialogue();
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////

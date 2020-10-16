@@ -160,8 +160,9 @@ bool CGameMap::QueryObj(int nCenterX, int nCenterY, OBJID idObjType, OBJID idObj
 	CHECKF(idObjType != ID_NONE);
 
 	void* pTemp = NULL;
-	int x,y,z;
-	FOR_9_BLOCKTHINGS(this, nCenterX, nCenterY)
+	int x=0,y=0,z;
+	for (z = 0; z < BlockByIndex(0,0).QuerySet()->GetAmount(); z++)
+	//FOR_9_BLOCKTHINGS(this, nCenterX, nCenterY)
 	{
 		IMapThing* pTarget = QueryThingByIndex(x,y,z);
 		if(pTarget && pTarget->QueryObj(idObjType, &pTemp))

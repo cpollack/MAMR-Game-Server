@@ -883,6 +883,7 @@ public: // task & action -------------------------------------------------------
 	void	SetTaskItemActionID(OBJID idAction)					{ m_idTaskItemAction = idAction; }
 	bool	TestTask		(CTaskData* pTask);
 	bool	ProcessTask		(int idx, LPCTSTR pszAccept);
+	bool	ProcessDialogueTask	(int idx);
 	bool	ProcessClientTask(OBJID idTask, LPCTSTR pszAccept);
 //	bool	ProcessAction	(OBJID idAction, IRole* pRole = NULL, CItem* pItem = NULL, LPCTSTR pszAccept = NULL);
 	bool	DebugShowAction	()									{ m_bDebugAction = !m_bDebugAction; return m_bDebugAction; }
@@ -893,6 +894,11 @@ public: // task & action -------------------------------------------------------
 	int		PushTaskID			(OBJID idTask, OBJID idIter);
 	CUserData* QueryDataForAction()								{ return &m_data; }
 	void 	SetRecordPos	(OBJID idMap, DWORD dwX, DWORD dwY, BOOL bUpdate = false);
+
+	bool PushDialogueMessage(string strMessage);
+	bool PushDialogueResponse(string strResponse, int runTask);
+	void ClearDialogue();
+	bool SendDialogue(int nFace, int nCloseTask);
 
 	void	AddTaskMask		(int idx);
 	void	ClrTaskMask		(int idx);
@@ -917,6 +923,11 @@ protected:
 	OBJID					m_idTaskItem;
 	bool					m_bDebugAction;				// 是否给GM显示每条ACTION的执行细节
 	int						m_nTaskIterator;			// 用于在任务系统中叠代
+
+	//for dialogue
+	vector<string> m_dialogueResponses; //max 4
+	vector<string> m_dialogueMessages; //max 16
+	int m_dialogueTasks[5];
 	
 public:	// wanted
 	WantedInfoStruct& WantedInfo(void)		{ return m_data.GetInfo().infoWanted; }

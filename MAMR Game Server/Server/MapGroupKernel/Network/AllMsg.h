@@ -34,6 +34,7 @@
 #include "MsgWeather.h"
 
 #include "MsgNpc.h"
+#include "MsgNpcAction.h"
 #include "MsgNpcInfo.h"
 #include "MsgNpcInfoEx.h"
 #include "MsgAiNpcInfo.h"

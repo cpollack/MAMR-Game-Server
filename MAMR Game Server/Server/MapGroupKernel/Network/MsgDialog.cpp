@@ -26,7 +26,7 @@ CMsgDialog::~CMsgDialog()
 }
 
 //////////////////////////////////////////////////////////////////////
-BOOL CMsgDialog::Create	(int nAction, LPCTSTR szText, int idxTask, int nData)
+/*BOOL CMsgDialog::Create	(int nAction, LPCTSTR szText, int idxTask, int nData)
 {
 	CHECKF(szText);
 
@@ -88,6 +88,42 @@ BOOL CMsgDialog::Create	(int nAction, int idxTask)
 	m_unMsgSize	=sizeof(MSG_Info)-1+m_StrPacker.GetSize();
 
 	return true;
+}*/
+
+BOOL CMsgDialog::Create(int nAction, int nFace, std::vector<std::string> vMessages, std::vector<std::string> vResponses) {
+	CHECKF(nAction == MSGDIALOG_CREATE);
+
+	// fill
+	this->Init();
+
+	// fill structure
+	m_pInfo->uc1 = 0;
+	m_pInfo->uc2 = 0;
+	m_pInfo->uc3 = 0;
+	m_pInfo->uc4 = 0;
+	m_pInfo->usFace = nFace;
+	m_pInfo->usAction = nAction;
+
+	BOOL ret;
+	for (int i = 0; i < 4; i++) {
+		if (vResponses.size() > i) {
+			ret = m_StrPacker.AddString(vResponses[i].c_str());
+			if (!ret) return ret;
+		}
+		else {
+			ret = m_StrPacker.AddString("");
+			if (!ret) return ret;
+		}
+	}
+	for (int i = 0; i < vMessages.size() && i < 16; i++) {
+		ret = m_StrPacker.AddString(vMessages[i].c_str());
+		if (!ret) return ret;
+	}
+
+	m_unMsgType = _MSG_DIALOG;
+	m_unMsgSize = sizeof(MSG_Info) - 1 + m_StrPacker.GetSize();
+
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -110,7 +146,7 @@ void CMsgDialog::Process(void *pInfo)
 						szWords);
 #endif
 
-	char* pAccept = "";
+	/*char* pAccept = "";
 	char szText[MAX_PARAMSIZE];
 	if(m_StrPacker.GetString(0, szText, sizeof(szText)))
 		pAccept	= szText;
@@ -137,5 +173,5 @@ void CMsgDialog::Process(void *pInfo)
 			pUser->ProcessClientTask(m_pInfo->idTask, pAccept);
 		}
 		break;
-	}
+	}*/
 }

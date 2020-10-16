@@ -171,6 +171,9 @@ enum NPCDATA{
 		//NPCDATA_SIZE_RIGHT,
 
 		//HSB0-2?
+		NPCDATA_HUE0,
+		NPCDATA_SATURATION0,
+		NPCDATA_BRIGHT0,
 };
 
 typedef	IGameData<NPCDATA>	INpcData;
@@ -223,6 +226,7 @@ public: // get attrib
 	virtual I64		GetEffect			()						{ return m_i64Effect; }
 	virtual int 	GetPose				()						{ return m_pData->GetInt(STATUARYDATA_POSE); }
 	virtual DWORD	GetLev				()						{ if(IsGoal()) return GetData(GOALNPC_LEVEL); return 0; }
+	virtual std::vector<HSB> GetHSBSets();
 
 	//virtual DWORD	GetLife				()						{ return m_pData->GetInt(NPCDATA_LIFE); }
 	//virtual DWORD	GetMaxLife			()						{ return m_pData->GetInt(NPCDATA_MAXLIFE); }
@@ -233,6 +237,8 @@ public: // get attrib
 	virtual int		GetWeaponRTypeID	();
 	virtual int 	GetWeaponLTypeID	();
 	virtual int 	GetMountTypeID		();
+
+
 
 //	virtual CGameMap*	GetMap			()						{ CHECKF(m_pMap); return m_pMap; }
 

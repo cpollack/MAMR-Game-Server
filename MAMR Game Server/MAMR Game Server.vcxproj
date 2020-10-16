@@ -207,6 +207,7 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgName.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgNormalAct.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgNpc.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcAction.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcInfo.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcInfoEx.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgPackage.cpp" />
@@ -406,6 +407,7 @@
     <ClInclude Include="Server\MapGroupKernel\Network\MsgName.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgNormalAct.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgNpc.h" />
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcAction.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcInfo.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcInfoEx.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgPackage.h" />

@@ -609,6 +609,9 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgBattleResult.cpp">
       <Filter>Server\MapGroupKernel\Battle\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcAction.cpp">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\Array.h">
@@ -1252,6 +1255,9 @@
     </ClInclude>
     <ClInclude Include="Server\MapGroupKernel\Network\MsgBattleResult.h">
       <Filter>Server\MapGroupKernel\Battle\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcAction.h">
+      <Filter>Server\MapGroupKernel\NPC\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

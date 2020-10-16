@@ -15,7 +15,7 @@
 CMsgNpcInfo::CMsgNpcInfo()
 {
 	Init();
-	m_pInfo	=(MSG_Info *)m_bufMsg;
+	m_pInfo	= (MSG_Info *)m_bufMsg;
 
 	//m_StrPacker.SetBuf(m_pInfo->szBuf, _MAX_MSGSIZE-sizeof(MSG_Info)+1);
 }
@@ -41,7 +41,23 @@ BOOL CMsgNpcInfo::Create(CNpc* pNpc, int nMode)
 	m_pInfo->wCellY		= pNpc->GetPosY();
 
 	strcpy(m_pInfo->szName, pNpc->GetName());
-	for (int i = 0; i < 15; i++) m_pInfo->bColorSets[i] = 0;
+
+	std::vector<HSB> hsbSets = pNpc->GetHSBSets();
+	for (int i = 0; i < 3; i++) {
+		m_pInfo->bColorSets[(i * 5)] = i == 0 ? 32 : i == 1 ? 96 : 127;
+		m_pInfo->bColorSets[(i * 5) + 2] = 8;
+		if (i < hsbSets.size()) {
+			HSB hsb = hsbSets[i];
+			m_pInfo->bColorSets[(i * 5) + 1] = hsb.hue;
+			m_pInfo->bColorSets[(i * 5) + 3] = hsb.sat;
+			m_pInfo->bColorSets[(i * 5) + 4] = hsb.bright;
+		}
+		else {
+			m_pInfo->bColorSets[(i * 5) + 1] = 0;
+			m_pInfo->bColorSets[(i * 5) + 3] = 0;
+			m_pInfo->bColorSets[(i * 5) + 4] = 0;
+		}
+	}
 
 	m_unMsgType	=_MSG_NPCINFO;
 	m_unMsgSize	=sizeof(MSG_Info);

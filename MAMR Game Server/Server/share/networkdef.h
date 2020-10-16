@@ -39,10 +39,12 @@ const unsigned short _MSG_BATTLEROUND	= _MSG_GENERAL + 1012;
 
 const unsigned short _MSG_NPCINFO		= _MSG_GENERAL + 1030;
 const unsigned short _MSG_NPC			= _MSG_GENERAL + 1031;
+const unsigned short _MSG_NPCACTION		= _MSG_GENERAL + 1032;
+const unsigned short _MSG_DIALOG		= _MSG_GENERAL + 1033;
 
 //Uncleaned
 
-const unsigned short _MSG_REGISTER		=_MSG_GENERAL+1;
+const unsigned short _MSG_REGISTER		=_MSG_GENERAL+1; //not used, role is used instead
 const unsigned short _MSG_LOGIN			=_MSG_GENERAL+2;
 const unsigned short _MSG_LOGIN_c		=_MSG_GENERAL+2; //special login override, original used for npc server?
 const unsigned short _MSG_LOGOUT		=_MSG_GENERAL+3;
@@ -83,7 +85,6 @@ const unsigned short _MSG_SYNMEMBERINFO	=_MSG_GENERAL+112;
 const unsigned short _MSG_DICE			=_MSG_GENERAL+113;
 const unsigned short _MSG_SYNINFO		=_MSG_GENERAL+114;
 
-const unsigned short _MSG_DIALOG		=_MSG_GENERAL+1032;
 const unsigned short _MSG_FRIENDINFO	=_MSG_GENERAL+1033;
 const unsigned short _MSG_TIME			=_MSG_GENERAL+1034; 
 const unsigned short _MSG_CALLPETINFO	=_MSG_GENERAL+1035;

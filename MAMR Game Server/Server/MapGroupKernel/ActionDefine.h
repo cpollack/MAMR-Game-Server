@@ -73,6 +73,14 @@ const char	PARA_ITER_TASK_BEGINTIME[]		= "iter_task_begintime";    //¶ÔÈÎÎñ¿ªÊ¼Ê
 
 ////////////////////////////////////////////////////////////////////////
 enum {
+	//-------------------------------------------------------------------------- MAM ACTIONS --------------------------------------------------------------------------
+		ACTION_MAM_FIRST			= 1,
+		ACTION_ITEM_ADD				= 1,
+		ACTION_NPC_DIALOGUE			= 68,
+		ACTION_NPC_DIALOGUE_SEND	= 69,
+		ACTION_MAM_LIMIT			= 140,
+
+	//-------------------------------------------------------------------------- OLD ACTIONS --------------------------------------------------------------------------
 		// system part, need user ptr --------------------------------------------------------------------------
 		ACTION_SYS_FIRST			= 100,
 		ACTION_MENUTEXT				= 101,			// ²Ëµ¥ÎÄ±¾¡£data:ÏÔÊ¾ĞĞÊı(È±Ê¡Îª0), param="text"(¿ÉÑ¡): ÏÔÊ¾ÎÄ±¾£¬´ËÀàĞÍ¿É°üº¬¿Õ¸ñ£¬Ò²¿ÉÎª¿ÕĞĞ¡£
@@ -138,7 +146,7 @@ enum {
 
 		// user item part, need user ptr --------------------------------------------------------------------------
 		ACTION_ITEM_FIRST			= 500,
-		ACTION_ITEM_ADD				= 501,			// Ìí¼ÓÎïÆ·¡£data=itemtype_id, param="amount amount_limit ident gem1 gem2 magic1 magic2 magic3 data warghostexp gemtype availabletime", param¿ÉÊ¡ÂÔ£¬ËùÓĞÈ±Ê¡ÖµÎª0(±íÊ¾²»ĞŞ¸Ä)
+		//ACTION_ITEM_ADD				= 501,			// Ìí¼ÓÎïÆ·¡£data=itemtype_id, param="amount amount_limit ident gem1 gem2 magic1 magic2 magic3 data warghostexp gemtype availabletime", param¿ÉÊ¡ÂÔ£¬ËùÓĞÈ±Ê¡ÖµÎª0(±íÊ¾²»ĞŞ¸Ä)
 		ACTION_ITEM_DEL				= 502,			// É¾³ıÎïÆ·¡£data=itemtype_id, param²»Îª0Ê±£¬¿Éµş¼ÓÀàÎïÆ·»áÍ¬Ê±É¾³ı¶à¸ö¡£»òÕßdataÎª0£¬param±íÊ¾ÒªÉ¾³ıµÄÎïÆ·Ãû¡£
 		ACTION_ITEM_CHECK			= 503,			// ¼ì²âÎïÆ·¡£data=itemtype_id, param²»Îª0Ê±£¬Í¬Ê±¼ì²éÎïÆ·µÄÊıÁ¿(»òÄÍ¾Ã¶È)£¬´ËÎïÆ·±ØĞë´ïµ½ÒªÇóµÄÊıÁ¿(»òÄÍ¾Ã¶È)²ÅĞĞ¡£»òÕßdataÎª0£¬param±íÊ¾ÒªÕÒµÄÎïÆ·Ãû¡£
 		ACTION_ITEM_HOLE			= 504,			// ÎäÆ÷´ò¶´¡£param Ö§³Ö "ChkHole HoleNum" »òÕß"MakeHole HoleNum"£¬NumÎª1»òÕß2

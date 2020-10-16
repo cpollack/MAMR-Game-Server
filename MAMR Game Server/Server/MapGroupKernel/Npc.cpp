@@ -445,6 +445,18 @@ bool CNpc::CreateFuncObj(PROCESS_ID idProcess)
 	return true;		//@
 }
 
+std::vector<HSB> CNpc::GetHSBSets() {
+	std::vector<HSB> hsbSets;
+	for (int i = 0; i < 3; i++) {
+		HSB hsb;
+		hsb.hue = m_pData->GetInt((NPCDATA)(NPCDATA_HUE0 + (i*3)));
+		hsb.sat = m_pData->GetInt((NPCDATA)(NPCDATA_SATURATION0 + (i * 3)));
+		hsb.bright = m_pData->GetInt((NPCDATA)(NPCDATA_BRIGHT0 + (i * 3)));
+		hsbSets.push_back(hsb);
+	}
+	return hsbSets;
+}
+
 int CNpc::GetMountTypeID()
 { return IsShelfNpc() ? QueryTrunk()->QueryPackage()->GetItemType(0) : m_pData->GetInt(STATUARYDATA_HELMET); }
 int CNpc::GetArmorTypeID()
