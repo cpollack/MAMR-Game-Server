@@ -50,8 +50,8 @@ BOOL CMsgPetInfo::Create(CPet *pPet, PETINFO_ACTION action)
 	m_pInfo->wDexterity = pData->GetDexterity();
 	m_pInfo->dwLevel = pData->GetLevel();
 	m_pInfo->dwExperience = pData->GetExperience();
-	m_pInfo->wLifeCurrent = pData->GetMaxLife();
-	m_pInfo->wLifeMax = pData->GetLife();
+	m_pInfo->wLifeCurrent = pData->GetLife();
+	m_pInfo->wLifeMax = pData->GetMaxLife();
 	m_pInfo->bGeneration = pData->GetGeneration();
 	
 	m_pInfo->bSkillCount = pData->GetSkillCount();

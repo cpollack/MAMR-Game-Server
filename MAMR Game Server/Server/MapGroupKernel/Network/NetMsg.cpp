@@ -152,6 +152,9 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 	case _MSG_ACTION:
 		pMsg = new CMsgAction;
 		break;
+	case _MSG_ITEM:
+		pMsg = new CMsgItem;
+		break;
 	case _MSG_DIRECTION:
 		pMsg = new CMsgDirection;
 		break;
@@ -203,9 +206,6 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 		break;
 	case _MSG_ITEMINFO:
 		pMsg	=new CMsgItemInfo;
-		break;
-	case _MSG_ITEM:
-		pMsg	=new CMsgItem;
 		break;
 	case _MSG_FRIEND:
 		pMsg	=new CMsgFriend;

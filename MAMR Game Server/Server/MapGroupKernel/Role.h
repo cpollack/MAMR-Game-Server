@@ -74,6 +74,7 @@ public: // get attrib
 	virtual DWORD	GetLev				()						PURE_VIRTUAL_FUNCTION_0
 	virtual std::vector<HSB> GetHSBSets() { std::vector<HSB> hsb; return hsb; }
 
+	virtual void	SetLife				(int nLife, BOOL bUpdate = false)	PURE_VIRTUAL_FUNCTION
 	virtual DWORD	GetLife				()						{ return 0; }
 	virtual double	GetMaxLife			()						{ return 0; }
 
@@ -221,6 +222,7 @@ public:	// 为了修改魔法系统而增加的部分，等魔法系统修改完再做整理 -- zlong 2005-
 	virtual void	SendGemEffect()											{}
 	virtual bool	IsEmbedGemType(int nGemType)							{ return false; }
 	
+	virtual void	SetMana(int nMana, BOOL bUpdate = false)				{ return; }
 	virtual DWORD	GetMana()												{ return 0; }
 	virtual DWORD	GetMaxMana()											{ return 0; }
 	

@@ -9,6 +9,8 @@ enum PETACTION {
 	PETACTION_FORGETSKILL = 5,
 	PETACTION_USEITEM = 7,
 	PETACTION_FULLHEAL = 18,
+	PETACTION_EXP = 19,
+	PETACTION_LOYALTY = 20,
 };
 
 class CPet;
@@ -18,7 +20,7 @@ public:
 	CMsgPetAction();
 	virtual ~CMsgPetAction();
 
-	BOOL	Create(OBJID petID, OBJID useID, PETACTION action);
+	BOOL	Create(OBJID petID, DWORD dwData, PETACTION action);
 public:	
 	BOOL			Create		(char* pMsgBuf, DWORD dwSize);
 	void			Process		(CGameSocket* pSocket);
@@ -29,7 +31,7 @@ protected:
 		MSGHEAD_DEFINE
 
 		OBJID petID;
-		OBJID useID;
+		DWORD dwData; //Can also be an item id
 		DWORD dwAction;
 	}MSG_Info;
 	MSG_Info*	m_pInfo;

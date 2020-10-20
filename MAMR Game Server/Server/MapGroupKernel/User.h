@@ -323,11 +323,14 @@ public: // IRole
 	virtual OBJID	GetMateID		();
 //	virtual bool	AddItem			(CItem* pItem);
 
-	void	SetLife(int nLife, BOOL bUpdate=false);
+	virtual void	SetLife				(int nLife, BOOL bUpdate=false);
 	virtual DWORD	GetLife				();
 	virtual double	GetMaxLife			();
-	virtual DWORD	GetPower			()			{ return m_data.GetPower(); }	// not over
+	virtual DWORD	GetPower			();
 	virtual DWORD	GetMaxPower			();
+	virtual void	SetMana				(int nMana, BOOL bUpdate = false);
+	virtual DWORD	GetMana				() { return GetPower(); }
+	virtual DWORD	GetMaxMana			() { return GetMaxPower(); }
 
 	virtual DWORD	GetMinAtk			();
 	virtual DWORD	GetMaxAtk			();
@@ -825,9 +828,9 @@ public: // item ------------------------------------------
 	bool	DelItem			(OBJID idItem, bool bSynchro);
 	bool	DelItemPt		(OBJID idItem);							// 只删除指针
 	CItem*	PopItem			(OBJID idItem, bool bSynchro, bool bUpdate);			// 立即清除OWNER
-	bool	TryItem			(OBJID idItem, int nPosition);
+	bool	TryItem			(OBJID idItem);
 	bool	ChkUseItem		(CItem* pItem, IRole* pTarget);
-	bool	UseItem			(OBJID idItem, int nPosition, bool bSynchro);
+	bool	UseItem			(OBJID idItem, bool bSynchro);
 	bool	UseItemTo		(OBJID idTarget, OBJID idItem);			// 对别人使用物品 -- zlong 2004.09.23
 	bool	UserItemToByType(OBJID idTarget, OBJID idType);			// 根据物品类型对别人使用物品——用于武器附带的魔魂宝石攻击效果
 	bool	UnEquipItem		(int nPosition, bool bSynchro);
@@ -856,7 +859,7 @@ public: // item ------------------------------------------
 	virtual bool	SpendArrow();
 	bool	SpendItem(CItem* pItem, int nNum=1, int nPosition=ITEMPOSITION_BACKPACK, bool bSynchro=true);	// may be erase
 protected:
-	bool	EquipItem		(CItem* pItem, int nPosition, bool bSynchro);
+	bool	EquipItem		(CItem* pItem, bool bSynchro);
 	CItem*	UnEquipOnly		(int nPosition);
 	void	UpdateWeight	();
 	void	UpdateEquipmentDurability	();

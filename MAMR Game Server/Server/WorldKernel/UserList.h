@@ -84,7 +84,7 @@ public:
 	CPlayer*	GetPlayerByAccount(LPCTSTR szAccount);
 	CPlayer*	GetPlayerByAccountID(OBJID idAccount);
 	CPlayer*	GetGM()		{ if (m_setGm.size() <= 0) return NULL; else return this->GetPlayer(m_setGm.front()); }
-	bool	CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickName,
+	int	CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickName,
 							int unLook, UCHAR ucFace, int nPhysique, int nStamina, int nForce, int nSpeed, int nDegree, HSB* hsb);
 	void	ChangeProcessID(SOCKET_ID idSocket, PROCESS_ID idProcess);
 	bool	IsLoginMapGroup(SOCKET_ID idSocket)			{ return (idSocket>=0 && idSocket<m_setUser.size() && m_setUser[idSocket] && m_setUser[idSocket]->idProcess >= MSGPORT_MAPGROUP_FIRST); }

@@ -58,6 +58,7 @@ public:
 
 public:
 	virtual bool	Create		(CUser* pUser, IDatabase* pDb)					PURE_VIRTUAL_FUNCTION_0
+	virtual int		GetNextSlotID()												PURE_VIRTUAL_FUNCTION_0
 	virtual bool	AddItem		(CItem* pItem, bool bUpdate = false)			PURE_VIRTUAL_FUNCTION_0
 	virtual bool	DelItem		(OBJID idItem)									PURE_VIRTUAL_FUNCTION_0
 	virtual CItem*	PopItem		(OBJID idItem)									PURE_VIRTUAL_FUNCTION_0
@@ -109,6 +110,7 @@ public:
 
 public: // IUserPackage
 	bool	Create		(CUser* pUser, IDatabase* pDb);
+	int		GetNextSlotID();
 	bool	AddItem		(CItem* pItem, bool bUpdate = false);
 	bool	DelItem		(OBJID idItem);
 	CItem*	PopItem		(OBJID idItem);

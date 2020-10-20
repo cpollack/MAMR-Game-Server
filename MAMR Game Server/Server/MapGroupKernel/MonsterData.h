@@ -52,7 +52,7 @@ protected:
 	bool	LoadInfo				();
 
 public: // set to info, use by CMonster
-	void			SetId(OBJID oId) { info.id = oId; }
+	void			SetID(OBJID oId) { info.id = oId; }
 	OBJID			GetID() { return info.id; }
 
 	void			SetName(const char* pszName);

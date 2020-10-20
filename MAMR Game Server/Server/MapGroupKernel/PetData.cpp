@@ -128,3 +128,14 @@ void CPetData::SetName(const char* pszName) {
 
 	strcpy(info.szName, pszName);
 }
+
+void CPetData::SetLife(int nLife, BOOL bUpdate) {
+	if (nLife < 0) nLife = 0;
+	info.Life = nLife;
+	if (pRes)
+	{
+		pRes->SetDWord("life", nLife);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}

@@ -1337,3 +1337,23 @@ bool CGameMap::CreateMonstersForBattle(MONSTER_SET &monsterSet, int x, int y) {
 
 	return true;
 }
+
+bool CGameMap::GetBattleRewardActions(int x, int y, int& awardCommon, int& awardRare) {
+	if (abs(x - m_pData->GetInt(GAMEMAPDATA_AREA1_X)) <= m_pData->GetInt(GAMEMAPDATA_AREA1_RANGE) && abs(y - m_pData->GetInt(GAMEMAPDATA_AREA1_Y)) <= m_pData->GetInt(GAMEMAPDATA_AREA1_RANGE)) {
+		awardCommon = m_pData->GetInt(GAMEMAPDATA_AREA1_AWARD0);
+		awardRare = m_pData->GetInt(GAMEMAPDATA_AREA1_AWARD1);
+		return true;
+	}
+	else if (abs(x - m_pData->GetInt(GAMEMAPDATA_AREA0_X)) <= m_pData->GetInt(GAMEMAPDATA_AREA0_RANGE) && abs(y - m_pData->GetInt(GAMEMAPDATA_AREA0_Y)) <= m_pData->GetInt(GAMEMAPDATA_AREA0_RANGE)) {
+		awardCommon = m_pData->GetInt(GAMEMAPDATA_AREA0_AWARD0);
+		awardRare = m_pData->GetInt(GAMEMAPDATA_AREA0_AWARD1);
+		return true;
+	}
+	else {
+		awardCommon = m_pData->GetInt(GAMEMAPDATA_AWARD0);
+		awardRare = m_pData->GetInt(GAMEMAPDATA_AWARD1);
+		return true;
+	}
+
+	return false;
+}

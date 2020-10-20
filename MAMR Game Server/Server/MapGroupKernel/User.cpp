@@ -751,6 +751,23 @@ void CUser::SetAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 	
 	switch(idxAttr)
 	{
+	case	_USERATTRIB_LIFE:
+	{
+		i64Data = __max(0, __min(this->GetMaxLife(), i64Data));
+
+		SetLife(i64Data);
+
+		// 血超过70%的时候解除狂暴状态
+		/*if (GetLife() * 100 / GetMaxLife() > MAX_FRENZY_LIFE_PERCENT)
+		{
+			CRole::DetachStatus(this->QueryRole(), STATUS_FRENZY);
+		}*/
+
+		if (!msg.Append(_USERATTRIB_LIFE, GetLife()))
+			return;
+	} break;
+	
+	//Not cleaned
 	case	_USERATTRIB_ENERGY:
 		{
 			this->SetEnergy(i64Data);
@@ -770,22 +787,6 @@ void CUser::SetAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 		{
 			m_data.SetPk(i64Data, true);
 			if(!msg.Append(_USERATTRIB_PK, this->GetPk()))
-				return;
-		}
-		break;
-	case	_USERATTRIB_LIFE:
-		{
-			i64Data = __max(0, __min(this->GetMaxLife(), i64Data));
-
-			SetLife(i64Data);
-
-			// 血超过70%的时候解除狂暴状态
-			if (GetLife()*100/GetMaxLife() > MAX_FRENZY_LIFE_PERCENT)
-			{
-				CRole::DetachStatus(this->QueryRole(), STATUS_FRENZY);
-			}
-			
-			if(!msg.Append(_USERATTRIB_LIFE, GetLife()))
 				return;
 		}
 		break;
@@ -1159,7 +1160,7 @@ void CUser::SetLife(int nLife, BOOL bUpdate)
 	m_data.SetLife(nLife, bUpdate);
 
 	// 调整移动速度
-	IStatus* pStatus = this->QueryStatus(STATUS_SLOWDOWN2);
+	/*IStatus* pStatus = this->QueryStatus(STATUS_SLOWDOWN2);
 	if (pStatus)
 	{
 		if ((nOldLife*2 < this->GetMaxLife() && this->GetLife()*2 >= this->GetMaxLife())
@@ -1169,7 +1170,7 @@ void CUser::SetLife(int nLife, BOOL bUpdate)
 			if (msg.Create(this->GetID(), _USERATTRIB_SPEED, AdjustSpeed(this->GetSpeed())))
 				this->BroadcastRoomMsg(&msg, INCLUDE_SELF);
 		}
-	}
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1206,7 +1207,11 @@ double CUser::GetMaxLife()
 		nMaxLife += m_data.GetHealth() * 6;
 		break;
 	}*/
-	int nMaxLife = (3 * m_data.GetLife()) + 30;	// 基础生命 = 体质 * 10;	// 体质就是耐力
+	int nMaxLife = (3 * GetPhysique()) + 30;	// 基础生命 = 体质 * 10;	// 体质就是耐力
+	nMaxLife += (m_data.GetStamina() + m_data.GetForce() + m_data.GetSpeed()) / 4;
+	nMaxLife += 5 * m_data.GetStamina() / 100;
+	nMaxLife += 5 * m_data.GetForce() / 100;
+	nMaxLife += 5 * m_data.GetSpeed() / 100;
 
 	/*for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
@@ -1230,6 +1235,20 @@ double CUser::GetMaxLife()
 		nMaxLife += m_nLinkValue;*/
 
 	return __max(0, nMaxLife);
+}
+
+//////////////////////////////////////////////////////////////////////
+void CUser::SetMana(int nMana, BOOL bUpdate)
+{
+	m_data.SetLife(nMana, bUpdate);
+}
+
+DWORD CUser::GetPower() {
+	int nMaxPower = this->GetMaxPower();
+	if (m_data.GetPower() > nMaxPower)
+		m_data.SetPower(nMaxPower);
+
+	return m_data.GetPower();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3167,6 +3186,7 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 /////////////////////////////////////////////////////////////////////////////
 void CUser::AwardBattleExp(int nExp, bool bGemEffect/*=true*/)
 {// 本函数操作战斗中得到或者扣除经验值。
+	return; //temp before cleaned
 	if (GetLev() > ADJUST_EXPFORMAT_LEVEL)
 		nExp /= 10;
 
@@ -3506,6 +3526,7 @@ bool CUser::Init			()		// login 和 change map_group都要执行的操作
 void CUser::SaveInfo			()
 {
 	m_data.SaveInfo();
+	//save all pet
 	SaveItemInfo();
 	//SaveAllWeaponSkillInfo();
 	m_pMagic->SaveInfo();

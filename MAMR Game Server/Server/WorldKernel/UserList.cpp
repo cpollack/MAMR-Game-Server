@@ -452,11 +452,11 @@ CPlayer* CUserList::GetPlayerByAccountID(OBJID idAccount)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickName,
+int CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickName,
 						int unLook, UCHAR ucFace, int nPhysique, int nStamina, int nForce, int nSpeed, int nDegree, HSB* hsb)
 {
 	CPlayer* pPlayer = GetPlayerByAccountID(idAccount);
-	if (!pPlayer) return false;
+	if (!pPlayer) return 0;
 
 	SQLBUF	szSQL;
 	sprintf(szSQL, "SELECT * FROM %s WHERE name=%s", _TBL_USER, szName);
@@ -466,13 +466,13 @@ bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickNa
 		CMsgTalkW	msg;
 		if (msg.Create(SYSTEM_NAME, ALLUSERS_NAME, STR_ERROR_DUPLICATE_NAME, NULL, _COLOR_WHITE, _TXTATR_REGISTER))
 			pPlayer->SendMsg(&msg);
-		return false;
+		return 0;
 	}
 
 	int idMap	= DEFAULT_LOGIN_MAPID;					// Default logon point map
 	CMapSt* pMap = MapList()->GetMap(idMap);
 	if(!pMap)
-		return false;
+		return 0;
 
 	//Attributes
 	nPhysique++;
@@ -505,21 +505,14 @@ bool CUserList::CreateNewPlayer(OBJID idAccount, LPCTSTR szName, LPCSTR szNickNa
 					nPhysique, nStamina, nForce, nSpeed, nDegree, DEFAULT_ALLOT_POINT);
 	GameWorld()->GetDatabase()->ExecuteSQL(szSQL);
 
-	int userId = 0;
-	sprintf(szSQL, "SELECT id FROM %s WHERE account_id=%d", _TBL_USER, idAccount);
-	pUserRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
-	if (pUserRes) {
-		userId = pUserRes->GetInt(0);
-		pUserRes->Release();
-	}
-	if (!userId) return false;
+	int userId = GameWorld()->GetDatabase()->GetInsertId();
 
 	sprintf(szSQL, "INSERT %s SET id_user=%d, hue0=%d,saturation0=%d,bright0=%d,hue1=%d,saturation1=%d,bright1=%d,hue2=%d,saturation2=%d,bright2=%d,hue3=%d,saturation3=%d,bright3=%d,hue4=%d,saturation4=%d,bright4=%d ",
 		_TBL_USERCOLOR, userId,		
 		hsb[0].hue, hsb[0].sat, hsb[0].bright, hsb[1].hue, hsb[1].sat, hsb[1].bright, hsb[2].hue, hsb[2].sat, hsb[2].bright, hsb[3].hue, hsb[3].sat, hsb[3].bright, hsb[4].hue, hsb[4].sat, hsb[4].bright);
 	GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
 
-	return true;
+	return userId;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -101,6 +101,7 @@ public: // IRole
 	// 幻兽不使用monstertype表中的等级属性字段 -- zlong 2004-02-24
 	virtual DWORD	GetLev() { return pData->GetLevel(); }
 
+	virtual void	SetLife(int nLife, BOOL bUpdate = false);
 	virtual	DWORD	GetLife() { return LifeCurrent; } 	//			{ return m_nCurrLife; }
 	virtual double	GetMaxLife() { return pData->GetLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
 									//	virtual DWORD	GetMana				()				{ return m_nCurrMana; }

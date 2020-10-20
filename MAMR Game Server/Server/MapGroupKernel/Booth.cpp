@@ -132,8 +132,8 @@ bool CBooth::AddItem(OBJID idItem, int nMoney)
 	if(idx < 2)
 	{
 		CMsgItem	msg;
-		IF_OK(msg.Create(m_setGoods[idx].idItem, ITEMACT_BOOTH_ADD, m_setGoods[idx].nMoney))
-			m_pUser->BroadcastRoomMsg(&msg, EXCLUDE_SELF);		// need not feedback, feedback outside already.
+		//IF_OK(msg.Create(m_setGoods[idx].idItem, ITEMACT_BOOTH_ADD, m_setGoods[idx].nMoney))
+		//	m_pUser->BroadcastRoomMsg(&msg, EXCLUDE_SELF);		// need not feedback, feedback outside already.
 	}
 
 	return true;
@@ -168,8 +168,8 @@ bool CBooth::DelItem(OBJID idItem)
 
 	// synchro msg
 	CMsgItem	msg;
-	IF_OK(msg.Create(idItem, ITEMACT_BOOTH_DEL, GetID()))
-		m_pUser->BroadcastRoomMsg(&msg, INCLUDE_SELF);
+	//IF_OK(msg.Create(idItem, ITEMACT_BOOTH_DEL, GetID()))
+	//	m_pUser->BroadcastRoomMsg(&msg, INCLUDE_SELF);
 
 	return ret;	
 }

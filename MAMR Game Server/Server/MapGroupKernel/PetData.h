@@ -48,7 +48,7 @@ protected:
 	bool	SaveInfo(void);
 
 public: //From Monster
-	void			SetId(OBJID oId) { info.id = oId; }
+	void			SetID(OBJID oId) { info.id = oId; }
 	OBJID			GetID() { return info.id; }
 
 	void			SetName(const char* pszName);
@@ -63,7 +63,7 @@ public: //From Monster
 	void			SetDexterity(double fDex) { info.Dexterity = fDex; }
 	double			GetDexterity() { return info.Dexterity; }
 
-	void			SetLife(int fLife) { info.Life = fLife; }
+	void			SetLife(int fLife, BOOL bUpdate = false);
 	int				GetLife() { return info.Life; }
 
 	void			SetGrowth(double fGrow) { info.Growth = fGrow; }

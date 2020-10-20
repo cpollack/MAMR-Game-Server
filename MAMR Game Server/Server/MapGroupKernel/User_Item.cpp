@@ -353,6 +353,8 @@ CItem* CUser::AwardItem(int nItemType, bool bSynchro, bool bIdentOK/*=false*/, b
 {
 	ItemInfoStruct info;
 	ASSERT(ItemType()->GetInfo(nItemType, &info));
+	info.id = this->QueryPackage()->GetNextSlotID();
+	if (info.id < 0) return nullptr;
 	info.idOwner	= GetID();
 	info.idPlayer	= GetID();
 	info.nPosition	= this->QueryPackage()->GetItemPositionByType(nItemType);
@@ -448,7 +450,7 @@ bool CUser::EraseItem(OBJID idItem, bool bSynchro)		// 同时操作数据库
 				this->SendMsg(&msg);
 		}
 
-		UpdateWeight();
+		//UpdateWeight();
 		return true;
 	}
 	else
@@ -469,7 +471,7 @@ bool CUser::EraseEquip(int nPosition, bool bSynchro)		// 同时操作数据库
 	if(bSynchro)
 	{
 		CMsgItem msg;
-		if(msg.Create(idItem, ITEMACT_DROPEQUIPMENT, nPosition))
+		if(msg.Create(idItem, ITEMACT_DROPEQUIPMENT))
 			this->SendMsg(&msg);
 
 		if(nPosition == ITEMPOSITION_WEAPON
@@ -490,7 +492,7 @@ bool CUser::EraseEquip(int nPosition, bool bSynchro)		// 同时操作数据库
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
+bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 {
 	CHECKF(pItem);
 
@@ -498,34 +500,36 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 		QueryMagic()->AbortMagic();
 
 	OBJID idItem = pItem->GetID();
-	if (!this->TryItem(idItem, nPosition))
+	if (!this->TryItem(idItem))
 		return false;
 
+	int nSort = pItem->GetItemSort();
+
 	// 双击，自动安排
-	if(nPosition >= ITEMPOSITION_PACK_BEGIN && nPosition < ITEMPOSITION_PACK_END)
+	if(nSort >= ITEMPOSITION_PACK_BEGIN && nSort < ITEMPOSITION_PACK_END)
 	{
 		if (this->IsWing())
 			return false;
 
 		if(pItem->IsWeapon())
 		{
-			nPosition	= ITEMPOSITION_WEAPON;
+			nSort = ITEMPOSITION_WEAPON;
 		}
 		else if(pItem->IsArmor())
 		{
-			nPosition	= ITEMPOSITION_ARMOR;
+			nSort = ITEMPOSITION_ARMOR;
 		}
 		else if(pItem->IsShoes())
 		{
-			nPosition	= ITEMPOSITION_SHOES;
+			nSort = ITEMPOSITION_SHOES;
 		}
 		else if (pItem->IsBodyAccessory())
 		{
-			nPosition = ITEMPOSITION_BODY;
+			nSort = ITEMPOSITION_BODY;
 		}
 		else if (pItem->IsHeadAccessory())
 		{
-			nPosition = ITEMPOSITION_HEAD;
+			nSort = ITEMPOSITION_HEAD;
 		}
 	}
 
@@ -543,13 +547,13 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 	// 先取出，以空出背包。
 	CHECKF(DelItemPt(idItem));				// VVVVVVVVVVVVVVVVVVVVVVVVVVVV
 	bool	bRet	= false;
-	switch(nPosition)
+	switch(nSort)
 	{
 	case	ITEMPOSITION_WEAPON:
 	{
 		if (pItem->IsWeapon())
 		{
-			UnEquipOnly(nPosition);
+			UnEquipOnly(nSort);
 			m_pWeapon = pItem;
 			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
 			bRet = true;
@@ -560,7 +564,7 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 		{
 			if(pItem->IsArmor())
 			{
-				UnEquipOnly(nPosition);
+				UnEquipOnly(nSort);
 				m_pArmor = pItem;
 				//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
 				bRet	= true;
@@ -571,7 +575,7 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 		{
 			if(pItem->IsShoes())
 			{
-				UnEquipOnly(nPosition);
+				UnEquipOnly(nSort);
 				m_pShoes = pItem;
 				//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
 				bRet	= true;
@@ -582,7 +586,7 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 	{
 		if (pItem->IsBodyAccessory())
 		{
-			UnEquipOnly(nPosition);
+			UnEquipOnly(nSort);
 			m_pBodyAccessory = pItem;
 			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
 			bRet = true;
@@ -593,7 +597,7 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 	{
 		if (pItem->IsHeadAccessory())
 		{
-			UnEquipOnly(nPosition);
+			UnEquipOnly(nSort);
 			m_pHeadAccessory = pItem;
 			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
 			bRet = true;
@@ -611,14 +615,14 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 		if(bSynchro)
 		{
 			CMsgItem msg;
-			if(msg.Create(idItem, ITEMACT_EQUIP, nPosition))
+			if(msg.Create(idItem, ITEMACT_EQUIP))
 				this->SendMsg(&msg);
 
-			if (nPosition == ITEMPOSITION_WEAPON
-				|| nPosition == ITEMPOSITION_ARMOR
-				|| nPosition == ITEMPOSITION_SHOES
-				|| nPosition == ITEMPOSITION_BODY
-				|| nPosition == ITEMPOSITION_HEAD)
+			if (nSort == ITEMPOSITION_WEAPON
+				|| nSort == ITEMPOSITION_ARMOR
+				|| nSort == ITEMPOSITION_SHOES
+				|| nSort == ITEMPOSITION_BODY
+				|| nSort == ITEMPOSITION_HEAD)
 			{
 				CMsgPlayer msgPlayer;
 				if (msgPlayer.Create(this->QueryRole()))
@@ -628,7 +632,7 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 
 //		UpdateWeight();
 		CalcFightRate();
-		EquipMagicItem(pItem, nPosition);
+		EquipMagicItem(pItem, nSort);
 		return true;
 	}
 	else
@@ -638,7 +642,7 @@ bool CUser::EquipItem(CItem* pItem, int nPosition, bool bSynchro)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CUser::TryItem(OBJID idItem, int nPosition)
+bool CUser::TryItem(OBJID idItem)
 {
 	CItemPtr pItem = GetItem(idItem);
 	if(!pItem)
@@ -647,8 +651,11 @@ bool CUser::TryItem(OBJID idItem, int nPosition)
 	if (pItem->IsTaskItem())
 		return false;
 
-	if (pItem->GetInt(ITEMDATA_LEVELREQ) && pItem->GetInt(ITEMDATA_LEVELREQ) > GetLev())		// 综合等级
+
+	//Adjust for cultivation?
+	if (pItem->GetInt(ITEMDATA_LEVELREQ) && pItem->GetInt(ITEMDATA_LEVELREQ) > GetLev())		
 		return false;
+	
 
 	//if (pItem->IsNeedIdent())
 	//	return false;
@@ -661,8 +668,8 @@ bool CUser::TryItem(OBJID idItem, int nPosition)
 	//	return false;
 
 	// rebirth ------------------------------------------------
-	if(this->GetMetempsychosis() && GetLev() >= 70)
-		return true;		//!
+	//if(this->GetMetempsychosis() && GetLev() >= 70)
+	//	return true;		//!
 
 	/*if (pItem->GetInt(ITEMDATA_REQ_PROF) != 0)
 	{
@@ -768,9 +775,9 @@ bool CUser::ChkUseItem(CItem* pItem, IRole* pTarget)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
+bool CUser::UseItem(OBJID idItem, bool bSynchro)
 {
-	if (!this->TryItem(idItem, nPosition))
+	if (!this->TryItem(idItem))
 		return false;
 		
 	CItemPtr pItem = GetItem(idItem);
@@ -840,7 +847,7 @@ bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
 		return true;
 	}*/
 	else if(pItem->IsEquipEnable())
-		return EquipItem(pItem, nPosition, bSynchro);
+		return EquipItem(pItem, bSynchro);
 	else if(pItem->IsEatEnable())
 	{
 		int	nAddLife	= pItem->GetInt(ITEMDATA_LIFE);
@@ -893,10 +900,10 @@ bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
 			m_tSlowHealLife.Update();
 
 			// cheat check
-			{
+			/*{
 				if((IsCheater(_TYPE_WS)||IsCheater(_TYPE_FY)) && IsCheater(_TYPE_USE_LIFE) && ::RandGet(3)==0)
 					KickoutCheat(_TYPE_USE_LIFE);
-			}
+			}*/
 		}
 		else if (nAddLife < 0)
 		{
@@ -941,10 +948,10 @@ bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
 			m_tSlowHealMana.Update();
 			
 			// cheat check
-			{
+			/*{
 				if((IsCheater(_TYPE_WS)||IsCheater(_TYPE_FY)) && IsCheater(_TYPE_USE_MANA) && ::RandGet(3)==0)
 					KickoutCheat(_TYPE_USE_MANA);
-			}
+			}*/
 		}
 		else if (nAddMana < 0)
 		{
@@ -952,7 +959,7 @@ bool CUser::UseItem(OBJID idItem, int nPosition, bool bSynchro)
 		}		
 		DEBUG_CATCH("UseItem") // AAAAAAAAAAAAAAAAA
 
-		UpdateWeight();
+		//UpdateWeight();
 		return true;
 	}
 
@@ -1087,7 +1094,7 @@ bool CUser::UnEquipItem(int nPosition, bool bSynchro)
 	if(bSynchro)
 	{
 		CMsgItem msg;
-		if(msg.Create(pItem->GetID(), ITEMACT_UNEQUIP, nPosition))
+		if(msg.Create(pItem->GetID(), ITEMACT_UNEQUIP))
 			this->SendMsg(&msg);
 
 		if(nPosition == ITEMPOSITION_WEAPON
@@ -1256,7 +1263,7 @@ bool CUser::DropItem(OBJID idItem, int x, int y)
 		{
 			// inform client the equipment is droped.
 			CMsgItem msg;
-			if (msg.Create(refpEquip->GetID(), ITEMACT_DROPEQUIPMENT, i))
+			if (msg.Create(refpEquip->GetID(), ITEMACT_DROPEQUIPMENT))
 				this->SendMsg(&msg);
 
 			char szPrompt[255];
@@ -1513,6 +1520,8 @@ bool CUser::SpendArrow()
 //////////////////////////////////////////////////////////////////////
 bool CUser::SpendItem(CItem* pItem, int nNum/*=1*/, int nPosition/*=ITEMPOSITION_BACKPACK*/, bool bSynchro/*=true*/)	// may be erase
 {
+	EraseItem(pItem->GetID(), bSynchro);
+
 	/*if(pItem->IsPileEnable() && pItem->GetInt(ITEMDATA_AMOUNT) > nNum)
 	{
 		pItem->SetInt(ITEMDATA_AMOUNT, pItem->GetInt(ITEMDATA_AMOUNT) - nNum);

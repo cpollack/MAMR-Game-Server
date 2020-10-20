@@ -68,7 +68,7 @@ bool CMonster::Create(PROCESS_ID idProcess, const ST_CREATENEWMONSTER* pInfo, LP
 	{
 		IF_OK(pData->Create(ID))
 		{
-			pData->SetId(GetNext_MonsterID());
+			pData->SetID(GetNext_MonsterID());
 			pType = MonsterType()->GetObj(ID);
 			ID = pData->GetID();
 			
@@ -266,3 +266,7 @@ float CMonster::GetCalcLife() {
 	return pData->GetBaseLife() + fLife;
 }
 
+void CMonster::SetLife(int nLife, BOOL bUpdate) { //update not used here
+	if (nLife < 0) nLife = 0;
+	LifeCurrent = nLife;
+}

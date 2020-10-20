@@ -2,6 +2,7 @@
 #include "MapGroup.h"
 
 #include "Monster.h"
+#include "Network//MsgPetAction.h"
 
 DWORD NEXT_PETID = _IDMSK_PET;
 
@@ -179,10 +180,38 @@ CPet* CPet::CreateNewPet(PROCESS_ID idProcess, OBJID ownerId, CMonster* pMonster
 		hsb[0].hue, hsb[0].sat, hsb[0].bright, hsb[1].hue, hsb[1].sat, hsb[1].bright, hsb[2].hue, hsb[2].sat, hsb[2].bright);
 
 	if (MapGroup(idProcess)->GetDatabase()->ExecuteSQL(szSQL)) {
+		int petId = MapGroup(idProcess)->GetDatabase()->GetInsertId();
+		pPet->SetID(petId);
 		return pPet;
 	}
 	else {
 		delete pPet;
 		return nullptr;
 	}
+}
+
+bool CPet::UpdateInfo(int nType) {
+	CHECKF(m_pOwner);
+
+	int nData = 0;
+	switch (nType) {
+	case PETACTION_FULLHEAL:
+		nData = GetMaxLife();
+		break;
+	}
+		
+	CMsgPetAction msg;
+	if (msg.Create(GetID(), nData, (PETACTION)nType))
+		m_pOwner->SendMsg(&msg);
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+void CPet::SaveInfo() {
+	data.SaveInfo();
+}
+
+void CPet::AwardBattleExp(int nExp, bool bGemEffect) {
+	return; //todo
 }

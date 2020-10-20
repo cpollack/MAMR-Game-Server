@@ -8,6 +8,7 @@
 #include "windows.h"
 #include "I_Role.h"
 #include "User.h"
+#include "Pet.h"
 #include "Item.h"
 #include "GameAction.h"
 #include "MapGroup.h"
@@ -848,7 +849,7 @@ bool CGameAction::ProcessAction(OBJID idAction, CUser* pUser, IRole* pRole, CIte
 			// process action now!
 			bool	bRet = false;
 			int nActionType = pAction->GetInt(ACTIONDATA_TYPE);
-			if (nActionType > ACTION_MAM_FIRST && nActionType < ACTION_MAM_LIMIT)
+			if (nActionType >= ACTION_MAM_FIRST && nActionType <= ACTION_MAM_LIMIT)
 				bRet	= ProcessActionMAM(pAction, szParam, m_pUser, m_pRole, m_pItem, pszAccept);
 			else if(nActionType > ACTION_SYS_FIRST && nActionType < ACTION_SYS_LIMIT)
 				bRet	= ProcessActionSys	(pAction, szParam, m_pUser, m_pRole, m_pItem, pszAccept);
@@ -989,6 +990,43 @@ bool CGameAction::ProcessActionMAM(CActionData* pAction, LPCTSTR szParam, CUser*
 			return true;
 		}
 	} break;
+	case ACTION_PLAYER_HEAL:
+	{
+		int nData = pAction->GetInt(ACTIONDATA_DATA);
+		if (nData == 0) { //Full heal
+			pUser->SetLife(pUser->GetMaxLife(), true);
+			pUser->SetAttrib(_USERATTRIB_LIFE, pUser->GetMaxLife(), SYNCHRO_TRUE);
+			return true;
+		}
+		else if (nData == 2) { //Full heal charge
+
+		}
+
+		return true;
+	} break;
+	case ACTION_PET_HEAL:
+	{
+		int nData = pAction->GetInt(ACTIONDATA_DATA);
+		switch (nData) {
+		case 0: // Heal marching pet
+		{
+			CPet* pPet = pUser->GetMarchingPet();
+			if (pPet) {
+				pPet->SetLife(pPet->GetMaxLife(), true);
+				pPet->UpdateInfo(PETACTION_FULLHEAL);
+			}
+		} break;
+		case 1: // Heal all pets
+			break;
+		case 2: //Heal marching - charge based on stats
+			break;
+		default:
+			LOGERROR("ACTION %u: TYPE %u - invalid data value %u", pAction->GetID(), pAction->GetInt(ACTIONDATA_TYPE), nData);
+			return false;
+		}
+
+		return true;
+	} break;
 	case ACTION_NPC_DIALOGUE:
 	{
 		char szMessage[MAX_PARAMSIZE];
@@ -1019,6 +1057,11 @@ bool CGameAction::ProcessActionMAM(CActionData* pAction, LPCTSTR szParam, CUser*
 			break;
 		}
 
+		return true;
+	} break;
+	case ACTION_PLAYER_CLEARTASKNPC: 
+	{
+		pUser->SetTaskNpcID(0);
 		return true;
 	} break;
 	default:

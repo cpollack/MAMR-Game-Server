@@ -60,6 +60,7 @@ public: // IRole
 	// 幻兽不使用monstertype表中的等级属性字段 -- zlong 2004-02-24
 	virtual DWORD	GetLev() { return data.GetLevel(); }
 
+	virtual void	SetLife(int nLife, BOOL bUpdate = false) { data.SetLife(nLife, bUpdate); }
 	virtual	DWORD	GetLife() { return data.GetLife(); } 	//			{ return m_nCurrLife; }
 	virtual double	GetMaxLife() { return data.GetMaxLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
 									//	virtual DWORD	GetMana				()				{ return m_nCurrMana; }
@@ -82,6 +83,7 @@ public: // IRole
 	//virtual	DWORD	GetIntervalAtkRate() { return m_pType->GetInt(NPCTYPEDATA_ATKSPEED); }
 
 	//virtual int		AdjustExp(IRole* pTarget, int nRawExp, bool bNewbieBonusMsg = false);
+	virtual void	AwardBattleExp(int nExp, bool bGemEffect = true);
 	//virtual void	AwardBattleExp(int nExp, bool bGemEffect = true, bool bIncludeOwner = true);
 	//virtual int 	AdjustHitRate(int nHitRate) { /*IStatus* pStatus = QueryStatus(STATUS_HITRATE); if(pStatus) return ::CutTrail(0, AdjustData(nHitRate, pStatus->GetPower()));*/ return nHitRate; }
 	//virtual int 	AdjustAttack(int nAtk);
@@ -132,6 +134,7 @@ public: // get
 	//virtual void	SendShow(IRole* pRole);
 
 public: // get attrib  ------------------------------------
+	void	SetID(OBJID id) { ID = id; data.SetID(id); }
 	void	SetOwner(CUser* pOwner) { m_pOwner = pOwner; SetOwnerID(((CRole*)pOwner)->GetID()); }
 	void	SetOwnerID(OBJID id) { data.SetOwnerID(id);  }
 	OBJID	GetOwnerID() { return data.GetOwnerID(); }
@@ -228,7 +231,8 @@ public: // common -------------------------------------
 
 public: // pet ----------------------------------------------------
 	//bool	Create(PROCESS_ID idProcess, IRecordset* pRes);
-	//void	SaveInfo();			//??? save all when close server!!!
+	bool	UpdateInfo(int nType);
+	void	SaveInfo();			//??? save all when close server!!!
 
 public: // call pet ---------------------------------
 	//CAutoLink<CPet>&	QueryLink() { return m_link; }

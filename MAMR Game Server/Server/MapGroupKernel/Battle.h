@@ -63,9 +63,18 @@ public: //IRole
 	OBJID GetID() { return (GetObjType() == OBJ_PET) ? pRole->GetID() | 0x80000000 : pRole->GetID(); }
 	int	GetObjType() { return pRole->GetObjType(); }
 	int GetLevel() { return pRole->GetLev(); }
+
+	void SetLife(int nLife) { pRole->SetLife(nLife); }
+	int GetLife() { return pRole->GetLife(); }
+	int GetMaxLife() { return pRole->GetMaxLife(); }
+	void SetMana(int nMana) { pRole->SetMana(nMana); }
+	int GetMana() { return pRole->GetMana(); }
+	int GetMaxMana() { return pRole->GetMaxMana(); }
+
 	int GetAttack() { return pRole->GetAttack(); }
 	int GetDefence() { return pRole->GetDefence(); }
 	int GetDexterity() { return pRole->GetDexterity(); }
+
 protected:
 	CRole *pRole;
 
@@ -74,6 +83,7 @@ public: //State
 	void SetState(FIGHTERSTATE s) { state = s; }
 
 	void AddDamage(int dmg) { takeDamage += dmg; }
+	int GetDamage() { return takeDamage; }
 	bool WillDie() { return pRole->GetLife() <= takeDamage; }
 	
 	bool GetRanAway() { return bRanAway; }
@@ -124,6 +134,7 @@ public:
 	void ProcessRound();
 	void EndRound();
 	void EndBattle();
+	void HandleBattleReward();
 
 	void ProcessActionGroups();
 	bool ProcessActionAttack(CFighter *pFighter, int group, int groupSize);
@@ -157,8 +168,11 @@ private:
 	int round = 0;
 	int group = 0;
 	bool noTargets = false;
+	bool allyKO = false;
 	bool actionsReloaded = false;
+
 	CGameMap* pMap;
+	int battleX, battleY;
 
 	FIGHTER_SET attackerSet;
 	int attackerFormation = 0;

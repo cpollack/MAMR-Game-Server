@@ -12,10 +12,10 @@
 #include "NetMsg.h"
 
 enum {	ITEMACT_NONE			=0, 
+		ITEMACT_USE,					// to server
 		ITEMACT_BUY,					// to server, id: idNpc, data: idItemType
 		ITEMACT_SELL,	 				// to server, id: idNpc, data: idItem
 		ITEMACT_DROP,					// to server, x, y
-		ITEMACT_USE,					// to server, data: position
 		ITEMACT_EQUIP			=5,		// to client，通知装备物品
 		ITEMACT_UNEQUIP,				// to server, data: position
 		ITEMACT_SPLITITEM,				// to server, data: num
@@ -48,8 +48,8 @@ public:
 	CMsgItem();
 	virtual ~CMsgItem();
 
-	BOOL	Create	(OBJID id, int nAction, int nPosition = ITEMPOSITION_NONE);
-//	BOOL	Create	(DWORD dwData, int nAction);
+//	BOOL	Create	(OBJID id, int nAction, int nPosition = ITEMPOSITION_NONE);
+	BOOL	Create	(DWORD dwData, int nAction);
 
 public:	
 	BOOL	Create		(char* pMsgBuf, DWORD dwSize);
@@ -60,15 +60,15 @@ protected:
 		MSGHEAD_DEFINE
 
 		OBJID		id;
-		union {
+		/*union {
 			DWORD		dwData;
 			struct {
 				USHORT	usPosY;
 				USHORT	usPosX;
 			};	
-		};
-		USHORT		usAction;
-		OBJID		idTarget;	// 目标对象ID，ID_NONE表示自己
+		};*/
+		DWORD		usAction;
+		//OBJID		idTarget;	// target ID，ID_NONE = self
 	}MSG_Info;
 
 	MSG_Info*	m_pInfo;

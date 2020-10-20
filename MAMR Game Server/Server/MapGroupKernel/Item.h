@@ -319,7 +319,7 @@ public:
 	bool	RecoverDur			(void);
 	int		GetRecoverDurCost	(void);
 
-protected: // 类型
+//protected: // 类型
 	int		GetItemSort()			{ return CItem::GetItemSort(GetInt(ITEMDATA_SORT)); }
 	int		GetItemType()			{ return CItem::GetItemType(GetInt(ITEMDATA_SORT)); }
 public:

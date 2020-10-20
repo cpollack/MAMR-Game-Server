@@ -4,6 +4,7 @@
 
 #include "allmsg.h"
 #include "MsgPetAction.h"
+#include "../MapGroup.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -21,7 +22,7 @@ CMsgPetAction::~CMsgPetAction()
 }
 
 //////////////////////////////////////////////////////////////////////
-BOOL CMsgPetAction::Create(OBJID petID, OBJID useID, PETACTION action)
+BOOL CMsgPetAction::Create(OBJID petID, DWORD dwData, PETACTION action)
 {
 	CHECKF(petID);
 
@@ -33,7 +34,7 @@ BOOL CMsgPetAction::Create(OBJID petID, OBJID useID, PETACTION action)
 	m_unMsgType	=_MSG_PETACTION;
 
 	m_pInfo->petID = petID;
-	m_pInfo->useID = useID;
+	m_pInfo->dwData = dwData;
 	m_pInfo->dwAction = action;
 	
 	return true;
@@ -52,6 +53,22 @@ BOOL CMsgPetAction::Create(char* pbufMsg, DWORD dwMsgSize)
 //////////////////////////////////////////////////////////////////////
 void CMsgPetAction::Process(CGameSocket* pSocket)
 {
-	ASSERT(!"CMsgPetAction::Process");
+	CUserPtr pUser = UserManager()->GetUser(this);
+	if (!pUser)
+		return;
+
+	try {
+	switch (m_pInfo->dwAction)
+	{
+		//
+	}
+	}catch (...)
+	{
+		::LogSave("switch(MSGPETACTION) Action [%d], id [%u]", m_pInfo->dwAction, m_pInfo->petID);
+	}
+
+#ifdef _MSGDEBUG
+	::LogMsg("Process CMsgPetAction, id:%u", m_pInfo->petID);
+#endif
 }
 

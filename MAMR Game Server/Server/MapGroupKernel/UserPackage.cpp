@@ -7,6 +7,8 @@
 #include "User.h"
 #include "MapGroup.h"
 
+#include <set>
+
 
 MYHEAP_IMPLEMENTATION(CUserPackage, s_heap)
 
@@ -73,6 +75,33 @@ bool CUserPackage::Create(CUser* pUser, IDatabase* pDb)
 		pRes->Release();
 	}*/
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+int	CUserPackage::GetNextSlotID() {
+	CHECKF(m_pOwner);
+
+	int slot = 0;
+	std::set<int> used;
+
+	//Get set of item ids
+	for (int i = 0; i < m_setItem[0]->GetAmount(); i++) {
+		CItem* pItem = m_setItem[0]->GetObjByIndex(i);
+		if (pItem) 
+			used.insert(pItem->GetID() % 100);
+	}
+
+	//find first unused
+	std::set<int>::iterator iter = used.lower_bound(slot);
+	while (iter != used.end() && *iter == slot)
+	{
+		++iter;
+		++slot;
+	}
+	if (slot > _MAX_ALLUSERITEMSIZE) return -1;
+
+	int nextId = 100000000 + (m_pOwner->GetID() * 100) + slot;
+	return nextId;
 }
 
 //////////////////////////////////////////////////////////////////////

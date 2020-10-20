@@ -330,7 +330,8 @@ public: // debug
 protected: //Battle
 	typedef	vector<CMonster*>	MONSTER_SET;
 public:
-	bool CreateMonstersForBattle(MONSTER_SET &monsterSet, int x, int y);
+	bool CreateMonstersForBattle(MONSTER_SET& monsterSet, int x, int y);
+	bool GetBattleRewardActions(int x, int y, int &awardCommon, int &awardRare);
 
 protected: // block
 	typedef	vector<CGameBlock>	BLOCK_SET;

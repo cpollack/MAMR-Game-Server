@@ -161,6 +161,7 @@ void CUserData::SetMate(LPCTSTR szMate, BOOL bUpdate)
 //////////////////////////////////////////////////////////////////////
 void CUserData::SetLife(int nLife, BOOL bUpdate)
 {
+	if (nLife < 0) nLife = 0;
 	m_Info.usLife	= nLife;
 	if (m_pRes)
 	{
@@ -173,6 +174,7 @@ void CUserData::SetLife(int nLife, BOOL bUpdate)
 //////////////////////////////////////////////////////////////////////
 void CUserData::SetPower(int nPower, BOOL bUpdate)
 {
+	if (nPower < 0) nPower = 0;
 	m_Info.usPower	= nPower;
 	if (m_pRes)
 	{

@@ -131,35 +131,20 @@ void CMsgRole::Process(void *pInfo) {
 	if (!pPlayer) return;
 
 	SQLBUF	szSQL;
-	if (g_UserList.CreateNewPlayer(pPlayer->m_idAccount, m_pInfo->szName, m_pInfo->szNickname, m_pInfo->ucRole, m_pInfo->ucFace,
-		m_pInfo->usPointLife, m_pInfo->usPointDefence, m_pInfo->usPointAttack, m_pInfo->usPointDexterity, m_pInfo->usPointMana, hsb))
+	int userId = g_UserList.CreateNewPlayer(pPlayer->m_idAccount, m_pInfo->szName, m_pInfo->szNickname, m_pInfo->ucRole, m_pInfo->ucFace,
+		m_pInfo->usPointLife, m_pInfo->usPointDefence, m_pInfo->usPointAttack, m_pInfo->usPointDexterity, m_pInfo->usPointMana, hsb);
+	if (userId)
 	{
 		PROCESS_ID pId = MapList()->GetMapProcessID(100001);
 		ST_CREATENEWMONSTER stMonster = { 72013, 1 };
 		CMonster* pMonster = CMonster::CreateNew();
 		if (pMonster->Create(pId, &stMonster)) {
-			int userId = 0;
-			sprintf(szSQL, "SELECT id FROM %s WHERE account_id=%d", _TBL_USER, pPlayer->m_idAccount);
-			IRecordset* pUserRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
-			if (pUserRes) {
-				userId = pUserRes->GetInt(0);
-				pUserRes->Release();
-			}
-			else return;
 
 			CPet* pPet = CPet::CreateNewPet(pId, userId, pMonster);
 			if (pPet) {
-				DWORD petId = 0;
-				sprintf(szSQL, "SELECT id FROM %s WHERE owner_id=%d ORDER BY id DESC LIMIT 1", _TBL_PET, pPlayer->m_idAccount);
-				IRecordset* pPetRes = GameWorld()->GetDatabase()->CreateNewRecordset(szSQL);
-				if (pPetRes) {
-					petId = pPetRes->GetInt(0);
-					pPetRes->Release();
-
-					sprintf(szSQL, "UPDATE %s SET pet_count=%d, petused_id=%u, pet0_id=%u WHERE id=%d LIMIT 1",
-						_TBL_USER, 1, petId, petId, userId);
-					GameWorld()->GetDatabase()->ExecuteSQL(szSQL);
-				}
+				sprintf(szSQL, "UPDATE %s SET pet_count=%d, petused_id=%u, pet0_id=%u WHERE id=%d LIMIT 1",
+					_TBL_USER, 1, pPet->GetID(), pPet->GetID(), userId);
+				GameWorld()->GetDatabase()->ExecuteSQL(szSQL);
 			}
 		}
 

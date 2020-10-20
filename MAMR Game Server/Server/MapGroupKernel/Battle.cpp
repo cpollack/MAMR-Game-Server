@@ -13,6 +13,7 @@
 #include "Network\MsgNormalAct.h"
 #include "Network\MsgBattleRound.h"
 #include "Network\MsgBattleResult.h"
+#include "Network\MsgTalk.h"
 
 CBattle* CBattle::CreateNpcBattle(PROCESS_ID idProcess, CUser* pUser) {
 	ASSERT(pUser);
@@ -21,13 +22,12 @@ CBattle* CBattle::CreateNpcBattle(PROCESS_ID idProcess, CUser* pUser) {
 	pBattle->m_idProcess = idProcess;
 	pBattle->type = BATTLETYPE_NPC;
 
-	int x, y;
-	x = pUser->GetPosX();
-	y = pUser->GetPosY();
+	pBattle->battleX = pUser->GetPosX();
+	pBattle->battleY = pUser->GetPosY();
 
 	MONSTER_SET monsterSet;
-	CGameMap* pMap = pUser->GetMap();
-	pMap->CreateMonstersForBattle(monsterSet, x, y);
+	pBattle->pMap = pUser->GetMap();
+	pBattle->pMap->CreateMonstersForBattle(monsterSet, pBattle->battleX, pBattle->battleY);
 
 	pBattle->SetDefenderSet(monsterSet);
 
@@ -145,7 +145,7 @@ void CBattle::ProcessRound() {
 	//ProcessActionGroups();
 
 	EndRound();
-	if (noTargets) EndBattle();
+	if (noTargets || allyKO) EndBattle();
 }
 
 void CBattle::EndRound() {
@@ -158,13 +158,21 @@ void CBattle::EndRound() {
 
 	if (!GetNextTarget(attackerSet.front())) noTargets = true;
 	if (!GetNextTarget(defenderSet.front())) noTargets = true;
+
+	allyKO = true;
+	for (auto attacker : attackerSet) {
+		if (attacker->GetObjType() == OBJ_USER && attacker->IsAlive()) {
+			allyKO = false;
+			break;
+		}
+	}
 }
 
 void CBattle::EndBattle() {
 	BATTLERESULT result;
 	
 	//for npc battle only
-	if (GetNextTarget(attackerSet[0])) result = BATTLERESULT_WIN;
+	if (GetNextTarget(attackerSet[0]) && !allyKO) result = BATTLERESULT_WIN;
 	else result = BATTLERESULT_LOSE;
 
 	for (auto fighter : attackerSet) {
@@ -182,33 +190,77 @@ void CBattle::EndBattle() {
 			int petExp = 0;
 
 			CUser *pUser = (CUser*)fighter->GetRole();
-			
-			
-			
+			if (pUser->GetLife() <= 0) pUser->SetLife(1);
+			pUser->AwardBattleExp(fighter->GetAwardExp());
+
 			CPet *pPet = pUser->GetMarchingPet();
 			CFighter *petFighter = nullptr;
 			if (pPet) petFighter = GetFighter(pPet->GetID() | 0x80000000);
 
-			if (fighter->GetRanAway()) result = BATTLERESULT_RUN;
+			if (fighter->GetRanAway()) result = BATTLERESULT_LOSE;
 			else {
 				money = fighter->GetAwardMoney();
 
-				if (petFighter) {
+				if (petFighter && pPet) {
+					if (pPet->GetLife() <= 0) pPet->SetLife(1);
 					petLife = pPet->GetLife();
+
+					//adjust loyalty? pet ko and ran away
 					petLoy = pPet->GetLoyalty();
-					petExp = petFighter->GetAwardExp();
-					money += petFighter->GetAwardMoney();
+
+					//still gain when ko?
+					if (petFighter->IsAlive()) {
+						petExp = petFighter->GetAwardExp();
+						pPet->AwardBattleExp(petExp);
+
+						money += petFighter->GetAwardMoney();
+					}
 				}
+				pUser->AddMoney(money);
+				//pUser->SetReputation(nRep);
 			}
+			pUser->SaveInfo();
+			if (pPet) pPet->SaveInfo();
 
 			CMsgBattleResult msgResult;
 			if (msgResult.Create(result, money, pUser->GetLife(), pUser->GetMana(), fighter->GetAwardRep(), fighter->GetAwardExp(), petLife, petLoy, petExp))
 				fighter->SendMsg(&msgResult);
 		}
+	}
 
-		//check if victory or loss
-		//apply kill rewards
-		//battle award action
+	//battle award action
+	if (result == BATTLERESULT_WIN) {
+		HandleBattleReward();
+	}
+}
+
+void CBattle::HandleBattleReward() {
+	if (RandGet(100) >= 6 * (defenderSet.size() - 1) + 4) return;
+
+	int commonReward = 0, rareReward = 0;
+	pMap->GetBattleRewardActions(battleX, battleY, commonReward, rareReward);
+
+	int rewardAction = RandGet(100) >= 98 ? rareReward : commonReward;
+
+	int nUserCount = 0;
+	for (auto fighter : attackerSet) 
+		if (fighter->GetObjType() == OBJ_USER) nUserCount++;
+
+	int nPlayerPos = RandGet(nUserCount);
+	int counter = 0;
+	for (auto fighter : attackerSet) {
+		if (fighter->GetObjType() == OBJ_USER) {
+			if (counter == nPlayerPos) {
+				GameAction()->ProcessAction(rewardAction, (CUser*)fighter->GetRole());
+				CMsgTalk msg;
+
+				std::string strMessage = fighter->GetRole()->GetName();
+				strMessage += " receives battle rewards!";
+				msg.Create(SYSTEM_NAME, "ROOMMATES", strMessage.c_str(), NULL, _COLOR_YELLOW, _TXTATR_SYSTEM, _TXT_NORMAL);
+				break;
+			}
+			counter++;
+		}
 	}
 }
 
@@ -262,7 +314,11 @@ void CBattle::ReloadJoinAttackSet(bool useExisting) {
 		CFighter *pTarget = GetFighter(pFighter->GetTarget());
 		fightersByDex.erase(fightersByDex.begin());
 
-		if (!pFighter->IsValidTarget()) continue;
+		//this still doesnt work...
+		if (pFighter->GetAction() == BATTLEACT_ATTACK && pTarget && !pTarget->IsValidTarget()) {
+			pTarget = GetNextTarget(pTarget);
+			if (!pTarget) continue;
+		}
 		
 		//Only attacks join, all other actions happen 'solo'
 		switch (pFighter->GetAction()) {
@@ -343,6 +399,7 @@ void CBattle::ProcessActionGroups() {
 
 	while (actSetItr != joinActSet.end()) {
 		bool targetSlain = false;
+		CFighter* pTarget = GetFighter(actSetItr->front()->GetTarget());
 
 		for (auto fighter : *actSetItr) {
 			if (fighter->IsDead()) continue;
@@ -386,8 +443,6 @@ void CBattle::ProcessActionGroups() {
 		}
 
 		if (targetSlain) {
-			CFighter *pTarget = GetFighter(actSetItr->front()->GetTarget());
-
 			pTarget->SetState(STATE_DEAD);
 
 			for (auto fighter : *actSetItr) DefeatEnemy(fighter, pTarget);
@@ -448,8 +503,8 @@ bool CBattle::ProcessActionAttack(CFighter *pFighter, int group, int groupSize) 
 	
 	int interaction;
 	int dmg = CalculateDamage(pFighter, pTarget, interaction);
-	pTarget->AddDamage(dmg);
-	if (pTarget->WillDie()) {
+	pTarget->SetLife(pTarget->GetLife() - dmg);
+	if (pTarget->GetLife() <= 0) {
 		//Target takes more dmg then life, inform client target dies, but dont change fighter status yet
 		CMsgNormalAct msg;
 		if (msg.Create(BATTLEACT_ATTACK, group, pFighter->GetState(), STATE_DEAD, pFighter->GetID(), pTarget->GetID(), dmg, 0, interaction, 0))
