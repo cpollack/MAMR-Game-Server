@@ -288,7 +288,7 @@
 #define	STR_SHUTDOWN_NOTIFY			"Server maintenance for ten minutes. Please log off immediately to avoind data lost."
 #define	STR_NONSUCH_TRADE_sssu		"[Trade] Trading superior item. Player [%s] gave player [%s] [%s][%u]"
 #define	STR_NOT_ENOUGH_MONEY	    "You do not have enough money."	
-#define	STR_NOT_ENOUGH_MONEY	    "You don't have %d silvers!"
+//#define	STR_NOT_ENOUGH_MONEY	    "You don't have %d silvers!"
 #define	STR_DIE_FORGIVE	            "He that dies pays all debts. Can't you forgive him?"	
 #define	STR_DIE_STOP_ATTACK	        "The target is dead. Move on."	
 #define	STR_ATTACK_POLICE	        "You are attempting to attack the police. Please behave yourself."	

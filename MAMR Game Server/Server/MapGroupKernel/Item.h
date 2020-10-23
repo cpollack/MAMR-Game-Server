@@ -268,7 +268,7 @@ public:	// get
 	//int		GetMgcMinAtk()		{ return GetInt(ITEMDATA_MAGICATK_MIN_); }
 	int		GetDefence()		{ return GetInt(ITEMDATA_DEFENCE); }
 	//int		GetMgcDef()			{ return GetInt(ITEMDATA_MAGICDEF_); }
-	int		GetDexteriy()		{ return GetInt(ITEMDATA_DEXTERITY); }
+	int		GetDexterity()		{ return GetInt(ITEMDATA_DEXTERITY); }
 	//int		GetDodge()			{ return GetInt(ITEMDATA_DODGE); }
 	int		GetLife()			{ return GetInt(ITEMDATA_LIFE); }
 	int		GetPower()			{ return GetInt(ITEMDATA_POWER); }

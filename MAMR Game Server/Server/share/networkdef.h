@@ -26,6 +26,7 @@ const unsigned short _MSG_PLAYER	= _MSG_GENERAL + 32;
 const unsigned short _MSG_PETACTION = _MSG_GENERAL + 33;
 const unsigned short _MSG_PETINFO   = _MSG_GENERAL + 34;
 const unsigned short _MSG_USERATTRIB = _MSG_GENERAL + 40;
+const unsigned short _MSG_POINTALLOT = _MSG_GENERAL + 41;
 const unsigned short _MSG_COLOR	    = _MSG_GENERAL + 43;
 
 const unsigned short _MSG_ROLE		= _MSG_GENERAL + 50;
@@ -36,7 +37,9 @@ const unsigned short _MSG_NORMALACT		= _MSG_GENERAL + 1001;
 const unsigned short _MSG_BATTLE		= _MSG_GENERAL + 1005;
 const unsigned short _MSG_ENEMY			= _MSG_GENERAL + 1007;
 const unsigned short _MSG_FIGHTER		= _MSG_GENERAL + 1008;
-const unsigned short _MSG_BATTLERESULT	= _MSG_GENERAL + 1009;
+const unsigned short _MSG_BATTLERESULT  = _MSG_GENERAL + 1009;
+const unsigned short _MSG_USERLEVELUP   = _MSG_GENERAL + 1010;
+const unsigned short _MSG_PETLEVELUP	= _MSG_GENERAL + 1011;
 const unsigned short _MSG_BATTLEROUND	= _MSG_GENERAL + 1012;
 
 const unsigned short _MSG_NPCINFO		= _MSG_GENERAL + 1030;

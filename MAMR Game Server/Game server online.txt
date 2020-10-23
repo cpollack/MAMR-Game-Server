@@ -1,15 +1,15 @@
-start server: 2020-10-19 23:39:37
-current: 2020-10-19 23:44:17
+start server: 2020-10-22 23:31:41
+current: 2020-10-22 23:33:41
 
-socket thread:   0(max:1)
+socket thread:   0(max:0)
 world thread:    0(max:0)
-map group 0 thread:   4(max:6)[858993460]
-map group 1 thread:   0(max:0)
+map group 0 thread:   4(max:8)[858993460]
+map group 1 thread:   0(max:1)
 map group 2 thread:   0(max:1)
 map group 3 thread:   0(max:1)
 map group 4 thread:   0(max:1)
-debug [0][0][0][0][1]
-OnTimer [ 62] Database [  0]
+debug [0][0][0][0][0]
+OnTimer [ 59] Database [  2]
 
 
 players:   0(max:1)

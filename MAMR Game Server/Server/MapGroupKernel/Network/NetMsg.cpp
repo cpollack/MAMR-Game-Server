@@ -158,6 +158,9 @@ CNetMsg* CNetMsg::CreateMsg(OBJID idMsg, const char* pbufMsg, DWORD dwMsgSize)
 	case _MSG_DIRECTION:
 		pMsg = new CMsgDirection;
 		break;
+	case _MSG_POINTALLOT:
+		pMsg = new CMsgPointAllot;
+		break;
 
 	case _MSG_BATTLEACT:
 		pMsg = new CMsgBattleAct;

@@ -10,6 +10,7 @@
 #include "NetworkDef.h"
 #include "define.h"
 #include "myheap.h"
+#include "NetStringPacker.h"
 
 using namespace mapgroup_kernel;
 

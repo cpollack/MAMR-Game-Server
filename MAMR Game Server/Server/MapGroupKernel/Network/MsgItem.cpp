@@ -85,11 +85,12 @@ void CMsgItem::Process(void *pInfo)
 		break;
 
 	//OLD
-	/*case ITEMACT_BUY:
+	case ITEMACT_BUY:
 		{
-			pUser->BuyItem(m_pInfo->id, m_pInfo->dwData);
+			//pUser->BuyItem(m_pInfo->id, m_pInfo->dwData);
+			pUser->BuyItem(m_pInfo->id);
 		}
-		break;*/
+		break;
 	/*case ITEMACT_SELL:
 		{
 			pUser->SellItem(m_pInfo->id, m_pInfo->dwData);

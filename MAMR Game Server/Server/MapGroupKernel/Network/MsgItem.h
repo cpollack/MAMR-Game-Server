@@ -16,8 +16,10 @@ enum {	ITEMACT_NONE			=0,
 		ITEMACT_BUY,					// to server, id: idNpc, data: idItemType
 		ITEMACT_SELL,	 				// to server, id: idNpc, data: idItem
 		ITEMACT_DROP,					// to server, x, y
-		ITEMACT_EQUIP			=5,		// to client，通知装备物品
-		ITEMACT_UNEQUIP,				// to server, data: position
+		ITEMACT_UNEQUIP = 10,
+
+		//Not used or not known
+		ITEMACT_EQUIP,		// to client，通知装备物品
 		ITEMACT_SPLITITEM,				// to server, data: num
 		ITEMACT_COMBINEITEM,			// to server, data: id
 		ITEMACT_QUERYMONEYSAVED,		// to server/client, id: idNpc, data: nMoney

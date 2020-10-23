@@ -629,7 +629,7 @@ bool CUser::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 					return false;
 			}
 			break;
-		case _USERATTRIB_XP:
+		/*case _USERATTRIB_XP:
 			{
 				if((int)i64Data != 0)
 				{
@@ -650,8 +650,8 @@ bool CUser::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 						return false;
 				}
 			}
-			break;
-		case _USERATTRIB_ENERGY:
+			break;*/
+		/*case _USERATTRIB_ENERGY:
 			{
 				AddEnergy(i64Data);
 				IF_NOT (msg.Append(_USERATTRIB_ENERGY, this->GetEnergy()))
@@ -660,7 +660,7 @@ bool CUser::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 				SendSysMsg("ENERGY: [%d]", GetEnergy());
 #endif
 			}
-			break;
+			break;*/
 		case _USERATTRIB_MAXENERGY:
 			{
 				// no operation
@@ -682,13 +682,13 @@ bool CUser::AddAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 					return false;
 			}
 			break;
-		case _USERATTRIB_NOBILITYRANK:
+		/*case _USERATTRIB_NOBILITYRANK:
 			{
 				m_data.SetNobilityRank(__max(0, (int)m_data.GetNobilityRank() + i64Data));
 				IF_NOT (msg.Append(_USERATTRIB_NOBILITYRANK, this->GetNobilityRank()))
 					return false;
 			}
-			break;
+			break;*/
 		case _USERATTRIB_EXPLOIT:
 			{
 				m_data.SetExploit(__max(0, (int)m_data.GetExploit()+i64Data));
@@ -768,13 +768,13 @@ void CUser::SetAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 	} break;
 	
 	//Not cleaned
-	case	_USERATTRIB_ENERGY:
+	/*case	_USERATTRIB_ENERGY:
 		{
 			this->SetEnergy(i64Data);
 			if(!msg.Append(_USERATTRIB_ENERGY, this->GetEnergy()))
 				return;
 		}
-		break;
+		break;*/
 	case	_USERATTRIB_MAXENERGY:
 		{
 			// no operation
@@ -866,13 +866,13 @@ void CUser::SetAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 				return;
 		}
 		break;
-	case _USERATTRIB_XP:
+	/*case _USERATTRIB_XP:
 		{
 			m_dwXP = ::CutRange((int)i64Data, 0, MAX_USER_XP);
 			IF_NOT (msg.Append(_USERATTRIB_XP, m_dwXP))
 				return;
 		}
-		break;
+		break;*/
 	case	_USERATTRIB_EXP:
 		{
 			// exp allow negative
@@ -908,27 +908,27 @@ void CUser::SetAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 				nSynchro = SYNCHRO_BROADCAST;
 		}
 		break;
-	case	_USERATTRIB_PORFESSION:
+	/*case	_USERATTRIB_PORFESSION:
 		{
 			m_data.SetProfession(i64Data, true);
 			if(!msg.Append(idxAttr, m_data.GetProfession()))
 				return;
 		}
-		break;
-	case	_USERATTRIB_LOOKFACE:
+		break;*/
+	/*case	_USERATTRIB_LOOKFACE:
 		{
 			// 不支持修改LOOKFACE属性
 			if(!msg.Append(idxAttr, i64Data))
 				return;
 		}
-		break;
-	case	_USERATTRIB_SIZEADD:
+		break;*/
+	/*case	_USERATTRIB_SIZEADD:
 		{
 			// 不支持修改SIZEADD属性
 			if(!msg.Append(idxAttr, i64Data))
 				return;
 		}
-		break;
+		break;*/
 	case	_USERATTRIB_SUPERMAP_ORDER:
 		{
 			// 不支持修改SIZEADD属性
@@ -950,13 +950,13 @@ void CUser::SetAttrib(int idxAttr, __int64 i64Data, int nSynchro)
 				return;
 		}
 		break;
-	case _USERATTRIB_NOBILITYRANK:
+	/*case _USERATTRIB_NOBILITYRANK:
 		{
 			m_data.SetNobilityRank(__max(0, i64Data));
 			if (!msg.Append(idxAttr, m_data.GetNobilityRank()))
 				return;
 		}
-		break;
+		break;*/
 	case	_USERATTRIB_EXPLOIT:
 		{
 			m_data.SetExploit(__max(0, i64Data), true);
@@ -1213,16 +1213,16 @@ double CUser::GetMaxLife()
 	nMaxLife += 5 * m_data.GetForce() / 100;
 	nMaxLife += 5 * m_data.GetSpeed() / 100;
 
-	/*for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
+	for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
-		CItemPtr* ppEquip = GetEquipItemPtr(i);
+		CItemPtr* ppEquip = GetEquipItemPtrByPos(i);
 		CHECKF(ppEquip);
 		CItemPtr& pEquip = *ppEquip;
 		if(pEquip)
 			nMaxLife += pEquip->GetInt(ITEMDATA_LIFE);
 	}
 
-	nMaxLife	= nMaxLife * m_data.GetMaxLifePercent() / 1000;		// 因为有个受伤度的问题，这里需要调整最大血量
+	/*nMaxLife	= nMaxLife * m_data.GetMaxLifePercent() / 1000;		// 因为有个受伤度的问题，这里需要调整最大血量
 
 	IStatus* pStatus = QueryStatus(STATUS_MAXLIFE);
 	if (pStatus)
@@ -1272,14 +1272,14 @@ DWORD CUser::GetMaxPower()
 	}*/
 	int nMaxMana = (3 * GetDegree()) + 20;
 
-	/*for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
+	for(int i = ITEMPOSITION_EQUIPBEGIN; i < ITEMPOSITION_EQUIPEND; i++)
 	{
-		CItemPtr* ppEquip = GetEquipItemPtr(i);
+		CItemPtr* ppEquip = GetEquipItemPtrByPos(i);
 		CHECKF(ppEquip);
 		CItemPtr& pEquip = *ppEquip;
 		if(pEquip)
-			nMaxMana += pEquip->GetInt(ITEMDATA_MANA);
-	}	*/
+			nMaxMana += pEquip->GetInt(ITEMDATA_POWER);
+	}	
 
 	return __max(0, nMaxMana);
 }
@@ -1307,7 +1307,23 @@ double CUser::GetAttack()
 	}
 
 	return (fAtk+0.5f);*/
-	return m_data.GetForce();
+	//return m_data.GetForce();
+
+	int attack = GetForce();
+	if (m_pWeapon)
+		attack += m_pWeapon->GetAttack();
+	if (m_pArmor)
+		attack += m_pArmor->GetAttack();
+	if (m_pShoes)
+		attack += m_pShoes->GetAttack();
+	if (m_pBodyAccessory)
+		attack += m_pBodyAccessory->GetAttack();
+	if (m_pHeadAccessory)
+		attack += m_pHeadAccessory->GetAttack();
+
+	if (attack < 0) attack = 0;
+
+	return attack;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1497,12 +1513,31 @@ double CUser::GetDefence()
 	}
 
 	return (fDef+0.5f);*/
-	return 0;
+	//return 0;
+
+	int defence = GetStamina();
+	if (m_pWeapon)
+		defence += m_pWeapon->GetDefence();
+	if (m_pArmor)
+		defence += m_pArmor->GetDefence();
+	if (m_pShoes)
+		defence += m_pShoes->GetDefence();
+	if (m_pBodyAccessory)
+		defence += m_pBodyAccessory->GetDefence();
+	if (m_pHeadAccessory)
+		defence += m_pHeadAccessory->GetDefence();
+
+	if (defence < 0) defence = 0;
+
+	return defence;
 }
 
 //////////////////////////////////////////////////////////////////////
 double CUser::GetDef()
 {
+	//for now these will be the same
+	return this->GetDefence();
+
 	if(QueryTransformation())
 		return QueryTransformation()->GetDef();
 
@@ -1556,10 +1591,26 @@ DWORD CUser::GetDefence2()
 //////////////////////////////////////////////////////////////////////
 double CUser::GetDexterity()
 {
-	if(QueryTransformation())
-		return QueryTransformation()->GetDexterity();
+	//if(QueryTransformation())
+	//	return QueryTransformation()->GetDexterity();
 
-	return m_data.GetSpeed();
+	//return m_data.GetSpeed();
+
+	int dexterity = GetSpeed();
+	if (m_pWeapon)
+		dexterity += m_pWeapon->GetDexterity();
+	if (m_pArmor)
+		dexterity += m_pArmor->GetDexterity();
+	if (m_pShoes)
+		dexterity += m_pShoes->GetDexterity();
+	if (m_pBodyAccessory)
+		dexterity += m_pBodyAccessory->GetDexterity();
+	if (m_pHeadAccessory)
+		dexterity += m_pHeadAccessory->GetDexterity();
+
+	if (dexterity < 0) dexterity = 0;
+
+	return dexterity;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1596,7 +1647,7 @@ DWORD CUser::GetDodge()
 		CItemPtr& pEquip = *ppEquip;
 		if (pEquip)
 		{
-			int nEquipDex = pEquip->GetDexteriy();
+			int nEquipDex = pEquip->GetDexterity();
 
 			//if (ITEMPOSITION_SPRITE == i)
 			//	nEquipDef = nEquipDef / 100;	// 精灵存储的附加属性是*100以后的值
@@ -1760,11 +1811,11 @@ void CUser::IncLev(int nLev)
 	this->SetAttrib(_USERATTRIB_LEV, nNewLev, SYNCHRO_TRUE);
 
 	// start pay point fee?
-	if(nOldLev < LOGIN_FREE_LEVEL && nNewLev >= LOGIN_FREE_LEVEL)
-		MapGroup(PID)->QueryIntraMsg()->LevelUp(GetID(), nNewLev);
+	//if(nOldLev < LOGIN_FREE_LEVEL && nNewLev >= LOGIN_FREE_LEVEL)
+	//	MapGroup(PID)->QueryIntraMsg()->LevelUp(GetID(), nNewLev);
 
-	if (QueryMagic())
-		QueryMagic()->OwnerUpLevel(nNewLev);
+	//if (QueryMagic())
+	//	QueryMagic()->OwnerUpLevel(nNewLev);
 	if(GetSynID() != ID_NONE)
 	{
 		QuerySynAttr()->UpLevel(nNewLev);
@@ -3185,10 +3236,9 @@ void CUser::BeKill(IRole* pRole /*= NULL*/)
 
 /////////////////////////////////////////////////////////////////////////////
 void CUser::AwardBattleExp(int nExp, bool bGemEffect/*=true*/)
-{// 本函数操作战斗中得到或者扣除经验值。
-	return; //temp before cleaned
-	if (GetLev() > ADJUST_EXPFORMAT_LEVEL)
-		nExp /= 10;
+{
+	//if (GetLev() > ADJUST_EXPFORMAT_LEVEL)
+	//	nExp /= 10;
 
 	if (nExp == 0)
 		return;
@@ -3200,7 +3250,7 @@ void CUser::AwardBattleExp(int nExp, bool bGemEffect/*=true*/)
 	}
 
 	// gem effect
-	if (bGemEffect)
+	/*if (bGemEffect)
 	{
 		int nAddPercent = this->GetGemExpEffect();
 		nExp += nExp*nAddPercent/100;
@@ -3209,51 +3259,69 @@ void CUser::AwardBattleExp(int nExp, bool bGemEffect/*=true*/)
 		if (nAddPercent != 0)
 			this->SendSysMsg(_TXTATR_NORMAL, "got gem exp add percent: %d", nAddPercent);
 #endif
+	}*/
+
+	int maxLev = MAX_USERLEV;
+	if (this->GetRankType() >= 4) {
+		if (this->GetRankType() >= 5 && this->GetMasterType() == MASTER_CULT)
+			maxLev = MAX_USERLEV_MASTER;
+		else
+			maxLev = MAX_USERLEV_SUPER;
+	}
+	if (this->GetLev() >= maxLev) {
+		this->SendSysMsg(_TXTATR_NORMAL, "You have reached the peak of strength. You must tread further down the path of immortality to seek new heights.");
+		return;
 	}
 
-	if (this->GetLev() >= MAX_USERLEV)
-		return;
-
-	if (this->GetLev() >= MASTER_USERLEV)
-		nExp /= 2;
+	if (this->GetRankType() >= 2) {
+		int capInterval = 100;
+		if (this->GetRankType() >= 5) capInterval = 300;
+		if ((this->GetLev() + 1) % capInterval == 0) {
+			this->SendSysMsg(_TXTATR_NORMAL, "You have reached a bottleneck in your cultivation, and must find a way to breakthrough to level further.");
+			return;
+		}
+	}
 
 #ifdef _DEBUG
-	this->SendSysMsg(_TXTATR_NORMAL, "got battle exp: %d", nExp);
+	this->SendSysMsg(_TXTATR_NORMAL, "[Debug] receive battle exp: %d", nExp);
 #endif
 
 	// 增加经验
 	//CLevupexpData* pLevupexp	= LevupexpSet()->GetObj(EXP_TYPE_USER * _EXP_TYPE + this->GetLev());
 	//if (!pLevupexp)
-		return;
+	//	return;
 
-	int nLevupExp = 0; // pLevupexp->GetInt(LEVUPEXPDATA_EXP);
-	int nOrgProgress = ::MulDiv(this->GetExp(), 1000, nLevupExp);
+	int nLevupExp = this->GetLev() * (this->GetLev() + 1); // pLevupexp->GetInt(LEVUPEXPDATA_EXP);
+	//int nOrgProgress = ::MulDiv(this->GetExp(), 1000, nLevupExp);
 
 	int nNewExp = nExp + this->GetExp();
 	if (nNewExp >= nLevupExp)
 	{
 		this->SetAttrib(_USERATTRIB_EXP, 0, SYNCHRO_TRUE);
-		this->IncLev(1);
-		if(IsAutoAllot())
-			this->AllotPoint();		//? add and allot
-		else
-			this->AddAttrib(_USERATTRIB_ADDPOINT, _ADDITIONALPOINT_NUM, SYNCHRO_TRUE);
+		//this->IncLev(1);
+		m_data.SetLev(this->GetLev() + 1);
+		//if(IsAutoAllot())
+		//	this->AllotPoint();		//? add and allot
+		//else
 
-		// 更新最大血量
-		CMsgUserAttrib	msg;
-		if (msg.Create(GetID(), _USERATTRIB_MAXLIFE, GetMaxLife()))
-			SendMsg(&msg);
-		// 2003.2.9 升级自动补满血。
-		this->SetAttrib(_USERATTRIB_LIFE, this->GetMaxLife(), SYNCHRO_TRUE);
-		this->SetAttrib(_USERATTRIB_MANA, this->GetMaxMana(), SYNCHRO_TRUE);
+		int addPoint = _ADDITIONALPOINT_NUM;
+		if (this->GetRankType() >= 2) addPoint++;
+		this->AddAttrib(_USERATTRIB_ADDPOINT, addPoint, SYNCHRO_FALSE);
 
-		CMsgAction msgAction;
-		if (msgAction.Create(this->GetID(), 0, 0, 0, actionUplev, 0, 0))
-			this->BroadcastRoomMsg(&msgAction, INCLUDE_SELF);
+		// Restore HP to max
+		//this->SetAttrib(_USERATTRIB_LIFE, this->GetMaxLife(), SYNCHRO_FALSE); 
+		//this->SetAttrib(_USERATTRIB_MANA, this->GetMaxMana(), SYNCHRO_TRUE);
+
+		//change to CMsgPlayerLevel - not yet created
+		CMsgUserLevelUp msgLvl;
+		if (msgLvl.Create(this))
+			this->SendMsg(&msgLvl);
+			//this->BroadcastRoomMsg(&msgAction, INCLUDE_SELF);
+		
 
 		// team life broacast
-		if (this->GetTeam())
-			this->BroadcastTeamLife(true);
+		//if (this->GetTeam())
+		//	this->BroadcastTeamLife(true);
 
 		// save info
 		m_data.SaveInfo();
@@ -3262,10 +3330,9 @@ void CUser::AwardBattleExp(int nExp, bool bGemEffect/*=true*/)
 	{
 		this->SetAttrib(_USERATTRIB_EXP, nNewExp, SYNCHRO_TRUE);
 
+		bool bSave = true;
+		/*int nLev = this->GetLev();
 		int nCurProgress = ::MulDiv(this->GetExp(), 1000, nLevupExp);
-
-		bool bSave = false;
-		int nLev = this->GetLev();
 		if (nLev >= 110)
 		{
 			if (nOrgProgress/5 != nCurProgress/5)
@@ -3290,15 +3357,15 @@ void CUser::AwardBattleExp(int nExp, bool bGemEffect/*=true*/)
 		{
 			if (nOrgProgress/100 != nCurProgress/100)
 				bSave = true;				
-		}
+		}*/
 
 		if (bSave)
 			m_data.SaveInfo();
 	}
 
-	// 奖励导师经验
-	if (GetTutor() && GetLev() >= _MIN_GIVEEXP_LEV)
-		m_dwExpToTutor += nExp * TUTOREXP_PERCENT / 100;
+	// Reward mentor exp
+	//if (GetTutor() && GetLev() >= _MIN_GIVEEXP_LEV)
+	//m_dwExpToTutor += nExp * TUTOREXP_PERCENT / 100;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3523,7 +3590,7 @@ bool CUser::Init			()		// login 和 change map_group都要执行的操作
 }
 
 //////////////////////////////////////////////////////////////////////
-void CUser::SaveInfo			()
+void CUser::SaveInfo()
 {
 	m_data.SaveInfo();
 	//save all pet
@@ -3885,8 +3952,9 @@ void CUser::OnTimer(time_t tCurr)
 
 	DEBUG_TRY
 	DEADLOOP_CHECK(PID, "ProcXpVal")
-	if (m_tXp.ToNextTime())
-		this->ProcXpVal();
+	//Not sure what this does. 
+	//if (m_tXp.ToNextTime())
+	//	this->ProcXpVal();
 	DEBUG_CATCH("CUser ProcXpVal crash")
 
 	DEBUG_TRY
@@ -3906,7 +3974,7 @@ void CUser::OnTimer(time_t tCurr)
 //		this->ProcAutoHealLife();
 //	DEBUG_CATCH("CUser autoheallife timer crash.")
 
-	DEBUG_TRY
+	/*DEBUG_TRY
 	DEADLOOP_CHECK(PID, "ENERGY timer")
 	if(IsAlive())		// && !this->QueryTransformation()
 	{
@@ -3932,7 +4000,7 @@ void CUser::OnTimer(time_t tCurr)
 			}
 		}
 	}
-	DEBUG_CATCH("CUser ENERGY timer crash.")
+	DEBUG_CATCH("CUser ENERGY timer crash.")*/
 
 	DEBUG_TRY
 	DEADLOOP_CHECK(PID, "QueryMagic()->OnTimer")
@@ -4302,8 +4370,8 @@ void CUser::Reborn(bool bChgPos/*=true*/)
 	SetAttrib(_USERATTRIB_LIFE, GetMaxLife(), SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_MANA, GetMaxMana(), SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_KEEPEFFECT, GetEffect(), SYNCHRO_BROADCAST);
-	SetAttrib(_USERATTRIB_LOOKFACE, GetLookFace(), SYNCHRO_BROADCAST);
-	AddAttrib(_USERATTRIB_ENERGY, 100, SYNCHRO_TRUE);
+	SetAttrib(_USERATTRIB_LOOK, GetLook(), SYNCHRO_BROADCAST);
+	//AddAttrib(_USERATTRIB_ENERGY, 100, SYNCHRO_TRUE);
 	AddAttrib(_USERATTRIB_MAXENERGY, 0, SYNCHRO_TRUE);	// 这里仅仅是为了同步
 
 	const bool bMaxLife = true;
@@ -4326,7 +4394,7 @@ void CUser::TransformGhost()
 	m_bGhost = true;
 
 	SetAttrib(_USERATTRIB_KEEPEFFECT, SetEffect(KEEPEFFECT_GHOST), SYNCHRO_BROADCAST);
-	SetAttrib(_USERATTRIB_LOOKFACE, GetLookFace(), SYNCHRO_BROADCAST);
+	SetAttrib(_USERATTRIB_LOOK, GetLook(), SYNCHRO_BROADCAST);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -4421,7 +4489,7 @@ void CUser::SetXp(int nXp)
 	if (nXp < 0 || nXp > MAX_USER_XP)
 		return;
 
-	this->SetAttrib(_USERATTRIB_XP, nXp, SYNCHRO_TRUE);
+	//this->SetAttrib(_USERATTRIB_XP, nXp, SYNCHRO_TRUE);
 
 }
 
@@ -4431,7 +4499,7 @@ void CUser::AddXp(int nXp)
 	if (nXp < 0 || nXp > MAX_USER_XP)
 		return;
 
-	this->AddAttrib(_USERATTRIB_XP, nXp, SYNCHRO_TRUE);
+	//this->AddAttrib(_USERATTRIB_XP, nXp, SYNCHRO_TRUE);
 
 }
 
@@ -6066,22 +6134,26 @@ bool CUser::IsAlive()
 	return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-void CUser::SetForce(DWORD dwForce)
-{
-	m_data.SetForce(dwForce);
+void CUser::SetStamina(DWORD dwStamina, BOOL bUpdate) {
+	m_data.SetStamina(dwStamina, bUpdate);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CUser::SetDegree(DWORD dwDegree)
+void CUser::SetForce(DWORD dwForce, BOOL bUpdate)
 {
-	m_data.SetDegree(dwDegree);
+	m_data.SetForce(dwForce, bUpdate);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CUser::SetSpeed(DWORD dwSpeed)
+void CUser::SetDegree(DWORD dwDegree, BOOL bUpdate)
 {
-	m_data.SetSpeed(dwSpeed);
+	m_data.SetDegree(dwDegree, bUpdate);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void CUser::SetSpeed(DWORD dwSpeed, BOOL bUpdate)
+{
+	m_data.SetSpeed(dwSpeed, bUpdate);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -6091,9 +6163,9 @@ void CUser::SetSpeed(DWORD dwSpeed)
 }*/
 
 /////////////////////////////////////////////////////////////////////////////
-void CUser::SetPhysique(DWORD dwPhysique)
+void CUser::SetPhysique(DWORD dwPhysique, BOOL bUpdate)
 {
-	m_data.SetPhysique(dwPhysique);
+	m_data.SetPhysique(dwPhysique, bUpdate);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -6800,10 +6872,11 @@ void CUser::AbortTransform()
 bool CUser::SynchroTransform()
 {
 	CMsgUserAttrib	msg;
-	IF_OK( msg.Create(GetID(), _USERATTRIB_LOOKFACE, GetLookFace())
-			&& msg.Append(_USERATTRIB_MAXLIFE, GetMaxLife())
-			&& msg.Append(_USERATTRIB_LIFE, GetLife())
-			&& msg.Append(_USERATTRIB_SIZEADD, GetSizeAdd()) )
+	IF_OK(msg.Create(GetID(), _USERATTRIB_LOOK, GetLook())
+		&& msg.Append(_USERATTRIB_MAXLIFE, GetMaxLife())
+		&& msg.Append(_USERATTRIB_LIFE, GetLife())
+		//&& msg.Append(_USERATTRIB_SIZEADD, GetSizeAdd()) )
+		)
 		BroadcastRoomMsg(&msg, INCLUDE_SELF);
 
 	this->BroadcastTeamLife(true);		// true: with max life
@@ -7399,14 +7472,14 @@ void CUser::ResetUserAttrib(int nOldProf, int nOldLevel, int nNewProf, int nNewL
 	this->SetAutoAllot(true);
 	this->SetMetempsychosis(1);
 	this->SetLook(nNewLook);
-	SetAttrib(_USERATTRIB_LOOKFACE, GetLookFace(), SYNCHRO_BROADCAST);		// no database
-	SetAttrib(_USERATTRIB_PORFESSION, nNewProf, SYNCHRO_TRUE);
+	SetAttrib(_USERATTRIB_LOOK, GetLook(), SYNCHRO_BROADCAST);		// no database
+	//SetAttrib(_USERATTRIB_PORFESSION, nNewProf, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_LEV, nNewLevel, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_EXP, 0, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_FORCE, nForce, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_DEGREE, nDegree, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_PHYSIQUE, nPhysique, SYNCHRO_TRUE);
-	SetAttrib(_USERATTRIB_SOUL, nSoul, SYNCHRO_TRUE);
+	//SetAttrib(_USERATTRIB_SOUL, nSoul, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_LIFE, nMaxLife, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_MANA, nMaxMana, SYNCHRO_TRUE);
 	SetAttrib(_USERATTRIB_ADDPOINT, nAddPoint, SYNCHRO_TRUE);
@@ -7664,6 +7737,13 @@ void CUser::SendActivePet() {
 	CMsgPetAction msg;
 	if (msg.Create(marchingPet->GetID(), 0, PETACTION_ACTIVE))
 		SendMsg(&msg);
+}
+
+CPet* CUser::GetPet(OBJID petID) {
+	for (auto pPet : setPet) {
+		if (pPet->GetID() == petID) return pPet;
+	}
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -23,6 +23,10 @@ const DWORD _IDMSK_PET = 0x80000000;
 extern DWORD NEXT_PETID;
 extern DWORD GetNext_PetID(IDatabase *pDb);
 
+const int MAX_PET_LEV = 1200;
+const int PET_UNEVOGEN_BONUS = 100;
+const int PET_MASTER_BONUS = 50;
+
 
 //////////////////////////////////////////////////////////////////////
 class CPet : public CGameObj, public CRole
@@ -60,9 +64,14 @@ public: // IRole
 	// 幻兽不使用monstertype表中的等级属性字段 -- zlong 2004-02-24
 	virtual DWORD	GetLev() { return data.GetLevel(); }
 
+	virtual void	SetExp(int nExp, BOOL bUpdate = false) { data.SetExperience(nExp, bUpdate); }
+	virtual int		GetExp() { return data.GetExperience(); }
+
 	virtual void	SetLife(int nLife, BOOL bUpdate = false) { data.SetLife(nLife, bUpdate); }
 	virtual	DWORD	GetLife() { return data.GetLife(); } 	//			{ return m_nCurrLife; }
 	virtual double	GetMaxLife() { return data.GetMaxLife(); }	//				{ return (m_AddInfo.nMaxLifeAdd + m_pType->GetInt(NPCTYPEDATA_LIFE)); }
+	virtual void	SetMaxLife(double dMax, BOOL bUpdate = false) { data.SetMaxLife(dMax, bUpdate); }
+	double GetLifeGrowth() { return data.GetLifeRise(); }
 									//	virtual DWORD	GetMana				()				{ return m_nCurrMana; }
 									//	virtual DWORD	GetMaxMana			()				{ return m_pType->GetInt(NPCTYPEDATA_MANA); }
 	//virtual DWORD	GetMinAtk();
@@ -70,17 +79,28 @@ public: // IRole
 	//virtual DWORD	GetMgcMinAtk();
 	//virtual DWORD	GetMgcMaxAtk();
 	virtual double	GetAttack() { return data.GetAttack(); } //{ return (GetMaxAtk() + GetMinAtk()) / 2; }	//{ return (m_pType->GetInt(NPCTYPEDATA_ATTACKMIN)+m_pType->GetInt(NPCTYPEDATA_ATTACKMAX))/2; }
+	virtual void	SetAttack(double dAttack, BOOL bUpdate = false) { data.SetAttack(dAttack, bUpdate); }
 	//virtual DWORD	GetDef();
 	virtual double	GetDefence() { return data.GetDefence(); }
+	virtual void	SetDefence(double dDef, BOOL bUpdate = false) { data.SetDefence(dDef, bUpdate); }
 	//virtual DWORD	GetDefence2() { return m_pType->GetInt(NPCTYPEDATA_DEFENCE2); }
 	//virtual DWORD	GetDex();
 	virtual double	GetDexterity() { return data.GetDexterity(); } //{ return m_pType->GetInt(NPCTYPEDATA_DEXTERITY); }
+	virtual void	SetDexterity(double dDex, BOOL bUpdate = false) { data.SetDexterity(dDex, bUpdate); }
 	//virtual DWORD	GetDdg();
 	//virtual DWORD	GetDodge(); //{ return m_pType->GetInt(NPCTYPEDATA_DODGE); }
 	//	virtual DWORD	GetMagicAtk			()				{ return 0; }
 	//virtual DWORD	GetMagicDef();
 	//virtual	DWORD	GetInterAtkRate();
 	//virtual	DWORD	GetIntervalAtkRate() { return m_pType->GetInt(NPCTYPEDATA_ATKSPEED); }
+
+	int GetAttackRate() { return data.GetRateAttack(); }
+	int GetDefenceRate() { return data.GetRateDefence(); }
+	int GetDexterityRate() { return data.GetRateDexterity(); }
+
+	double GetGrowth() { return data.GetGrowth(); }
+	int GetCapLev() { return data.GetInjury(); }
+	double GetLevelCapModifier();
 
 	//virtual int		AdjustExp(IRole* pTarget, int nRawExp, bool bNewbieBonusMsg = false);
 	virtual void	AwardBattleExp(int nExp, bool bGemEffect = true);
@@ -95,10 +115,14 @@ public: // IRole
 	//virtual int 	AdjustMagicDamage(int nDamage);
 	//virtual void	SetFightPause(int nInterval) { m_nFightPause = nInterval; }
 
+	virtual void	SetLevel(int nLev, BOOL bUpdate = false) { data.SetLevel(nLev, bUpdate); }
+	void			IncLev(bool bUpdate = true);
+
 	virtual CUser*	QueryOwnerUser() { return m_pOwner; }
 
 	virtual DWORD	GetLook() { return data.GetLook(); }
 	virtual ELEMENT GetElement() { return element; }
+	virtual int		GetGeneration() { return data.GetGeneration(); }
 
 	//virtual void	BroadcastRoomMsg(CNetMsg* pMsg, bool bSendSelf = false);
 	//virtual void	BroadcastRoomMsg(LPCTSTR szMsg, bool bSendSelf = false);
@@ -139,6 +163,7 @@ public: // get attrib  ------------------------------------
 	void	SetOwnerID(OBJID id) { data.SetOwnerID(id);  }
 	OBJID	GetOwnerID() { return data.GetOwnerID(); }
 
+	virtual void	SetLoyalty(int nLoy, BOOL bUpdate = false) { data.SetLoyalty(nLoy, bUpdate); }
 	int		GetLoyalty() { return data.GetLoyalty(); }
 
 	//virtual int		GetType() { return pData->; }
@@ -317,7 +342,10 @@ protected:
 	} m_AddInfo;
 	*/
 
-	//CItem*		m_pEudemonItem;		// refrence
+public: //Items
+	bool	UseItem(OBJID idItem, bool bSynchro);
+protected:
+	CItem*		m_pItem;		
 
 protected: // fight
 		   //CBattleSystem*		m_pBattleSystem;

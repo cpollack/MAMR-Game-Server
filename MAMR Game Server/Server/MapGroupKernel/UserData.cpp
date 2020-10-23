@@ -402,20 +402,9 @@ void CUserData::SetCultivation(int nCultivation, BOOL bUpdate)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CUserData::SetForce(int nForce , BOOL bUpdate)
-{
-	m_Info.usForce	= nForce;
-	if (m_pRes)
-	{
-		m_pRes->SetUInt("force", nForce);
-		if (bUpdate)
-			m_pRes->UpdateRecord();
-	}
-}
-
-//////////////////////////////////////////////////////////////////////
 void CUserData::SetAddPoint(int nAddPoint, BOOL bUpdate)
 {
+	if (nAddPoint < 0) nAddPoint = 0;
 	m_Info.usAdditional_point	= nAddPoint;
 	if (m_pRes)
 	{
@@ -426,12 +415,36 @@ void CUserData::SetAddPoint(int nAddPoint, BOOL bUpdate)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CUserData::SetDegree(DWORD dwDex, BOOL bUpdate)
+void CUserData::SetPhysique(int nPhysique, BOOL bUpdate)
 {
-	m_Info.usDegree = dwDex;
+	m_Info.usPhysique = nPhysique;
 	if (m_pRes)
 	{
-		m_pRes->SetUInt("degree", dwDex);
+		m_pRes->SetUInt("physique", nPhysique);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void CUserData::SetStamina(DWORD dwStamina, BOOL bUpdate)
+{
+	m_Info.usStamina = dwStamina;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("stamina", dwStamina);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+void CUserData::SetForce(int nForce, BOOL bUpdate)
+{
+	m_Info.usForce = nForce;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("force", nForce);
 		if (bUpdate)
 			m_pRes->UpdateRecord();
 	}
@@ -450,13 +463,23 @@ void CUserData::SetSpeed(DWORD dwSpeed, BOOL bUpdate)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CUserData::SetStamina(DWORD dwStamina, BOOL fUpdate)
+void CUserData::SetDegree(DWORD dwDex, BOOL bUpdate)
 {
-	m_Info.usStamina = dwStamina;
+	m_Info.usDegree = dwDex;
 	if (m_pRes)
 	{
-		m_pRes->SetUInt("stamina", dwStamina);
-		if (fUpdate)
+		m_pRes->SetUInt("degree", dwDex);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+void CUserData::SetPetRaising(int nPetRaise, BOOL bUpdate) {
+	m_Info.nCreative = nPetRaise;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("exp_creative", nPetRaise);
+		if (bUpdate)
 			m_pRes->UpdateRecord();
 	}
 }
@@ -569,18 +592,6 @@ void CUserData::SetNobilityRank(DWORD dwNobilityRank, BOOL bUpdate)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CUserData::SetPhysique(int nPhysique, BOOL bUpdate)
-{
-	m_Info.usPhysique = nPhysique;
-	if (m_pRes)
-	{
-		m_pRes->SetUInt("physique", nPhysique);
-		if (bUpdate)
-			m_pRes->UpdateRecord();
-	}
-}
-
-//////////////////////////////////////////////////////////////////////
 void CUserData::SetLength(int nLength, BOOL bUpdate)
 {
 	m_Info.cLength	= nLength;
@@ -669,6 +680,56 @@ void CUserData::SetExploit(DWORD dwExploit, BOOL bUpdate)
 	if (m_pRes)
 	{
 		m_pRes->SetUInt("exploit", dwExploit);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+void CUserData::SetWeapon(OBJID itemID, BOOL bUpdate) {
+	m_Info.idWeapon = itemID;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("weapon_id", itemID);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+void CUserData::SetArmor(OBJID itemID, BOOL bUpdate) {
+	m_Info.idArmor = itemID;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("armor_id", itemID);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+void CUserData::SetShoes(OBJID itemID, BOOL bUpdate) {
+	m_Info.idShoes = itemID;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("shoes_id", itemID);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+void CUserData::SetBodyAcc(OBJID itemID, BOOL bUpdate) {
+	m_Info.idBody = itemID;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("treasure0_id", itemID);
+		if (bUpdate)
+			m_pRes->UpdateRecord();
+	}
+}
+
+void CUserData::SetHeadAcc(OBJID itemID, BOOL bUpdate) {
+	m_Info.idHead = itemID;
+	if (m_pRes)
+	{
+		m_pRes->SetUInt("treasure1_id", itemID);
 		if (bUpdate)
 			m_pRes->UpdateRecord();
 	}

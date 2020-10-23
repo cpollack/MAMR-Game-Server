@@ -909,7 +909,7 @@ bool CGameAction::ProcessActionMAM(CActionData* pAction, LPCTSTR szParam, CUser*
 
 	switch (pAction->GetInt(ACTIONDATA_TYPE))
 	{
-	case	ACTION_ITEM_ADD:
+	case ACTION_ITEM_ADD:
 	{
 		CItem* pItem = pUser->AwardItem(pAction->GetInt(ACTIONDATA_DATA), SYNCHRO_FALSE, false, CUser::NO_COMBINE);
 		if (pItem)
@@ -1572,7 +1572,7 @@ bool CGameAction::ProcessActionNpc(CActionData* pAction, LPCTSTR szParam, CUser*
 					pNpc->SetInt(NPCDATA_LOOK, nData, bUpdate);
 
 					CMsgUserAttrib	msg;
-					IF_OK(msg.Create(pNpc->GetID(), _USERATTRIB_LOOKFACE, nData))
+					IF_OK(msg.Create(pNpc->GetID(), _USERATTRIB_LOOK, nData))
 						pNpc->BroadcastRoomMsg(&msg);
 
 					return true;
@@ -1709,7 +1709,7 @@ bool CGameAction::ProcessActionNpc(CActionData* pAction, LPCTSTR szParam, CUser*
 					pTarget->SetInt(NPCDATA_LOOK, nData, bUpdate);
 
 					CMsgUserAttrib	msg;
-					IF_OK(msg.Create(pTarget->GetID(), _USERATTRIB_LOOKFACE, nData))
+					IF_OK(msg.Create(pTarget->GetID(), _USERATTRIB_LOOK, nData))
 						pTarget->BroadcastRoomMsg(&msg);
 
 					return true;
@@ -4940,7 +4940,7 @@ bool CGameAction::ProcessActionUser(CActionData* pAction, LPCTSTR szParam, CUser
 				else if(strcmp(szOpt, "set") == 0)
 				{
 					pUser->QueryDataForAction()->SetProfession(nData, true);
-					pUser->SetAttrib(_USERATTRIB_PORFESSION, nData, SYNCHRO_BROADCAST);
+					//pUser->SetAttrib(_USERATTRIB_PORFESSION, nData, SYNCHRO_BROADCAST);
 					return true;
 				}
 			}
@@ -5177,12 +5177,12 @@ bool CGameAction::ProcessActionUser(CActionData* pAction, LPCTSTR szParam, CUser
 				}
 				else if(strcmp(szOpt, "+=") == 0)
 				{
-					pUser->AddAttrib(_USERATTRIB_NOBILITYRANK, nData, SYNCHRO_TRUE);
+					//pUser->AddAttrib(_USERATTRIB_NOBILITYRANK, nData, SYNCHRO_TRUE);
 					return true;
 				}
 				else if(strcmp(szOpt, "=") == 0)
 				{
-					pUser->SetAttrib(_USERATTRIB_NOBILITYRANK, nData, SYNCHRO_TRUE);
+					//pUser->SetAttrib(_USERATTRIB_NOBILITYRANK, nData, SYNCHRO_TRUE);
 					return true;
 				}
 			}

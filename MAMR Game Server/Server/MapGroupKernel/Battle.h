@@ -89,6 +89,7 @@ public: //State
 	bool GetRanAway() { return bRanAway; }
 	void SetRanAway(bool bRan) { bRanAway = bRan; }
 
+	bool CanAct() { return IsAlive() && !bRanAway; }
 	bool IsValidTarget() { return IsAlive() && !bRanAway; }
 	bool IsAlive() { return !IsDead(); }
 	bool IsDead() { return state == STATE_DEAD; }
@@ -165,6 +166,7 @@ public: //Network
 
 private:
 	BATTLETYPE type;
+	bool battleComplete = false;
 	int round = 0;
 	int group = 0;
 	bool noTargets = false;

@@ -205,20 +205,24 @@ public: // set to info, use by CUser
 	void			SetProfession	(DWORD dwProfession, BOOL bUpdate = TRUE);	// 很少使用，默认直接修改数据库
 	DWORD			GetProfession	()	{return m_Info.ucProfession;}
 
-	void			SetForce(int nForce, BOOL bUpdate = TRUE);
-	DWORD			GetForce() { return m_Info.usForce; }
+	void			SetForce		(int nForce, BOOL bUpdate = false);
+	DWORD			GetForce		() { return m_Info.usForce; }
 
-	void			SetPhysique(int nPhysique, BOOL bUpdate = TRUE);
-	DWORD			GetPhysique() { return m_Info.usPhysique; }
+	void			SetPhysique		(int nPhysique, BOOL bUpdate = false);
+	DWORD			GetPhysique		() { return m_Info.usPhysique; }
 
-	void			SetDegree		(DWORD dwDex, BOOL bUpdate = TRUE);
+	void			SetDegree		(DWORD dwDex, BOOL bUpdate = false);
 	DWORD			GetDegree		()	{return m_Info.usDegree;}
 
-	void			SetSpeed		(DWORD dwSpeed, BOOL bUpdate = TRUE);
+	void			SetSpeed		(DWORD dwSpeed, BOOL bUpdate = false);
 	DWORD			GetSpeed		()	{return m_Info.usSpeed;}
 
-	void			SetStamina		(DWORD dwStamina, BOOL fUpdate = TRUE);
+	void			SetStamina		(DWORD dwStamina, BOOL fUpdate = false);
 	DWORD			GetStamina		()	{return m_Info.usStamina;}
+
+	void			SetPetRaising	(int nPetRaise, BOOL bUpdate = false);
+	DWORD			GetPetRaising	() { return GetMedicine(); }
+	DWORD			GetMedicine		() { return m_Info.nMedicine; }
 
 	//void			SetSoul			(DWORD dwSoul, BOOL fUpdate = TRUE);
 	//DWORD			GetSoul			()	{return m_Info.usSoul;}
@@ -268,6 +272,14 @@ public: // set to info, use by CUser
 	
 	DWORD			GetExploit		()	{ return m_Info.dwExploit; }
 	void			SetExploit		(DWORD dwExploit, BOOL bUpdate = TRUE);
+
+	//Equipment
+
+	void SetWeapon	(OBJID itemID, BOOL bUpdate = true);
+	void SetArmor	(OBJID itemID, BOOL bUpdate = true);
+	void SetShoes	(OBJID itemID, BOOL bUpdate = true);
+	void SetBodyAcc	(OBJID itemID, BOOL bUpdate = true);
+	void SetHeadAcc	(OBJID itemID, BOOL bUpdate = true);
 
 	UserInfoStruct&		GetInfo()	{ return m_Info; }
 protected:

@@ -630,8 +630,8 @@ bool CMagic::MagicAttack(int nType, OBJID idTarget, int x, int y, UCHAR ucAutoAc
 	{
 		if(m_pMagic->GetInt(MAGICDATA_USE_MP) > 0)
 			m_pOwner->AddAttrib(_USERATTRIB_MANA, -1*m_pMagic->GetInt(MAGICDATA_USE_MP), SYNCHRO_TRUE);
-		if(m_pMagic->GetInt(MAGICDATA_USE_EP) > 0)
-			m_pOwner->AddAttrib(_USERATTRIB_ENERGY, -1*m_pMagic->GetInt(MAGICDATA_USE_EP), SYNCHRO_TRUE);
+		//if(m_pMagic->GetInt(MAGICDATA_USE_EP) > 0)
+		//	m_pOwner->AddAttrib(_USERATTRIB_ENERGY, -1*m_pMagic->GetInt(MAGICDATA_USE_EP), SYNCHRO_TRUE);
 		if(pData->GetInt(MAGICDATA_USE_ITEM) && pData->GetInt(MAGICDATA_ITEM_NUM) > 0)
 			m_pOwner->SpendEquipItem(pData->GetInt(MAGICDATA_USE_ITEM), pData->GetInt(MAGICDATA_ITEM_NUM), SYNCHRO_TRUE);
 		if (m_pMagic->GetInt(MAGICDATA_USE_POTENTIAL) > 0)

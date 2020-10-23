@@ -213,8 +213,10 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgPackage.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgPetAction.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgPetInfo.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPetLevelUp.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgPlayer.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgPlayerTask.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPointAllot.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgSynAttrInfo.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgSyndicate.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgSynInfo.cpp" />
@@ -224,6 +226,7 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgTrade.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgUserAttrib.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgUserInfo.cpp" />
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgUserLevelUp.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgWalk.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\MsgWeather.cpp" />
     <ClCompile Include="Server\MapGroupKernel\Network\NetMsg.cpp" />
@@ -413,8 +416,10 @@
     <ClInclude Include="Server\MapGroupKernel\Network\MsgPackage.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgPetAction.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgPetInfo.h" />
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPetLevelUp.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgPlayer.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgPlayerTask.h" />
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPointAllot.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgSynAttrInfo.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgSyndicate.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgSynInfo.h" />
@@ -424,6 +429,7 @@
     <ClInclude Include="Server\MapGroupKernel\Network\MsgTrade.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgUserAttrib.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgUserInfo.h" />
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgUserLevelUp.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgWalk.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\MsgWeather.h" />
     <ClInclude Include="Server\MapGroupKernel\Network\NetMsg.h" />

@@ -142,9 +142,21 @@ const unsigned char SEX_REQ_EUNUCH		=	0x04;// 太监可用
 
 
 ////////////////////////////////////////////////////////////////
-const int	MASTER_USERLEV				= 120;
-const int	MAX_USERLEV					= 130;
-//const int	MAX_EUDEMONLEV				= 130;
+const int	MASTER_USERLEV		= 120;
+const int	MAX_USERLEV			= 1200;
+const int	MAX_USERLEV_SUPER	= 1300;
+const int	MAX_USERLEV_MASTER	= 1400;
+//const int	MAX_EUDEMONLEV		= 130;
+
+enum {
+	MASTER_PET		= 1,
+	MASTER_CULT		= 2,
+	MASTER_VIRTUE	= 3,
+	MASTER_WUX		= 4,
+	MASTER_KUNGFU	= 5,
+	MASTER_THIEF	= 6,
+	MASTER_REP		= 7,
+};
 
 //typedef	IGameObjSet<CUserWeaponSkill>		IUserWeaponSkillSet;
 //typedef	CGameObjSet<CUserWeaponSkill>		CUserWeaponSkillSet;
@@ -346,6 +358,9 @@ public: // IRole
 
 	//virtual DWORD	GetDegree			();
 	virtual double	GetDexterity		();
+
+	virtual void	SetPetRaising(int nPetRaise, BOOL bUpdate = false) { m_data.SetPetRaising(nPetRaise, bUpdate); }
+	int				GetPetRaising() { return m_data.GetPetRaising(); }
 
 	virtual DWORD	GetDdg				();
 	virtual DWORD	GetDodge			();
@@ -617,6 +632,7 @@ public:
 //----------------------------------------------------------------------------
 public:	// modify attrib ------------------------------
 	int			GetAddPoint			();
+	void		SetAddPoint(int nPoint, BOOL bUpdate = TRUE) { m_data.SetAddPoint(nPoint, bUpdate); }
 
 	int			GetAutoAllot		()					{return m_data.GetAutoAllot();}
 	void		SetAutoAllot		(int nAutoAllot)	{m_data.SetAutoAllot(nAutoAllot);}
@@ -710,18 +726,21 @@ protected:
 public:	//-------- 不知道的类型 -----------------------
 //	void		InitWalkStep		()				{ m_nWalkStep = 0; }
 
-	void		SetForce			(DWORD dwForce);
+	void		SetStamina			(DWORD dwStamina, BOOL bUpdate = false);
+	DWORD		GetStamina			() { return m_data.GetStamina(); }
+
+	void		SetForce			(DWORD dwForce, BOOL bUpdate = false);
 	DWORD		GetForce			()				{ return m_data.GetForce();}
 
-	void		SetDegree			(DWORD dwDegree);
+	void		SetDegree			(DWORD dwDegree, BOOL bUpdate = false);
 	DWORD		GetDegree			()				{ return m_data.GetDegree(); }
 
-	void		SetSpeed			(DWORD dwSpeed);
+	void		SetSpeed			(DWORD dwSpeed, BOOL bUpdate = false);
 	DWORD		GetSpeed			()				{ return m_data.GetSpeed();}
 	// 根据状态调整速度
 	DWORD		AdjustSpeed			(int nSpeed);
 
-	void		SetPhysique			(DWORD dwHealth);
+	void		SetPhysique			(DWORD dwHealth, BOOL bUpdate = false);
 	DWORD		GetPhysique			()				{ return m_data.GetPhysique();}
 
 	//void		SetSoul				(DWORD dwSoul);
@@ -824,6 +843,8 @@ public: // item ------------------------------------------
 	CItemPtr*	GetEquipItemPtr	(OBJID idItem);
 	CItemPtr&	GetEquipItemRef	(OBJID idItem)						{ CItemPtr* ppEquip = GetEquipItemPtr(idItem); ASSERT(ppEquip); return *ppEquip; }
 	CItem*	GetEquipItemByPos	(int nPosition);
+	CItemPtr* GetEquipItemPtrByPos(int nPosition);
+	CItemPtr& GetEquipItemRefByPos(int nPosition) { CItemPtr* ppEquip = GetEquipItemPtrByPos(nPosition); ASSERT(ppEquip); return *ppEquip; }
 	bool	AddItem			(CItem* pItem, bool bSynchro, bool bUpdate = true);
 	bool	DelItem			(OBJID idItem, bool bSynchro);
 	bool	DelItemPt		(OBJID idItem);							// 只删除指针
@@ -863,6 +884,12 @@ protected:
 	CItem*	UnEquipOnly		(int nPosition);
 	void	UpdateWeight	();
 	void	UpdateEquipmentDurability	();
+
+	void	SetWeapon	(OBJID itemID, BOOL bUpdate = true) { m_data.SetWeapon(itemID, bUpdate); }
+	void	SetArmor	(OBJID itemID, BOOL bUpdate = true) { m_data.SetArmor(itemID, bUpdate); }
+	void	SetShoes	(OBJID itemID, BOOL bUpdate = true) { m_data.SetShoes(itemID, bUpdate); }
+	void	SetBodyAcc	(OBJID itemID, BOOL bUpdate = true) { m_data.SetBodyAcc(itemID, bUpdate); }
+	void	SetHeadAcc	(OBJID itemID, BOOL bUpdate = true) { m_data.SetHeadAcc(itemID, bUpdate); }
 protected:
 	bool	CreateAllItem	(IDatabase* pDb);
 	void	SaveItemInfo	();
@@ -870,7 +897,8 @@ protected:
 	void	SendAllItemInfo	();
 public: // msgitem
 	void	SendAllEquipInfoTo(CUser* pTarget);
-	void	BuyItem			(OBJID idNpc, OBJID idType);
+	//void	BuyItem			(OBJID idNpc, OBJID idType);
+	void	BuyItem			(OBJID idType);
 	void	SellItem		(OBJID idNpc, OBJID idItem);
 protected: // member
 	bool	m_bUpdateWeight;		// false: m_nAllWeight值无效，需要重新计算
@@ -986,6 +1014,7 @@ public: // Pet
 	bool CreateAllPet();
 	void SendAllPet();
 	void SendActivePet();
+	CPet* GetPet(OBJID petID);
 	CPet* GetMarchingPet() { return marchingPet; }
 
 protected:

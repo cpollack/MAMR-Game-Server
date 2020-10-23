@@ -5,6 +5,7 @@
 #include "allmsg.h"
 #include "MsgPetAction.h"
 #include "../MapGroup.h"
+#include "../Pet.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -54,13 +55,18 @@ BOOL CMsgPetAction::Create(char* pbufMsg, DWORD dwMsgSize)
 void CMsgPetAction::Process(CGameSocket* pSocket)
 {
 	CUserPtr pUser = UserManager()->GetUser(this);
-	if (!pUser)
-		return;
+	CHECK(pUser);
 
 	try {
 	switch (m_pInfo->dwAction)
 	{
-		//
+	case PETACTION_USEITEM:
+	{
+		CPet* pPet = pUser->GetPet(m_pInfo->petID);
+		if (pPet) {
+			pPet->UseItem(m_pInfo->dwData, SYNCHRO_TRUE);
+		}
+	} break;
 	}
 	}catch (...)
 	{

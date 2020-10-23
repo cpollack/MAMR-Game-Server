@@ -23,7 +23,9 @@ protected: // interface
 	virtual UINT	LoadUInt	(LPCTSTR szField)					{ return (UINT)LoadInt(szField); }
 	virtual void	SetUInt		(LPCTSTR szField, UINT nData)		{ SetInt(szField, nData); }
 	virtual float	LoadFloat	(LPCSTR szField);
+	virtual void	SetFloat	(LPCTSTR szField, float fData);
 	virtual double	LoadDouble	(LPCSTR szField);
+	virtual void	SetDouble	(LPCTSTR szField, double dData);
 	virtual void	LoadString	(char* szData, LPCTSTR szField, int nSize);
 	virtual void	SetString	(LPCTSTR szField, LPCTSTR szData, int nSize);
 
@@ -33,6 +35,8 @@ protected: // interface
 	virtual double	GetDouble	(int idx);
 	virtual LPCTSTR	GetStr		(int idx);
 	virtual void	SetInt		(int idx, int nData);
+	virtual void	SetFloat	(int idx, float fData);
+	virtual void	SetDouble	(int idx, double dData);
 	virtual void	SetStr		(int idx, LPCTSTR szData, int nSize);
 	virtual void	ClearUpdateFlags	()							{ ClsEditFlag(); }
 

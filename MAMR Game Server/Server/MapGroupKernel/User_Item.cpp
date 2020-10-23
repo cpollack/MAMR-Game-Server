@@ -2,15 +2,28 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Network/AllMsg.h"
+//#include "Network/AllMsg.h"
 #include "User.h"
 #include "MapGroup.h"
-#include "Network/netmsg.h"
+//#include "Network/netmsg.h"
 #include "ItemType.h"
 //#include "MapItem.h"
 #include "Package.h"
+#include "Npc.h"
 
-const int USERITEM_MASK = 100000000;
+#include "Network/MsgItem.h"
+#include "Network/MsgItemInfo.h"
+#include "Network/MsgItemInfoEx.h"
+#include "Network/MsgName.h"
+
+//why do we need this?
+#include "Network/MsgPlayer.h"
+#include "Network/MsgUserAttrib.h"
+#include "Network/MsgInteract.h"
+#include "Network/MsgTalk.h"
+#include "Network/MsgTrade.h"
+
+const int	USERITEM_MASK = 100000000;
 const int	MINI_ADDLIFE_DRAG				= 100;
 //const int	ADDLIFE_FIRST_PERCENT			= 40;
 //const int	ADDLIFE_NEXT_PERCENT			= 20;
@@ -240,7 +253,7 @@ CItem* CUser::GetEquipItem(OBJID idItem)
 //////////////////////////////////////////////////////////////////////
 CItem* CUser::GetEquipItemByPos(int nPosition)
 {
-	CItemPtr* ppEquip = this->GetEquipItemPtr(nPosition);
+	CItemPtr* ppEquip = this->GetEquipItemPtrByPos(nPosition);
 	if (!ppEquip)
 		return NULL;
 	
@@ -269,6 +282,26 @@ CItemPtr* CUser::GetEquipItemPtr(OBJID idItem)
 	case	ITEMPOSITION_HEAD:
 		return &m_pHeadAccessory;
 	}*/
+
+	return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////
+CItemPtr* CUser::GetEquipItemPtrByPos(int nPosition)
+{
+	switch(nPosition)
+	{
+	case	ITEMPOSITION_WEAPON:
+		return &m_pWeapon;
+	case	ITEMPOSITION_ARMOR:
+		return &m_pArmor;
+	case	ITEMPOSITION_SHOES:
+		return &m_pShoes;
+	case	ITEMPOSITION_BODY:
+		return &m_pBodyAccessory;
+	case	ITEMPOSITION_HEAD:
+		return &m_pHeadAccessory;
+	}
 
 	return NULL;
 }
@@ -506,10 +539,10 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 	int nSort = pItem->GetItemSort();
 
 	// 双击，自动安排
-	if(nSort >= ITEMPOSITION_PACK_BEGIN && nSort < ITEMPOSITION_PACK_END)
+	/*if(nSort >= ITEMPOSITION_PACK_BEGIN && nSort < ITEMPOSITION_PACK_END)
 	{
-		if (this->IsWing())
-			return false;
+		//if (this->IsWing())
+		//	return false;
 
 		if(pItem->IsWeapon())
 		{
@@ -531,7 +564,7 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 		{
 			nSort = ITEMPOSITION_HEAD;
 		}
-	}
+	}*/
 
 	// 冗错
 	//if(m_setItem.size() > _MAX_USERITEMSIZE)
@@ -545,7 +578,7 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 */
 
 	// 先取出，以空出背包。
-	CHECKF(DelItemPt(idItem));				// VVVVVVVVVVVVVVVVVVVVVVVVVVVV
+	//CHECKF(DelItemPt(idItem));				// VVVVVVVVVVVVVVVVVVVVVVVVVVVV
 	bool	bRet	= false;
 	switch(nSort)
 	{
@@ -554,8 +587,13 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 		if (pItem->IsWeapon())
 		{
 			UnEquipOnly(nSort);
+			this->SetWeapon(idItem);
 			m_pWeapon = pItem;
-			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
+			m_pPackage->PopItem(idItem);
+			CMsgItem msg;
+			if (msg.Create(idItem, ITEMACT_USE))
+				this->SendMsg(&msg);
+			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_WEAPON);
 			bRet = true;
 		}
 	}
@@ -565,9 +603,13 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 			if(pItem->IsArmor())
 			{
 				UnEquipOnly(nSort);
+				this->SetArmor(idItem);
 				m_pArmor = pItem;
-				//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_ARMOR);
-				bRet	= true;
+				m_pPackage->PopItem(idItem);
+				CMsgItem msg;
+				if (msg.Create(idItem, ITEMACT_USE))
+					this->SendMsg(&msg);
+				bRet = true;
 			}
 		}
 		break;
@@ -576,9 +618,13 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 			if(pItem->IsShoes())
 			{
 				UnEquipOnly(nSort);
+				this->SetShoes(idItem);
 				m_pShoes = pItem;
-				//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
-				bRet	= true;
+				m_pPackage->PopItem(idItem);
+				CMsgItem msg;
+				if (msg.Create(idItem, ITEMACT_USE))
+					this->SendMsg(&msg);
+				bRet = true;
 			}
 		}
 		break;
@@ -587,8 +633,12 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 		if (pItem->IsBodyAccessory())
 		{
 			UnEquipOnly(nSort);
+			this->SetBodyAcc(idItem);
 			m_pBodyAccessory = pItem;
-			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
+			m_pPackage->PopItem(idItem);
+			CMsgItem msg;
+			if (msg.Create(idItem, ITEMACT_USE))
+				this->SendMsg(&msg);
 			bRet = true;
 		}
 	}
@@ -598,8 +648,12 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 		if (pItem->IsHeadAccessory())
 		{
 			UnEquipOnly(nSort);
+			this->SetHeadAcc(idItem);
 			m_pHeadAccessory = pItem;
-			//pItem->SetInt(ITEMDATA_POSITION, ITEMPOSITION_SHOES);
+			m_pPackage->PopItem(idItem);
+			CMsgItem msg;
+			if (msg.Create(idItem, ITEMACT_USE))
+				this->SendMsg(&msg);
 			bRet = true;
 		}
 	}
@@ -607,10 +661,10 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 	default:
 		ASSERT(!"switch");
 	} // switch
-	if(!bRet)
-		AddItem(pItem, SYNCHRO_FALSE);		// 恢复物品 AAAAAAAAAAAAAAAAAAAAAAA
+	//if(!bRet)
+	//	AddItem(pItem, SYNCHRO_FALSE);		// 恢复物品 AAAAAAAAAAAAAAAAAAAAAAA
 
-	if(bRet)
+	/*if(bRet)
 	{
 		if(bSynchro)
 		{
@@ -631,14 +685,16 @@ bool CUser::EquipItem(CItem* pItem, bool bSynchro)
 		}
 
 //		UpdateWeight();
-		CalcFightRate();
-		EquipMagicItem(pItem, nSort);
+		//CalcFightRate();
+		//EquipMagicItem(pItem, nSort);
 		return true;
 	}
 	else
 	{
 		return false;
-	}
+	}*/
+
+	return bRet;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -787,6 +843,7 @@ bool CUser::UseItem(OBJID idItem, bool bSynchro)
 	if (!ChkUseItem(pItem, this->QueryRole()))
 		return false;
 
+	//Items with actions run the action instead of their normal "action"
 	//if(pItem->IsActionItem() || pItem->IsGhostGem())
 	if (pItem->GetInt(ITEMDATA_ACTION))
 	{
@@ -876,7 +933,7 @@ bool CUser::UseItem(OBJID idItem, bool bSynchro)
 			if (m_setSlowHealUp2Life.Size() == 0)
 			{
 				AddAttrib(_USERATTRIB_LIFE, nFirstAdd, SYNCHRO_TRUE);
-				this->BroadcastTeamLife();
+				//this->BroadcastTeamLife();
 			}
 			else
 				setAddLife.push_back(nFirstAdd);
@@ -908,7 +965,7 @@ bool CUser::UseItem(OBJID idItem, bool bSynchro)
 		else if (nAddLife < 0)
 		{
 			AddAttrib(_USERATTRIB_LIFE, nAddLife, SYNCHRO_TRUE);
-			this->BroadcastTeamLife();
+			//this->BroadcastTeamLife();
 		}
 
 		if(nAddMana > 0)
@@ -1123,7 +1180,7 @@ CItem* CUser::UnEquipOnly(int nPosition)
 	//CHECKF(m_setItem.size() < _MAX_USERITEMSIZE);
 
 	CItem* pItem = NULL;
-	CItemPtr& refpEquip = GetEquipItemRef(nPosition);
+	CItemPtr& refpEquip = GetEquipItemRefByPos(nPosition);
 	if (refpEquip == NULL)
 		return NULL;
 
@@ -1143,29 +1200,31 @@ CItem* CUser::UnEquipOnly(int nPosition)
 
 	}
 
-	UnequipMagicItem(nPosition);
+	//UnequipMagicItem(nPosition);
 	return pItem;
 }
 
 //////////////////////////////////////////////////////////////////////
 // msgitem
 //////////////////////////////////////////////////////////////////////
-void CUser::BuyItem (OBJID idNpc, OBJID idType)
+//void CUser::BuyItem(OBJID idNpc, OBJID idType)
+void CUser::BuyItem(OBJID idType)
 {
-	CNpc* pNpc; 
-	if(!GetMap()->QueryObj(GetPosX(), GetPosY(), OBJ_NPC, idNpc, IPP_OF(pNpc)))
-		return ;
-	if(!pNpc->IsShopNpc())
-		return;
-	if(!pNpc->QueryShop()->IsOpen())
-		return;
+	//CNpc* pNpc; 
+	//if(!GetMap()->QueryObj(GetPosX(), GetPosY(), OBJ_NPC, idNpc, IPP_OF(pNpc)))
+	//	return ;
+	//if(!pNpc->IsShopNpc())
+	//	return;
+	//if(!pNpc->QueryShop()->IsOpen())
+	//	return;
 
-	CItemTypeData* pType = pNpc->QueryShop()->QueryItemType(idType);
+	CItemTypeData* pType = ItemType()->QueryItemType(idType);
+	//CItemTypeData* pType = pNpc->QueryShop()->QueryItemType(idType);
 	IF_NOT (pType)
 		return;
 
 	int nCost = pType->GetInt(ITEMTYPEDATA_COST);
-	nCost = pNpc->QueryShop()->Rebate(nCost, GetSynID(), GetSynRankShow());
+	//nCost = pNpc->QueryShop()->Rebate(nCost, GetSynID(), GetSynRankShow());
 
 	//---jinggy---过是向帮派NPC买东西，帮派成员有优惠---begin	
 /*	
@@ -1188,14 +1247,19 @@ void CUser::BuyItem (OBJID idNpc, OBJID idType)
 		return;
 	}
 
-	if(!AwardItem(idType, SYNCHRO_TRUE, CUser::IDENT_OK))
+	CItem* pAddItem = AwardItem(idType, SYNCHRO_TRUE, CUser::IDENT_OK);
+	if(!pAddItem)
 	{
 //		this->SendSysMsg("您身上带不了这么多东西!");
 		return;
 	}
 
-	ASSERT(this->SpendMoney(nCost, SYNCHRO_TRUE));
-	UpdateWeight();
+	ASSERT(this->SpendMoney(nCost, SYNCHRO_FALSE));
+
+	CMsgItem msg;
+	if (msg.Create(pAddItem->GetID(), ITEMACT_BUY))
+		this->SendMsg(&msg);
+	//UpdateWeight();
 }
 
 //////////////////////////////////////////////////////////////////////

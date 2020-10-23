@@ -54,13 +54,13 @@ public: //From Monster
 	void			SetName(const char* pszName);
 	char*			GetName() { return info.szName; }
 
-	void			SetAttack(double fAttack) { info.Attack = fAttack; }
+	void			SetAttack(double dAttack, BOOL bUpdate = false);
 	double			GetAttack() { return info.Attack; }
 
-	void			SetDefence(double fDef) { info.Defence = fDef; }
+	void			SetDefence(double dDef, BOOL bUpdate = false);
 	double			GetDefence() { return info.Defence; }
 
-	void			SetDexterity(double fDex) { info.Dexterity = fDex; }
+	void			SetDexterity(double dDex, BOOL bUpdate = false);
 	double			GetDexterity() { return info.Dexterity; }
 
 	void			SetLife(int fLife, BOOL bUpdate = false);
@@ -72,7 +72,7 @@ public: //From Monster
 	void			SetLifeRise(double fRise) { info.LifeRise = fRise; }
 	double			GetLifeRise() { return info.LifeRise; }
 
-	void			SetLevel(int nLev) { info.Level = nLev; }
+	void			SetLevel(int nLev, BOOL bUpdate = false);
 	int				GetLevel() { return info.Level; }
 
 	void			SetLook(int nLook) { info.Look = nLook; }
@@ -105,10 +105,10 @@ public: //From Monster
 	HSB				GetHSB(int idx) { return info.hsb[idx]; }
 
 public: //Specific to pet
-	void SetExperience(int iExp) { info.Experience = iExp; }
+	void SetExperience(int iExp, BOOL bUpdate = false);
 	DWORD GetExperience() { return info.Experience; }
 
-	void SetLoyalty(int iLoy) { info.Loyalty = iLoy; }
+	void SetLoyalty(int iLoy, BOOL bUpdate = false);
 	DWORD GetLoyalty() { return info.Loyalty; }
 
 	void SetGeneration(int iGen) { info.Generation = iGen; }
@@ -117,7 +117,7 @@ public: //Specific to pet
 	void SetInjury(int iInj) { info.Injury = iInj; }
 	DWORD GetInjury() { return info.Injury; }
 
-	void SetMaxLife(double fLife) { info.LifeMax = fLife; }
+	void SetMaxLife(double dLife, BOOL bUpdate = false);
 	double GetMaxLife() { return info.LifeMax; }
 
 	void SetSkillCount(int iCount) { info.SkillCount = iCount; }

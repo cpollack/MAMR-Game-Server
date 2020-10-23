@@ -14,6 +14,8 @@
 #include "MsgPlayer.h"
 #include "MsgUserInfo.h"
 #include "MsgUserAttrib.h"
+#include "MsgPointAllot.h"
+#include "MsgUserLevelUp.h"
 #include "MsgDirection.h"
 #include "MsgAction.h"
 #include "MsgInteract.h"
@@ -43,6 +45,7 @@
 
 #include "MsgPetInfo.h"
 #include "MsgPetAction.h"
+#include "MsgPetLevelUp.h"
 #include "MsgCallPetInfo.h" //This will go away?
 
 #include "MsgSyndicate.h"

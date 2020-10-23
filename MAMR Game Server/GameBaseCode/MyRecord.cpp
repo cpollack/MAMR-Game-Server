@@ -799,6 +799,22 @@ float CMyRecord::LoadFloat(LPCTSTR szField)
 }
 
 ///////////////////////////////////////////////////////////////////////
+void CMyRecord::SetFloat(LPCTSTR szField, float fData)
+{
+	IF_NOT(szField)
+		return;
+
+	for (UINT i = 0; i < m_uiFieldsCount; i++)
+	{
+		if (_stricmp(szField, m_Fields[i].name) == 0)
+		{
+			SetFloat(i, fData);
+			return;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////
 double CMyRecord::LoadDouble(LPCTSTR szField)
 {
 	IF_NOT(szField)
@@ -813,6 +829,22 @@ double CMyRecord::LoadDouble(LPCTSTR szField)
 	}
 
 	return INT_NONE;
+}
+
+///////////////////////////////////////////////////////////////////////
+void CMyRecord::SetDouble(LPCTSTR szField, double dData)
+{
+	IF_NOT(szField)
+		return;
+
+	for (UINT i = 0; i < m_uiFieldsCount; i++)
+	{
+		if (_stricmp(szField, m_Fields[i].name) == 0)
+		{
+			SetDouble(i, dData);
+			return;
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -878,6 +910,22 @@ float CMyRecord::GetFloat(int idx)
 }
 
 ///////////////////////////////////////////////////////////////////////
+void CMyRecord::SetFloat(int idx, float fData)
+{
+	IF_NOT(idx >= 0 && idx < (int)m_uiFieldsCount)
+	{
+		LOGERROR("Invalid index[%d] in table [%s]", idx, m_szTableName);
+		return;
+	}
+
+	m_pbDirty[idx] = true;
+	if (!m_objFields[idx].m_szVal)			// 非串类型
+		m_objFields[idx].m_fVal = fData;
+
+	return;
+}
+
+///////////////////////////////////////////////////////////////////////
 double CMyRecord::GetDouble(int idx)
 {
 	IF_NOT(idx >= 0 && idx<(int)m_uiFieldsCount)
@@ -890,6 +938,22 @@ double CMyRecord::GetDouble(int idx)
 		return m_objFields[idx].m_dVal;
 	else
 		return INT_NONE;
+}
+
+///////////////////////////////////////////////////////////////////////
+void CMyRecord::SetDouble(int idx, double dData)
+{
+	IF_NOT(idx >= 0 && idx < (int)m_uiFieldsCount)
+	{
+		LOGERROR("Invalid index[%d] in table [%s]", idx, m_szTableName);
+		return;
+	}
+
+	m_pbDirty[idx] = true;
+	if (!m_objFields[idx].m_szVal)			// 非串类型
+		m_objFields[idx].m_dVal = dData;
+
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////

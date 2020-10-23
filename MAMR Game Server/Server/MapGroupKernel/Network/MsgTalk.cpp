@@ -156,7 +156,7 @@ void CMsgTalk::Process(void *pInfo)
 			if(pUser->IsPM())
 			{
 				int	nData = atoi(szParam);
-				pUser->SetAttrib(_USERATTRIB_PORFESSION, nData, SYNCHRO_TRUE);
+				//pUser->SetAttrib(_USERATTRIB_PORFESSION, nData, SYNCHRO_TRUE);
 			}
 		}
 		else if (_stricmp(szCmd, "Ñæ»ð") == 0)
@@ -308,7 +308,7 @@ void CMsgTalk::Process(void *pInfo)
 			if(pUser->IsPM())
 			{
 				int	nData = atoi(szParam);
-				pUser->SetAttrib(_USERATTRIB_ENERGY, nData, SYNCHRO_TRUE);
+				//pUser->SetAttrib(_USERATTRIB_ENERGY, nData, SYNCHRO_TRUE);
 			}
 		}
 		else if(_stricmp(szCmd, "awardmoney") == 0)
@@ -476,7 +476,7 @@ void CMsgTalk::Process(void *pInfo)
 		{
 			if (pUser->IsPM())
 			{
-				pUser->AddAttrib(_USERATTRIB_SOUL, 500, SYNCHRO_TRUE);
+				//pUser->AddAttrib(_USERATTRIB_SOUL, 500, SYNCHRO_TRUE);
 				//pUser->AddAttrib(_USERATTRIB_HEALTH, 500, SYNCHRO_TRUE);
 				pUser->AddAttrib(_USERATTRIB_FORCE, 500, SYNCHRO_TRUE);
 				//pUser->AddAttrib(_USERATTRIB_DEX, 500, SYNCHRO_TRUE);

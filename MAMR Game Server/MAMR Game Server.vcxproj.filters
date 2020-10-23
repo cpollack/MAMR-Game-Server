@@ -612,6 +612,15 @@
     <ClCompile Include="Server\MapGroupKernel\Network\MsgNpcAction.cpp">
       <Filter>Server\MapGroupKernel\NPC\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPetLevelUp.cpp">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgUserLevelUp.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\MapGroupKernel\Network\MsgPointAllot.cpp">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\Array.h">
@@ -1258,6 +1267,15 @@
     </ClInclude>
     <ClInclude Include="Server\MapGroupKernel\Network\MsgNpcAction.h">
       <Filter>Server\MapGroupKernel\NPC\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPetLevelUp.h">
+      <Filter>Server\MapGroupKernel\Pet\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgUserLevelUp.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MapGroupKernel\Network\MsgPointAllot.h">
+      <Filter>Server\MapGroupKernel\User\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

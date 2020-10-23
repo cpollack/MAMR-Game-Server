@@ -90,6 +90,12 @@ int	CUserPackage::GetNextSlotID() {
 		if (pItem) 
 			used.insert(pItem->GetID() % 100);
 	}
+	//include equipment slots
+	for (int itr = ITEMPOSITION_EQUIPBEGIN; itr <= ITEMPOSITION_EQUIPEND; itr++) {
+		CItem* pItem = m_pOwner->GetEquipItemByPos(itr);
+		if (pItem)
+			used.insert(pItem->GetID() % 100);
+	}
 
 	//find first unused
 	std::set<int>::iterator iter = used.lower_bound(slot);

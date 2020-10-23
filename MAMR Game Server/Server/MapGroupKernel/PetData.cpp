@@ -139,3 +139,81 @@ void CPetData::SetLife(int nLife, BOOL bUpdate) {
 			pRes->UpdateRecord();
 	}
 }
+
+void CPetData::SetMaxLife(double dLife, BOOL bUpdate) {
+	if (dLife < 0) dLife = 0;
+	info.LifeMax = dLife;
+	if (pRes)
+	{
+		pRes->SetDouble("max_life", dLife);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}
+
+void CPetData::SetAttack(double dAttack, BOOL bUpdate) {
+	if (dAttack < 0) dAttack = 0;
+	info.Attack = dAttack;
+	if (pRes)
+	{
+		pRes->SetDouble("attack", dAttack);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}
+
+void CPetData::SetDefence(double dDef, BOOL bUpdate) {
+	if (dDef < 0) dDef = 0;
+	info.Defence = dDef;
+	if (pRes)
+	{
+		pRes->SetDouble("defence", dDef);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}
+
+void CPetData::SetDexterity(double dDex, BOOL bUpdate) {
+	if (dDex < 0) dDex = 0;
+	info.Dexterity = dDex;
+	if (pRes)
+	{
+		pRes->SetDouble("dexterity", dDex);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}
+
+void CPetData::SetLevel(int nLev, BOOL bUpdate) {
+	if (nLev < 1) nLev = 1;
+	info.Level = nLev;
+	if (pRes)
+	{
+		pRes->SetDWord("level", nLev);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}
+
+void CPetData::SetExperience(int nExp, BOOL bUpdate) {
+	if (nExp < 0) nExp = 0;
+	info.Experience = nExp;
+	if (pRes)
+	{
+		pRes->SetDWord("exp", nExp);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}
+
+void CPetData::SetLoyalty(int nLoy, BOOL bUpdate) {
+	if (nLoy < 0) nLoy = 0;
+	if (nLoy > 150) nLoy = 150;
+	info.Loyalty = nLoy;
+	if (pRes)
+	{
+		pRes->SetDWord("fidelity", nLoy);
+		if (bUpdate)
+			pRes->UpdateRecord();
+	}
+}

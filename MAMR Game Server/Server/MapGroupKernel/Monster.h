@@ -122,8 +122,8 @@ public: // IRole
 	virtual double GetBaseDexterity() { return pData->GetBaseDexterity(); }
 
 	virtual DWORD GetAttackRate() { return pData->GetRateAttack(); }
-	virtual DWORD GetDexterityRate() { return pData->GetRateDefence(); }
-	virtual DWORD GetDefenceRate() { return pData->GetRateDexterity(); }
+	virtual DWORD GetDefenceRate() { return pData->GetRateDefence(); }
+	virtual DWORD GetDexterityRate() { return pData->GetRateDexterity(); }
 
 	virtual double GetGrowRate() { return pData->GetGrowth(); }
 	virtual double GetLifeRate() { return pData->GetLifeRise(); }

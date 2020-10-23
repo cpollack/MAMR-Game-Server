@@ -49,8 +49,10 @@ public:
 	virtual void	SetInt		(LPCTSTR szField, int nData)		PURE_VIRTUAL_DECLARATION_DB
 	virtual UINT	LoadUInt	(LPCTSTR szField)					PURE_VIRTUAL_DECLARATION_DB_0
 	virtual void	SetUInt		(LPCTSTR szField, UINT nData)		PURE_VIRTUAL_DECLARATION_DB
-	virtual float	LoadFloat(LPCSTR szField)					PURE_VIRTUAL_DECLARATION_DB_0
+	virtual float	LoadFloat	(LPCSTR szField)					PURE_VIRTUAL_DECLARATION_DB_0
+	virtual void	SetFloat	(LPCSTR szField, float fData)					PURE_VIRTUAL_DECLARATION_DB
 	virtual double	LoadDouble	(LPCSTR szField)					PURE_VIRTUAL_DECLARATION_DB_0
+	virtual void	SetDouble	(LPCSTR szField, double dData)					PURE_VIRTUAL_DECLARATION_DB
 	virtual void	LoadString	(char* szData, LPCTSTR szField, int nSize)		PURE_VIRTUAL_DECLARATION_DB
 	virtual void	SetString	(LPCTSTR szField, LPCTSTR szData, int nSize)	PURE_VIRTUAL_DECLARATION_DB
 	virtual DWORD	LoadDWord	(LPCTSTR szField)					{ return LoadUInt(szField); }
@@ -62,8 +64,10 @@ public:
 	virtual int		GetInt		(int nIdx)							PURE_VIRTUAL_DECLARATION_DB_0
 	virtual LPCTSTR	GetStr		(int nIdx)							PURE_VIRTUAL_DECLARATION_DB_0
 	virtual void	SetInt		(int nIdx, int nData)				PURE_VIRTUAL_DECLARATION_DB
-	virtual float	GetFloat(int nIdx)							PURE_VIRTUAL_DECLARATION_DB_0
+	virtual float	GetFloat(int nIdx)								PURE_VIRTUAL_DECLARATION_DB_0
+	virtual void	SetFloat(int idx, float fData)					PURE_VIRTUAL_DECLARATION_DB
 	virtual double	GetDouble	(int nIdx)							PURE_VIRTUAL_DECLARATION_DB_0
+	virtual void	SetDouble(int idx, double dData)				PURE_VIRTUAL_DECLARATION_DB
 	virtual void	SetStr		(int nIdx, LPCTSTR szData, int nSize)			PURE_VIRTUAL_DECLARATION_DB
 	virtual void	ClearUpdateFlags	()							PURE_VIRTUAL_DECLARATION_DB
 
